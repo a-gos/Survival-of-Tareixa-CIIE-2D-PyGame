@@ -6,22 +6,12 @@
 
 import pygame, sys, os
 from pygame.locals import *
+from player import Player
 
 # SETTINGS
-SCREEN_WIDTH = 600
+SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-# Movimientos
-IDLE = 0
-LEFT = 1
-RIGHT = 2
-UP = 3
-DOWN = 4
-
-#Posturas
-SPRITE_IDLE = 0
-SPRITE_WALKING = 1
-SPRITE_JUMPING = 2
 
 
 # -------------------------------------------------
@@ -34,7 +24,7 @@ def main():
     pygame.init()
 
     # Crear la pantalla
-    pantalla = pygame.display.set_mode((800, 600), 0, 32)
+    pantalla = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
     # Creamos el objeto reloj para sincronizar el juego
     reloj = pygame.time.Clock()
@@ -43,11 +33,11 @@ def main():
     pygame.display.set_caption('Ejemplo de uso de Sprites')
 
     # Creamos los jugadores
-    #jugador1 = Jugador()
-    #jugador2 = Jugador()
+    player1 = Player()
+    player2 = Player()
 
     # Creamos el grupo de Sprites de jugadores
-  #  grupoJugadores = pygame.sprite.Group( jugador1, jugador2 )
+    grupoJugadores = pygame.sprite.Group( player1, player2 )
 
 
     # El bucle de eventos
@@ -74,20 +64,20 @@ def main():
 
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
-        #jugador1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
-        #jugador2.mover(teclasPulsadas, K_w,  K_s,    K_a,    K_d)
+        player1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
+        player2.mover(teclasPulsadas, K_w,  K_s,    K_a,    K_d)
 
 
 
         # Actualizamos los jugadores actualizando el grupo
-        #grupoJugadores.update(tiempo_pasado)
+        grupoJugadores.update(tiempo_pasado)
 
 
         # Dibujar el fondo de color
         pantalla.fill((133,133,133))
 
         # Dibujar el grupo de Sprites
-        #grupoJugadores.draw(pantalla)
+        grupoJugadores.draw(pantalla)
         
         # Actualizar la pantalla
         pygame.display.update()
