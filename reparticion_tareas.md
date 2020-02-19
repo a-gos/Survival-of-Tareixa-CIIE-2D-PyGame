@@ -1,0 +1,6 @@
+- Gestor recursos
+- Personajes
+	- Clase Personaje (da que heredan todos)
+- Fase
+- Fondos
+- Sprites (si os xuntamos ou no)
