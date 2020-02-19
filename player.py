@@ -51,7 +51,7 @@ class Player(pygame.sprite.Sprite):
         # Leemos las coordenadas de un archivo de texto
         datos = ResourcesManager.CargarArchivoCoordenadas('coordTareixa.txt')
         datos = datos.split()
-        self.numPostura = 1;
+        self.animationNumber = 1;
         self.numImagenPostura = 0;
         cont = 0;
         numImagenes = [6, 12, 6]        
@@ -59,18 +59,18 @@ class Player(pygame.sprite.Sprite):
         for linea in range(0, 3):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
-            for postura in range(1, numImagenes[linea]+1):
+            for animation in range(1, numImagenes[linea]+1):
                 tmp.append(pygame.Rect((int(datos[cont]), int(datos[cont+1])), (int(datos[cont+2]), int(datos[cont+3]))))
                 cont += 4
 
         # El retardo a la hora de cambiar la imagen del Sprite (para que no se mueva demasiado rápido)
         self.retardoMovimiento = 0;
 
-        # En que postura esta inicialmente
-        self.numPostura = IDLE
+        # En que animation esta inicialmente
+        self.animationNumber = IDLE
 
         # La posicion inicial del Sprite
-        self.rect = pygame.Rect(100,100,self.coordenadasHoja[self.numPostura][self.numImagenPostura][2],self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
+        self.rect = pygame.Rect(100,100,self.coordenadasHoja[self.animationNumber][self.numImagenPostura][2],self.coordenadasHoja[self.animationNumber][self.numImagenPostura][3])
 
         # La posicion x e y que ocupa
         self.posicionx = 300
@@ -81,30 +81,30 @@ class Player(pygame.sprite.Sprite):
         #  En el eje x se utilizaria si hubiese algun tipo de inercia
         self.velocidady = 0
 
-        # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
+        # Y actualizamos la animation del Sprite inicial, llamando al metodo correspondiente
         self.actualizarPostura()
 
 
 
     def actualizarPostura(self):
         self.retardoMovimiento -= 1
-        # Miramos si ha pasado el retardo para dibujar una nueva postura
+        # Miramos si ha pasado el retardo para dibujar una nueva animation
         if (self.retardoMovimiento < 0):
             self.retardoMovimiento = PLAYER_ANIMATION_DELAY
-            # Si ha pasado, actualizamos la postura
+            # Si ha pasado, actualizamos la animation
             self.numImagenPostura += 1
-            if self.numImagenPostura >= len(self.coordenadasHoja[self.numPostura]):
+            if self.numImagenPostura >= len(self.coordenadasHoja[self.animationNumber]):
                 self.numImagenPostura = 0;
             if self.numImagenPostura < 0:
-                self.numImagenPostura = len(self.coordenadasHoja[self.numPostura])-1
-            self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura])
+                self.numImagenPostura = len(self.coordenadasHoja[self.animationNumber])-1
+            self.image = self.hoja.subsurface(self.coordenadasHoja[self.animationNumber][self.numImagenPostura])
 
             # Si esta mirando a la izquiera, cogemos la porcion de la hoja
             if self.mirando == RIGHT:
-                self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura])
+                self.image = self.hoja.subsurface(self.coordenadasHoja[self.animationNumber][self.numImagenPostura])
             #  Si no, si mira a la derecha, invertimos esa imagen
             elif self.mirando == LEFT:
-                self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura]), 1, 0)
+                self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.animationNumber][self.numImagenPostura]), 1, 0)
 
 
 
@@ -113,7 +113,7 @@ class Player(pygame.sprite.Sprite):
         # Indicamos la acción a realizar segun la tecla pulsada para el Player
         if teclasPulsadas[arriba]:
             # Si estamos en el aire y han pulsado arriba, ignoramos este movimiento
-            if self.numPostura == SPRITE_JUMPING:
+            if self.animationNumber == SPRITE_JUMPING:
                 self.movimiento = IDLE
             else:
                 self.movimiento = UP
@@ -130,9 +130,9 @@ class Player(pygame.sprite.Sprite):
     def update(self, tiempo):
         # Si vamos a la izquierda
         if self.movimiento == LEFT:
-            # Si no estamos en el aire, la postura actual sera estar caminando
-            if not self.numPostura == SPRITE_JUMPING:
-                self.numPostura = SPRITE_WALKING
+            # Si no estamos en el aire, la animation actual sera estar caminando
+            if not self.animationNumber == SPRITE_JUMPING:
+                self.animationNumber = SPRITE_WALKING
             # Esta mirando a la izquierda
             self.mirando = LEFT
             # Actualizamos la posicion
@@ -140,9 +140,9 @@ class Player(pygame.sprite.Sprite):
             self.rect.left = self.posicionx
         # Si vamos a la derecha
         elif self.movimiento == RIGHT:
-            # Si no estamos en el aire, la postura actual sera estar caminando
-            if not self.numPostura == SPRITE_JUMPING:
-                self.numPostura = SPRITE_WALKING
+            # Si no estamos en el aire, la animation actual sera estar caminando
+            if not self.animationNumber == SPRITE_JUMPING:
+                self.animationNumber = SPRITE_WALKING
             # Esta mirando a la derecha
             self.mirando = RIGHT
             # Actualizamos la posicion
@@ -150,23 +150,23 @@ class Player(pygame.sprite.Sprite):
             self.rect.left = self.posicionx
         # Si estamos saltando
         elif self.movimiento == UP:
-            # La postura actual sera estar saltando
-            self.numPostura = SPRITE_JUMPING
+            # La animation actual sera estar saltando
+            self.animationNumber = SPRITE_JUMPING
             # Le imprimimos una velocidad en el eje y
             self.velocidady = PLAYER_JUMP_SPEED
         # Si no se ha pulsado ninguna tecla
         elif self.movimiento == IDLE:
-            # Si no estamos saltando, la postura actual será estar quieto
-            if not self.numPostura == SPRITE_JUMPING:
-                self.numPostura = SPRITE_IDLE
+            # Si no estamos saltando, la animation actual será estar quieto
+            if not self.animationNumber == SPRITE_JUMPING:
+                self.animationNumber = SPRITE_IDLE
 
         # Si estamos en el aire
-        if self.numPostura == SPRITE_JUMPING:
+        if self.animationNumber == SPRITE_JUMPING:
             # Actualizamos la posicion
             self.posiciony -= self.velocidady * tiempo
             # Si llegamos a la posicion inferior, paramos de caer y lo ponemos como quieto
             if (self.posiciony>300):
-                self.numPostura = SPRITE_IDLE
+                self.animationNumber = SPRITE_IDLE
                 self.posiciony = 300
                 self.velovidady = 0
             # Si no, aplicamos el efecto de la gravedad
