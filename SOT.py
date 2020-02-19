@@ -28,39 +28,70 @@ SPRITE_JUMPING = 2
 # Funcion principal del juego
 # -------------------------------------------------
 
-if __name__ == '__main__':
+def main():
 
     # Inicializar pygame
     pygame.init()
 
     # Crear la pantalla
-    pantalla = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
+    pantalla = pygame.display.set_mode((800, 600), 0, 32)
 
     # Creamos el objeto reloj para sincronizar el juego
     reloj = pygame.time.Clock()
 
-    # Creamos la fase
-    fase = Fase()
+    # Poner el título de la ventana
+    pygame.display.set_caption('Ejemplo de uso de Sprites')
+
+    # Creamos los jugadores
+    #jugador1 = Jugador()
+    #jugador2 = Jugador()
+
+    # Creamos el grupo de Sprites de jugadores
+  #  grupoJugadores = pygame.sprite.Group( jugador1, jugador2 )
 
 
     # El bucle de eventos
     while True:
 
-        # Sincronizar el juego a 60 fps
+        # Hacemos que el reloj espere a un determinado fps
         tiempo_pasado = reloj.tick(60)
 
-        # Coge la lista de eventos y se la pasa a la escena
-        # Devuelve si se debe parar o no el juego
-        if (fase.eventos(pygame.event.get())):
+        # Para cada evento, hacemos
+        for event in pygame.event.get():
+
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+
+        # Miramos que teclas se han pulsado
+        teclasPulsadas = pygame.key.get_pressed()
+
+        # Si la tecla es Escape
+        if teclasPulsadas[K_ESCAPE]:
+            # Se sale del programa
             pygame.quit()
             sys.exit()
 
-        # Actualiza la escena
-        # Devuelve si se debe parar o no el juego
-        if (fase.update(tiempo_pasado)):
-            pygame.quit()
-            sys.exit()
 
-        # Se dibuja en pantalla
-        fase.dibujar(pantalla)
-        pygame.display.flip()
+        # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
+        #jugador1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
+        #jugador2.mover(teclasPulsadas, K_w,  K_s,    K_a,    K_d)
+
+
+
+        # Actualizamos los jugadores actualizando el grupo
+        #grupoJugadores.update(tiempo_pasado)
+
+
+        # Dibujar el fondo de color
+        pantalla.fill((133,133,133))
+
+        # Dibujar el grupo de Sprites
+        #grupoJugadores.draw(pantalla)
+        
+        # Actualizar la pantalla
+        pygame.display.update()
+
+
+if __name__ == "__main__":
+    main()
