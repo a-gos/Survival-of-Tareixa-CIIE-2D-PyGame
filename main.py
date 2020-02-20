@@ -28,6 +28,7 @@ def main():
 
     # Creamos el objeto reloj para sincronizar el juego
     reloj = pygame.time.Clock()
+    
 
     # Poner el título de la ventana
     pygame.display.set_caption('Ejemplo de uso de Sprites')
