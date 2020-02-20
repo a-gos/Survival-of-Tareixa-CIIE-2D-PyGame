@@ -45,7 +45,6 @@ def main():
 
         # Hacemos que el reloj espere a un determinado fps
         tiempo_pasado = reloj.tick(60)
-
         # Para cada evento, hacemos
         for event in pygame.event.get():
 
