@@ -12,18 +12,18 @@ from pygame.locals import *
 # -------------------------------------------------
 
 class ResourcesManager(object):
-    recursos = {}
+    resources = {}
             
     @classmethod
-    def CargarImagen(cls, nombre, colorkey=None):
-        # Si el nombre de archivo está entre los recursos ya cargados
-        if nombre in cls.recursos:
+    def LoadImage(cls, name, colorkey=None):
+        # Si el name de archivo está entre los resources ya cargados
+        if name in cls.resources:
             # Se devuelve ese recurso
-            return cls.recursos[nombre]
+            return cls.resources[name]
         # Si no ha sido cargado anteriormente
         else:
             # Se carga la imagen indicando la carpeta en la que está
-            fullname = os.path.join('data', nombre)
+            fullname = os.path.join('data', name)
             try:
                 imagen = pygame.image.load(fullname)
             except pygame.error as message:
@@ -35,24 +35,24 @@ class ResourcesManager(object):
                     colorkey = imagen.get_at((0,0))
                 imagen.set_colorkey(colorkey, RLEACCEL)
             # Se almacena
-            cls.recursos[nombre] = imagen
+            cls.resources[name] = imagen
             # Se devuelve
             return imagen
 
     @classmethod
-    def CargarArchivoCoordenadas(cls, nombre):
-        # Si el nombre de archivo está entre los recursos ya cargados
-        if nombre in cls.recursos:
+    def LoadCoordFile(cls, name):
+        # Si el name de archivo está entre los resources ya cargados
+        if name in cls.resources:
             # Se devuelve ese recurso
-            return cls.recursos[nombre]
+            return cls.resources[name]
         # Si no ha sido cargado anteriormente
         else:
-            # Se carga el recurso indicando el nombre de su carpeta
-            fullname = os.path.join('data', nombre)
+            # Se carga el recurso indicando el name de su carpeta
+            fullname = os.path.join('data', name)
             pfile=open(fullname,'r')
             datos=pfile.read()
             pfile.close()
             # Se almacena
-            cls.recursos[nombre] = datos
+            cls.resources[name] = datos
             # Se devuelve
             return datos

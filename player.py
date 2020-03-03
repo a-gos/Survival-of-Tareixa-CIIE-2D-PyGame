@@ -28,11 +28,45 @@ PLAYER_JUMP_SPEED = 0.3 # Pixeles per milisecond
 PLAYER_ANIMATION_DELAY = 5 # updates that the character model will endure
                               # should be a different number for each animation
 
+GRAVITY = 0.0003
 
 # -------------------------------------------------
 #
 # -------------------------------------------------
+# Clase MiSprite
+class MiSprite(pygame.sprite.Sprite):
+    "Los Sprites que tendra este juego"
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.posicion = (0, 0)
+        self.velocidad = (0, 0)
+        self.scroll   = (0, 0)
 
+    def establecerPosicion(self, posicion):
+        self.posicion = posicion
+        self.rect.left = self.posicion[0] - self.scroll[0]
+        self.rect.bottom = self.posicion[1] - self.scroll[1]
+
+    def establecerPosicionPantalla(self, scrollDecorado):
+        self.scroll = scrollDecorado;
+        (scrollx, scrolly) = self.scroll;
+        (posx, posy) = self.posicion;
+        self.rect.left = posx - scrollx;
+        self.rect.bottom = posy - scrolly;
+
+    def incrementarPosicion(self, incremento):
+        (posx, posy) = self.posicion
+        (incrementox, incrementoy) = incremento
+        self.establecerPosicion((posx+incrementox, posy+incrementoy))
+
+    def update(self, tiempo):
+        incrementox = self.velocidad[0]*tiempo
+        incrementoy = self.velocidad[1]*tiempo
+        self.incrementarPosicion((incrementox, incrementoy))
+
+
+
+# -------------------------------------------------
 
 class Player(pygame.sprite.Sprite):
     "Player"
