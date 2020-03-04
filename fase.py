@@ -57,11 +57,11 @@ class Fase(Scene):
 
         # Creamos las platforms del decorado
         # La platform que conforma todo el suelo
-       # platformSuelo = Platform(pygame.Rect(0, 550, 1200, 15))
+        platformSuelo = Platform(pygame.Rect(0, 550, 1200, 15))
         # La platform del techo del edificio
        # platformCasa = Platform(pygame.Rect(870, 417, 200, 10))
         # y el grupo con las mismas
-        self.platformGroup = pygame.sprite.Group( )
+        self.platformGroup = pygame.sprite.Group( platformSuelo)
 
         # Y los enemys que tendran en este decorado
      #   enemy1 = Sniper()
@@ -271,7 +271,7 @@ class Sky:
 
 class Scenary:
     def __init__(self):
-        self.imagen = ResourcesManager.LoadImage('decorado.png', -1)
+        self.imagen = ResourcesManager.LoadImage('level1/fondoNivel1.png', -1)
         self.imagen = pygame.transform.scale(self.imagen, (1200, 300))
 
         self.rect = self.imagen.get_rect()

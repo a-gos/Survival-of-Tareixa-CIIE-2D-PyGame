@@ -174,13 +174,12 @@ class Character(MySprite):
             else:
                 speedx = self.runSpeed
         # Si no saltamos
-        if self.animationNumber != SPRITE_JUMPING:
+            if self.animationNumber != SPRITE_JUMPING:
           # walking
-          self.animationNumber = SPRITE_WALKING
+                self.animationNumber = SPRITE_WALKING
            # esto non sei que fai a vdd
-     #   if pygame.sprite.spritecollideany(self, platformGroup) == None:
-     #       self.numPostura = SPRITE_SALTANDO
-
+                if pygame.sprite.spritecollideany(self, platformGroup) == None:
+                  self.animationNumber = SPRITE_JUMPING
         # Si estamos saltando
         elif self.movement == UP:
             # La animation actual sera estar saltando
