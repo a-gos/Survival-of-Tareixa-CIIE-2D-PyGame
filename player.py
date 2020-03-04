@@ -4,7 +4,9 @@
 # LIB
 # -------------------------------------------------
 
-import pygame, sys, os
+import pygame
+import sys
+import os
 from pygame.locals import *
 from resourcesmanager import ResourcesManager
 
@@ -22,160 +24,240 @@ SPRITE_WALKING = 1
 SPRITE_JUMPING = 2
 
 
-# PLAYER SETTINGS
-PLAYER_SPEED = 0.2 # Pixeles per milisecond
-PLAYER_JUMP_SPEED = 0.3 # Pixeles per milisecond
-PLAYER_ANIMATION_DELAY = 5 # updates that the character model will endure
-                              # should be a different number for each animation
+# Character SETTINGS
+Character_SPEED = 0.2  # Pixeles per milisecond
+Character_JUMP_SPEED = 0.3  # Pixeles per milisecond
+Character_ANIMATION_DELAY = 5  # updates that the character model will endure
+                            # should be a different number for each animation
 
 
 # -------------------------------------------------
 #
 # -------------------------------------------------
+# Clase MySprite
 
 
-class Player(pygame.sprite.Sprite):
-    "Player"
+class MySprite(pygame.sprite.Sprite):
+    "Los Sprites que tendra este juego"
 
     def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.posion = (0, 0)
+        self.speed = (0, 0)
+        self.scroll = (0, 0)
+
+    def setposition(self, position):
+        self.position = position
+        self.rect.left = self.position[0] - self.scroll[0]
+        self.rect.bottom = self.position[1] - self.scroll[1]
+
+    def setpositionscreen(self, scrollDecorado):
+        self.scroll = scrollDecorado
+        (scrollx, scrolly) = self.scroll
+        (posx, posy) = self.position
+        self.rect.left = posx - scrollx
+        self.rect.bottom = posy - scrolly
+
+    def increaseposition(self, incremento):
+        (posx, posy) = self.position
+        (incrementox, incrementoy) = incremento
+        self.setposition((posx+incrementox, posy+incrementoy))
+
+    def update(self, tiempo):
+        incrementox = self.speed[0]*tiempo
+        incrementoy = self.speed[1]*tiempo
+        self.increaseposition((incrementox, incrementoy))
+
+
+# -------------------------------------------------
+
+class Character(MySprite):
+    "Character Principal"
+
+    def __init__(self, imageFile, coordFile, numImages, runSpeed, jumpSpeed, animationDelay):
         # Primero invocamos al constructor de la clase padre
-        pygame.sprite.Sprite.__init__(self);
+        MySprite.__init__(self)
         # Se carga la hoja
-        self.hoja = ResourcesManager.CargarImagen('Tareixa.png',-1)
+        self.hoja = ResourcesManager.LoadImage(imageFile, -1)
         self.hoja = self.hoja.convert_alpha()
-        # El movimiento que esta realizando
-        self.movimiento = IDLE
-        # Lado hacia el que esta mirando
-        self.mirando = LEFT
+        # El movement que esta realizando
+        self.movement = IDLE
+        # Lado hacia el que esta looking
+        self.looking = LEFT
 
         # Leemos las coordenadas de un archivo de texto
-        datos = ResourcesManager.CargarArchivoCoordenadas('coordTareixa.txt')
-        datos = datos.split()
-        self.animationNumber = 1;
-        self.numImagenPostura = 0;
-        cont = 0;
-        numImagenes = [6, 12, 6]        
-        self.coordenadasHoja = [];
+        data = ResourcesManager.LoadCoordFile(coordFile)
+        data = data.split()
+        self.animationNumber = 1
+        self.numImagenPostura = 0
+        cont = 0
+
+        self.coordenadasHoja = []
         for linea in range(0, 3):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
-            for animation in range(1, numImagenes[linea]+1):
-                tmp.append(pygame.Rect((int(datos[cont]), int(datos[cont+1])), (int(datos[cont+2]), int(datos[cont+3]))))
+            for animation in range(1, numImages[linea]+1):
+                tmp.append(pygame.Rect((int(data[cont]), int(
+                    data[cont+1])), (int(data[cont+2]), int(data[cont+3]))))
                 cont += 4
 
         # El retardo a la hora de cambiar la imagen del Sprite (para que no se mueva demasiado rápido)
-        self.retardoMovimiento = 0;
+        self.movementDelay = 0
 
         # En que animation esta inicialmente
         self.animationNumber = IDLE
 
-        # La posicion inicial del Sprite
-        self.rect = pygame.Rect(100,100,self.coordenadasHoja[self.animationNumber][self.numImagenPostura][2],self.coordenadasHoja[self.animationNumber][self.numImagenPostura][3])
+        # La position inicial del Sprite
+        self.rect = pygame.Rect(100, 100, self.coordenadasHoja[self.animationNumber][self.numImagenPostura]
+                                [2], self.coordenadasHoja[self.animationNumber][self.numImagenPostura][3])
 
-        # La posicion x e y que ocupa
-        self.posicionx = 300
-        self.posiciony = 300
-        self.rect.left = self.posicionx
-        self.rect.bottom = self.posiciony
-        # Velocidad en el eje y (para los saltos)
+        # La position x e y que ocupa
+        self.runSpeed = runSpeed
+        self.jumpSpeed = jumpSpeed
+
+        # speed en el eje y (para los saltos)
         #  En el eje x se utilizaria si hubiese algun tipo de inercia
-        self.velocidady = 0
+        self.animationDelay = animationDelay
 
         # Y actualizamos la animation del Sprite inicial, llamando al metodo correspondiente
-        self.actualizarPostura()
+        self.updatePosture()
+
+    # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
+    def mover(self, move):
+        if move == UP:
+            # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
+            if self.animationNumber == SPRITE_JUMPING:
+                self.movement = IDLE
+            else:
+                self.movement = UP
+        else:
+            self.movement = move
 
 
-
-    def actualizarPostura(self):
-        self.retardoMovimiento -= 1
+    def updatePosture(self):
+        self.movementDelay -= 1
         # Miramos si ha pasado el retardo para dibujar una nueva animation
-        if (self.retardoMovimiento < 0):
-            self.retardoMovimiento = PLAYER_ANIMATION_DELAY
+        if (self.movementDelay < 0):
+            self.movementDelay = self.animationDelay
             # Si ha pasado, actualizamos la animation
             self.numImagenPostura += 1
             if self.numImagenPostura >= len(self.coordenadasHoja[self.animationNumber]):
-                self.numImagenPostura = 0;
+                self.numImagenPostura = 0
             if self.numImagenPostura < 0:
-                self.numImagenPostura = len(self.coordenadasHoja[self.animationNumber])-1
-            self.image = self.hoja.subsurface(self.coordenadasHoja[self.animationNumber][self.numImagenPostura])
+                self.numImagenPostura = len(
+                    self.coordenadasHoja[self.animationNumber])-1
+            self.image = self.hoja.subsurface(
+                self.coordenadasHoja[self.animationNumber][self.numImagenPostura])
 
-            # Si esta mirando a la izquiera, cogemos la porcion de la hoja
-            if self.mirando == RIGHT:
-                self.image = self.hoja.subsurface(self.coordenadasHoja[self.animationNumber][self.numImagenPostura])
+            # Si esta looking a la izquiera, cogemos la porcion de la hoja
+            if self.looking == RIGHT:
+                self.image = self.hoja.subsurface(
+                    self.coordenadasHoja[self.animationNumber][self.numImagenPostura])
             #  Si no, si mira a la derecha, invertimos esa imagen
-            elif self.mirando == LEFT:
-                self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.animationNumber][self.numImagenPostura]), 1, 0)
+            elif self.looking == LEFT:
+                self.image = pygame.transform.flip(self.hoja.subsurface(
+                    self.coordenadasHoja[self.animationNumber][self.numImagenPostura]), 1, 0)
 
+    def update(self, platformGroup, tiempo):
 
+        (speedx, speey) = self.speed
 
-    def mover(self,teclasPulsadas, arriba, abajo, izquierda, derecha):
-
-        # Indicamos la acción a realizar segun la tecla pulsada para el Player
-        if teclasPulsadas[arriba]:
-            # Si estamos en el aire y han pulsado arriba, ignoramos este movimiento
-            if self.animationNumber == SPRITE_JUMPING:
-                self.movimiento = IDLE
+        # Si vamos a la izquierda o derecha
+        if (self.movement == LEFT) or (self.movement == RIGHT):
+          # Si no estamos en el aire, la animation actual sera estar caminando
+            self.looking = self.movement
+           # Esta looking a la izquierda
+            if self.movement == LEFT:
+              speedx = -self.runSpeed
+            # este looking derecha
             else:
-                self.movimiento = UP
-        elif teclasPulsadas[izquierda]:
-            self.movimiento = LEFT
-        elif teclasPulsadas[derecha]:
-            self.movimiento = RIGHT
-        else:
-            self.movimiento = IDLE
+                speedx = self.runSpeed
+        # Si no saltamos
+        if self.animationNumber != SPRITE_JUMPING:
+          # walking
+          self.animationNumber = SPRITE_WALKING
+           # esto non sei que fai a vdd
+     #   if pygame.sprite.spritecollideany(self, platformGroup) == None:
+     #       self.numPostura = SPRITE_SALTANDO
 
-
-
-
-    def update(self, tiempo):
-        # Si vamos a la izquierda
-        if self.movimiento == LEFT:
-            # Si no estamos en el aire, la animation actual sera estar caminando
-            if not self.animationNumber == SPRITE_JUMPING:
-                self.animationNumber = SPRITE_WALKING
-            # Esta mirando a la izquierda
-            self.mirando = LEFT
-            # Actualizamos la posicion
-            self.posicionx -= PLAYER_SPEED * tiempo
-            self.rect.left = self.posicionx
-        # Si vamos a la derecha
-        elif self.movimiento == RIGHT:
-            # Si no estamos en el aire, la animation actual sera estar caminando
-            if not self.animationNumber == SPRITE_JUMPING:
-                self.animationNumber = SPRITE_WALKING
-            # Esta mirando a la derecha
-            self.mirando = RIGHT
-            # Actualizamos la posicion
-            self.posicionx += PLAYER_SPEED * tiempo
-            self.rect.left = self.posicionx
         # Si estamos saltando
-        elif self.movimiento == UP:
+        elif self.movement == UP:
             # La animation actual sera estar saltando
             self.animationNumber = SPRITE_JUMPING
-            # Le imprimimos una velocidad en el eje y
-            self.velocidady = PLAYER_JUMP_SPEED
+            # Le imprimimos una speed en el eje y
+            self.speedy = -self.jumpSpeed
         # Si no se ha pulsado ninguna tecla
-        elif self.movimiento == IDLE:
+        elif self.movement == IDLE:
             # Si no estamos saltando, la animation actual será estar quieto
             if not self.animationNumber == SPRITE_JUMPING:
                 self.animationNumber = SPRITE_IDLE
+            speedx = 0
 
         # Si estamos en el aire
         if self.animationNumber == SPRITE_JUMPING:
-            # Actualizamos la posicion
-            self.posiciony -= self.velocidady * tiempo
-            # Si llegamos a la posicion inferior, paramos de caer y lo ponemos como quieto
-            if (self.posiciony>300):
+           # Miramos a ver si hay que parar de caer: si hemos llegado a una platform
+            #  Para ello, miramos si hay colision con alguna platform del grupo
+            platform = pygame.sprite.spritecollideany(self, platformGroup)
+            #  Ademas, esa colision solo nos interesa cuando estamos cayendo
+            #  y solo es efectiva cuando caemos encima, no de lado, es decir,
+            #  cuando nuestra posicion inferior esta por encima de la parte de abajo de la platform
+            if (platform != None) and (speedy > 0) and (platform.rect.bottom>self.rect.bottom):
+                # Lo situamos con la parte de abajo un pixel colisionando con la platform
+                #  para poder detectar cuando se cae de ella
+                self.setPosition(
+                    (self.posicion[0], platform.posicion[1]-platform.rect.height+1))
+                # Lo ponemos como quieto
                 self.animationNumber = SPRITE_IDLE
-                self.posiciony = 300
-                self.velovidady = 0
-            # Si no, aplicamos el efecto de la gravedad
+                # Y estará quieto en el eje y
+                speedy = 0
+
+            # Si no caemos en una platform, aplicamos el efecto de la gravedad
             else:
-                self.velocidady -= 0.004
-            # Nos ponemos en esa posicion en el eje y
-            self.rect.bottom = self.posiciony
+                speedy += GRAVEDAD * tiempo
 
         # Actualizamos la imagen a mostrar
-        self.actualizarPostura()
+        self.updatePosture()
         return
-        
+
+
+# -------------------------------------------------
+# Clase Player
+
+class Player(Character):
+    "Cualquier Character del juego"
+
+    def __init__(self):
+        # Invocamos al constructor de la clase padre con la configuracion de este Character concreto
+        Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt', [6, 12, 6],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
+
+
+    def mover(self, pressedKeys, arriba, abajo, izquierda, derecha):
+        # Indicamos la acción a realizar segun la tecla pulsada para el Character
+        if pressedKeys[arriba]:
+            Character.mover(self, UP)
+        elif pressedKeys[izquierda]:
+            Character.mover(self, LEFT)
+        elif pressedKeys[derecha]:
+            Character.mover(self, RIGHT)
+        else:
+            Character.mover(self, IDLE)
+
+
+# -------------------------------------------------
+# Clase NPC
+
+class NPC(Character):
+    "El resto de Characters no jugadores"
+
+    def __init__(self, imageFile, coordFile, numImagenes, speed, jumpSeed, animationDelay):
+        # Primero invocamos al constructor de la clase padre con los parametros pasados
+        Character.__init__(self, imageFile, coordFile,
+                           numImages, speed, jumpSeed, animationDelay)
+
+    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
+    # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
+    #  mostrando la personalidad de cada enemigo
+    def move_cpu(self, player1):
+        # Por defecto un enemigo no hace nada
+        #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
+        return
