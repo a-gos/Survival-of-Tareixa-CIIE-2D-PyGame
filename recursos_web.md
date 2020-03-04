@@ -7,3 +7,6 @@
 
 ### Sonidos
 - https://freesound.org/
+
+### Programas para crear mapas
+- https://www.mapeditor.org/  (deixa exportar a json)
