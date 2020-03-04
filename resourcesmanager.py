@@ -23,7 +23,11 @@ class ResourcesManager(object):
         # Si no ha sido cargado anteriormente
         else:
             # Se carga la imagen indicando la carpeta en la que está
-            fullname = os.path.join('data', name)
+            
+            current_path = os.path.dirname(__file__) 
+            fullname_path = os.path.join(current_path, 'data')
+            fullname = os.path.join(fullname_path, name)
+
             try:
                 imagen = pygame.image.load(fullname)
             except pygame.error as message:
@@ -48,7 +52,9 @@ class ResourcesManager(object):
         # Si no ha sido cargado anteriormente
         else:
             # Se carga el recurso indicando el name de su carpeta
-            fullname = os.path.join('data', name)
+            current_path = os.path.dirname(__file__) 
+            fullname_path = os.path.join(current_path, 'data')
+            fullname = os.path.join(fullname_path, name)
             pfile=open(fullname,'r')
             datos=pfile.read()
             pfile.close()

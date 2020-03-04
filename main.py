@@ -7,6 +7,7 @@
 import pygame, sys, os
 from pygame.locals import *
 from player import Player
+from fase import Fase
 
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
@@ -15,7 +16,7 @@ from player import Player
 import pygame
 import director
 from director import *
-from menu import Menu
+
 
 if __name__ == '__main__':
 
@@ -24,9 +25,9 @@ if __name__ == '__main__':
     # Creamos el director
     director = Director()
     # Creamos la escena con la pantalla inicial
-    scene = Menu(director)
+    fase = Fase(director)
     # Le decimos al director que apile esta escena
-    director.stackscene(scene)
+    director.stackscene(fase)
     # Y ejecutamos el juego
     director.execute()
     # Cuando se termine la ejecución, finaliza la librería

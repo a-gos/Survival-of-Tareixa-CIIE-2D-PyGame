@@ -12,7 +12,7 @@ class Director():
 
     def __init__(self):
         # Inicializamos la pantalla y el modo grafico
-        self.screen = pygame.display.set_mode((WIDTH_SCREEN, HEIGTH_SCREEN))
+        self.screen = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN))
         pygame.display.set_caption("Game with scenes")
         # Pila de scenes
         self.stack = []

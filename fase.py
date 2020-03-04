@@ -2,9 +2,10 @@
 
 import pygame, scene
 from scene import *
-from personajes import *
+from player import *
 from pygame.locals import *
-from animaciones import *
+from resourcesmanager import ResourcesManager
+
 
 # -------------------------------------------------
 # -------------------------------------------------
@@ -39,7 +40,7 @@ class Fase(Scene):
 
         # Creamos el decorado y el background
         self.scenary = Scenary()
-        self.background = Sky()
+    #    self.background = Sky()
 
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
@@ -51,7 +52,7 @@ class Fase(Scene):
         self.grupoPlayers = pygame.sprite.Group( self.player1)
 
         # Ponemos a los jugadores en sus posiciones iniciales
-        self.player1.setPosition((200, 551))
+        self.player1.setposition((200, 551))
     
 
         # Creamos las platforms del decorado
@@ -67,7 +68,7 @@ class Fase(Scene):
      #   enemy1.setPosition((1000, 418))
 
         # Creamos un grupo con los enemys
-        self.grupoEnemy = pygame.sprite.Group("enemy")
+        self.grupoEnemy = pygame.sprite.Group()
 
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
@@ -136,10 +137,10 @@ class Fase(Scene):
     def updateScroll(self, player1):
         # Se ordenan los jugadores según el eje x, y se mira si hay que actualizar el scroll
      
-            stateScroll = self.updateOrderedScroll(player1)
+        stateScroll = self.updateOrderedScroll(player1)
       
         # Si se cambio el scroll, se desplazan todos los Sprites y el decorado
-        if cambioScroll:
+        if stateScroll:
             # Actualizamos la posición en screen de todos los Sprites según el scroll actual
             for sprite in iter(self.grupoSprites):
                 sprite.setPositionScreen((self.scrollx, 0))
@@ -190,12 +191,12 @@ class Fase(Scene):
   
         # Actualizamos el background:
         #  la posicion del sol y el color del cielo
-        self.background.update(tiempo)
+     #   self.background.update(tiempo)
 
         
     def paint(self, screen):
         # Ponemos primero el background
-        self.background.paint(screen)
+    #    self.background.paint(screen)
         # Despues, las animaciones que haya detras
        
         # Después el decorado
@@ -216,7 +217,7 @@ class Fase(Scene):
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         pressedKeys = pygame.key.get_pressed()
         self.player1.mover(pressedKeys, K_UP, K_DOWN, K_LEFT, K_RIGHT)
-        self.player2.mover(pressedKeys, K_w,  K_s,    K_a,    K_d)
+        
 
 # -------------------------------------------------
 # Clase Platform
@@ -270,14 +271,14 @@ class Sky:
 
 class Scenary:
     def __init__(self):
-        self.imagen = ResourceManager.LoadImage('decorado.png', -1)
+        self.imagen = ResourcesManager.LoadImage('decorado.png', -1)
         self.imagen = pygame.transform.scale(self.imagen, (1200, 300))
 
         self.rect = self.imagen.get_rect()
-        self.rect.bottom = HEIGTH_SCREEN
+        self.rect.bottom = HEIGHT_SCREEN
 
         # La subimagen que estamos viendo
-        self.rectSubimagen = pygame.Rect(0, 0, WIDTH_SCREEN, HEIGTH_SCREEN)
+        self.rectSubimagen = pygame.Rect(0, 0, WIDTH_SCREEN, HEIGHT_SCREEN)
         self.rectSubimagen.left = 0 # El scroll horizontal empieza en la posicion 0 por defecto
 
     def update(self, scrollx):
