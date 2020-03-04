@@ -16,7 +16,7 @@ from resourcesmanager import ResourcesManager
 VELOCIDAD_SOL = 0.1 # Pixeles por milisegundo
 
 # Los bordes de la screen para hacer scroll horizontal
-MIN_X_PLAYER = 50
+MIN_X_PLAYER = (WIDTH_SCREEN / 2) - 20
 MAX_X_PLAYER = WIDTH_SCREEN - MIN_X_PLAYER
 
 # -------------------------------------------------
@@ -57,7 +57,9 @@ class Fase(Scene):
 
         # Creamos las platforms del decorado
         # La platform que conforma todo el suelo
-        platformSuelo = Platform(pygame.Rect(0, 550, 1200, 15))
+        platformSuelo = Platform(pygame.Rect(0, 580, 1200, 20))
+      
+        
         # La platform del techo del edificio
        # platformCasa = Platform(pygame.Rect(870, 417, 200, 10))
         # y el grupo con las mismas
@@ -74,7 +76,7 @@ class Fase(Scene):
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
         self.grupoSpritesDinamicos = pygame.sprite.Group( self.player1 )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group( self.player1, self.grupoEnemy )
+        self.grupoSprites = pygame.sprite.Group( self.player1, self.grupoEnemy, platformSuelo )
 
         # Creamos las animaciones de fuego,
         #  las que estan detras del decorado, y delante
@@ -232,8 +234,7 @@ class Platform(MySprite):
         # Y lo situamos de forma global en esas coordenadas
         self.setposition((self.rect.left, self.rect.bottom))
         # En el caso particular de este juego, las platforms no se van a ver, asi que no se carga ninguna imagen
-        self.image = pygame.Surface((0, 0))
-
+        self.image = ResourcesManager.LoadImage("level1/plataforma1.png")
 
 # -------------------------------------------------
 # Clase Sky

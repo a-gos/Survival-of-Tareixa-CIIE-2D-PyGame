@@ -30,7 +30,7 @@ Character_JUMP_SPEED = 0.3  # Pixeles per milisecond
 Character_ANIMATION_DELAY = 5  # updates that the character model will endure
                             # should be a different number for each animation
 
-GRAVITY = 0.0003
+GRAVITY = 0.0005
 
 # -------------------------------------------------
 #
