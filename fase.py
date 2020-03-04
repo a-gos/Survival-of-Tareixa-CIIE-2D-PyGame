@@ -61,11 +61,11 @@ class Fase(Scene):
         # La platform del techo del edificio
        # platformCasa = Platform(pygame.Rect(870, 417, 200, 10))
         # y el grupo con las mismas
-       # self.grupoPlatforms = pygame.sprite.Group( platformSuelo, platformCasa )
+        self.platformGroup = pygame.sprite.Group( )
 
         # Y los enemys que tendran en este decorado
      #   enemy1 = Sniper()
-     #   enemy1.setPosition((1000, 418))
+     #   enemy1.setposition((1000, 418))
 
         # Creamos un grupo con los enemys
         self.grupoEnemy = pygame.sprite.Group()
@@ -95,7 +95,7 @@ class Fase(Scene):
                 self.scrollx = 0
 
                 # En su lugar, colocamos al jugador que esté más a la izquierda a la izquierda de todo
-                player1.setPosition((MIN_X_PLAYER, player1.posicion[1]))
+                player1.setposition((MIN_X_PLAYER, player1.position[1]))
 
                 return False; # No se ha actualizado el scroll
 
@@ -119,7 +119,7 @@ class Fase(Scene):
                 self.scrollx = self.scenary.rect.right - WIDTH_SCREEN
 
                 # En su lugar, colocamos al jugador que esté más a la derecha a la derecha de todo
-                player1.setPosition((self.scrollx+MAX_X_PLAYER-player1.rect.width, player1.posicion[1]))
+                player1.setposition((self.scrollx+MAX_X_PLAYER-player1.rect.width, player1.position[1]))
 
                 return False; # No se ha actualizado el scroll
 
@@ -143,7 +143,7 @@ class Fase(Scene):
         if stateScroll:
             # Actualizamos la posición en screen de todos los Sprites según el scroll actual
             for sprite in iter(self.grupoSprites):
-                sprite.setPositionScreen((self.scrollx, 0))
+                sprite.setpositionscreen((self.scrollx, 0))
 
             # Ademas, actualizamos el decorado para que se muestre una parte distinta
             self.scenary.update(self.scrollx)
@@ -156,7 +156,7 @@ class Fase(Scene):
     #  Se comprueba si hay colision entre algun jugador y algun enemy
     #  Se comprueba si algún jugador ha salido de la screen, y se actualiza el scroll en consecuencia
     #     Actualizar el scroll implica tener que desplazar todos los sprites por screen
-    #  Se actualiza la posicion del sol y el color del cielo
+    #  Se actualiza la position del sol y el color del cielo
     def update(self, time):
 
         # Primero, se indican las acciones que van a hacer los enemys segun como esten los jugadores
@@ -169,7 +169,7 @@ class Fase(Scene):
         # Esta operación de update ya comprueba que los movimientos sean correctos
         #  y, si lo son, realiza el movimiento de los Sprites
 
-      #  self.grupoSpritesDinamicos.update(self.grupoPlatforms, time)
+        self.grupoSpritesDinamicos.update(self.platformGroup, time)
 
         # Dentro del update ya se comprueba que todos los movimientos son válidos
         #  (que no choque con paredes, etc.)
@@ -190,7 +190,7 @@ class Fase(Scene):
         self.updateScroll(self.player1)
   
         # Actualizamos el background:
-        #  la posicion del sol y el color del cielo
+        #  la position del sol y el color del cielo
      #   self.background.update(tiempo)
 
         
@@ -230,7 +230,7 @@ class Platform(MySprite):
         # Rectangulo con las coordenadas en screen que ocupara
         self.rect = rectangle
         # Y lo situamos de forma global en esas coordenadas
-        self.setPosition((self.rect.left, self.rect.bottom))
+        self.setposition((self.rect.left, self.rect.bottom))
         # En el caso particular de este juego, las platforms no se van a ver, asi que no se carga ninguna imagen
         self.image = pygame.Surface((0, 0))
 
@@ -279,7 +279,7 @@ class Scenary:
 
         # La subimagen que estamos viendo
         self.rectSubimagen = pygame.Rect(0, 0, WIDTH_SCREEN, HEIGHT_SCREEN)
-        self.rectSubimagen.left = 0 # El scroll horizontal empieza en la posicion 0 por defecto
+        self.rectSubimagen.left = 0 # El scroll horizontal empieza en la position 0 por defecto
 
     def update(self, scrollx):
         self.rectSubimagen.left = scrollx

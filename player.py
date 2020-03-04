@@ -42,7 +42,7 @@ class MySprite(pygame.sprite.Sprite):
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.posion = (0, 0)
+        self.position = (0, 0)
         self.speed = (0, 0)
         self.scroll = (0, 0)
 
@@ -160,7 +160,7 @@ class Character(MySprite):
 
     def update(self, platformGroup, tiempo):
 
-        (speedx, speey) = self.speed
+        (speedx, speedy) = self.speed
 
         # Si vamos a la izquierda o derecha
         if (self.movement == LEFT) or (self.movement == RIGHT):
@@ -185,7 +185,7 @@ class Character(MySprite):
             # La animation actual sera estar saltando
             self.animationNumber = SPRITE_JUMPING
             # Le imprimimos una speed en el eje y
-            self.speedy = -self.jumpSpeed
+            speedy = -self.jumpSpeed
         # Si no se ha pulsado ninguna tecla
         elif self.movement == IDLE:
             # Si no estamos saltando, la animation actual será estar quieto
@@ -200,12 +200,12 @@ class Character(MySprite):
             platform = pygame.sprite.spritecollideany(self, platformGroup)
             #  Ademas, esa colision solo nos interesa cuando estamos cayendo
             #  y solo es efectiva cuando caemos encima, no de lado, es decir,
-            #  cuando nuestra posicion inferior esta por encima de la parte de abajo de la platform
+            #  cuando nuestra position inferior esta por encima de la parte de abajo de la platform
             if (platform != None) and (speedy > 0) and (platform.rect.bottom>self.rect.bottom):
                 # Lo situamos con la parte de abajo un pixel colisionando con la platform
                 #  para poder detectar cuando se cae de ella
-                self.setPosition(
-                    (self.posicion[0], platform.posicion[1]-platform.rect.height+1))
+                self.setposition(
+                    (self.position[0], platform.position[1]-platform.rect.height+1))
                 # Lo ponemos como quieto
                 self.animationNumber = SPRITE_IDLE
                 # Y estará quieto en el eje y
@@ -213,10 +213,14 @@ class Character(MySprite):
 
             # Si no caemos en una platform, aplicamos el efecto de la gravedad
             else:
-                speedy += GRAVEDAD * tiempo
+                speedy +=GRAVITY * tiempo
 
         # Actualizamos la imagen a mostrar
         self.updatePosture()
+
+        self.speed = (speedx, speedy)
+
+        MySprite.update(self,tiempo)
         return
 
 
@@ -254,7 +258,7 @@ class NPC(Character):
         Character.__init__(self, imageFile, coordFile,
                            numImages, speed, jumpSeed, animationDelay)
 
-    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
+    # Aqui vendria la implementacion de la IA segun las positiones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
     def move_cpu(self, player1):

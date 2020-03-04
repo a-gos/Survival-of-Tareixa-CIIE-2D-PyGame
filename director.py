@@ -13,7 +13,7 @@ class Director():
     def __init__(self):
         # Inicializamos la pantalla y el modo grafico
         self.screen = pygame.display.set_mode((WIDTH_SCREEN, HEIGHT_SCREEN))
-        pygame.display.set_caption("Game with scenes")
+        pygame.display.set_caption("Survival of Tareixa - [INDEV]")
         # Pila de scenes
         self.stack = []
         # Flag que nos indica cuando quieren salir de la scene
