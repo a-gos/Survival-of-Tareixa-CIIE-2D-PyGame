@@ -231,8 +231,8 @@ class Player(Character):
     "Cualquier Character del juego"
 
     def __init__(self):
-        # Invocamos al constructor de la clase padre con la configuracion de este Character concreto
-        Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt', [6, 12, 6],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
+        # Invocamos al constructor de la clase padre con la configuracion de este Character concreto (jugador 1 en este caso)
+        Character.__init__(self, 'Tareixav2.png', 'coordTareixa.txt', [4, 12, 1],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
 
 
     def mover(self, pressedKeys, arriba, abajo, izquierda, derecha):
