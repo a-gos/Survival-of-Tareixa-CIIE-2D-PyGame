@@ -16,7 +16,7 @@ from resourcesmanager import ResourcesManager
 VELOCIDAD_SOL = 0.1 # Pixeles por milisegundo
 
 # Los bordes de la screen para hacer scroll horizontal
-MIN_X_PLAYER = (WIDTH_SCREEN / 2) - 20
+MIN_X_PLAYER = (WIDTH_SCREEN / 2) - PLAYER_SIZE
 MAX_X_PLAYER = WIDTH_SCREEN - MIN_X_PLAYER
 
 # -------------------------------------------------
@@ -52,12 +52,12 @@ class Fase(Scene):
         self.grupoPlayers = pygame.sprite.Group( self.player1)
 
         # Ponemos a los jugadores en sus posiciones iniciales
-        self.player1.setposition((200, 551))
+        self.player1.setposition((500, 578))
     
 
         # Creamos las platforms del decorado
         # La platform que conforma todo el suelo
-        platformSuelo = Platform(pygame.Rect(0, 580, 1200, 20))
+        platformSuelo = Platform(pygame.Rect(0, 580, 6020, 20))
       
         
         # La platform del techo del edificio
@@ -92,12 +92,16 @@ class Fase(Scene):
         if (player1.rect.left<MIN_X_PLAYER):
             offset = MIN_X_PLAYER - player1.rect.left
 
-            # Si el escenario ya está a la izquierda del todo, no lo movemos mas
+            # Si el escenario ya está a la izquierda del todo, no movemos mas la camara (player size para compensar)
             if self.scrollx <= 0:
                 self.scrollx = 0
+              
+               #Miramos si el jugador esta en el limte de la ventana, si es así lo colocamos ahi y no desplazamos
 
-                # En su lugar, colocamos al jugador que esté más a la izquierda a la izquierda de todo
-                player1.setposition((MIN_X_PLAYER, player1.position[1]))
+                if (player1.rect.left<=0):
+                    player1.setposition(( 0, player1.position[1]))
+                
+                    
 
                 return False; # No se ha actualizado el scroll
 
@@ -117,11 +121,13 @@ class Fase(Scene):
             offset = player1.rect.right - MAX_X_PLAYER
 
             # Si el escenario ya está a la derecha del todo, no lo movemos mas
-            if self.scrollx + WIDTH_SCREEN >= self.scenary.rect.right:
+            if self.scrollx + WIDTH_SCREEN>= self.scenary.rect.right :
+                print("size")
                 self.scrollx = self.scenary.rect.right - WIDTH_SCREEN
 
-                # En su lugar, colocamos al jugador que esté más a la derecha a la derecha de todo
-                player1.setposition((self.scrollx+MAX_X_PLAYER-player1.rect.width, player1.position[1]))
+                # Miramos si el jugador esta en el limite de la derecha
+                if (player1.rect.right>=(self.scenary.rect.right)):
+                    player1.setposition((self.scenary.rect.right, player1.position[1]))
 
                 return False; # No se ha actualizado el scroll
 
@@ -273,7 +279,7 @@ class Sky:
 class Scenary:
     def __init__(self):
         self.imagen = ResourcesManager.LoadImage('level1/fondoNivel1.png', -1)
-        self.imagen = pygame.transform.scale(self.imagen, (1200, 300))
+        self.imagen = pygame.transform.scale(self.imagen, (1200, 610))
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = HEIGHT_SCREEN

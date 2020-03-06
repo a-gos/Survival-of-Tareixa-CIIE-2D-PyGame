@@ -2,6 +2,7 @@
 
 WIDTH_SCREEN = 800
 HEIGHT_SCREEN = 600
+PLAYER_SIZE = 40
 
 # -------------------------------------------------
 # Clase Escena con lo metodos abstractos
