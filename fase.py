@@ -86,8 +86,9 @@ class Fase(Scene):
         
     # Devuelve True o False según se ha tenido que desplazar el scroll
     def updateOrderedScroll(self, player1):
-      
-
+     
+        print(player1.rect.right)
+        print(self.scenary.rect.right)
         # Si el jugador de la izquierda se encuentra más allá del borde izquierdo
         if (player1.rect.left<MIN_X_PLAYER):
             offset = MIN_X_PLAYER - player1.rect.left
@@ -121,13 +122,19 @@ class Fase(Scene):
             offset = player1.rect.right - MAX_X_PLAYER
 
             # Si el escenario ya está a la derecha del todo, no lo movemos mas
-            if self.scrollx + WIDTH_SCREEN>= self.scenary.rect.right :
-                print("size")
+            if (self.scrollx + WIDTH_SCREEN >= self.scenary.rect.right ):
+               
                 self.scrollx = self.scenary.rect.right - WIDTH_SCREEN
-
+               
                 # Miramos si el jugador esta en el limite de la derecha
-                if (player1.rect.right>=(self.scenary.rect.right)):
-                    player1.setposition((self.scenary.rect.right, player1.position[1]))
+
+                #IMPORTANTE: POR QUE WIDH SCREEN:
+                    #POR COMO ESTA IMPLEMENTADO EL MOVIMIENTO, AL HACER SCROLL EL PJ SE MANTIENE EN LA
+                    # MISMA POSICION Y SE ACTUALIZA EL RESTO, ENTONCES LA POSICION RELATIVA SE PIERDA
+                    # PERO TAMBIEN SIGNIFICA QUE EL FINAL DEL ESCENARIO PARA LA POSICION DEL JUGADOR 
+                    # SERA SIEMPRE EL ANCHO DE LA PANTALLA
+                if (player1.rect.right >=WIDTH_SCREEN):
+                    player1.setposition((self.scrollx+WIDTH_SCREEN - PLAYER_SIZE, player1.position[1]))
 
                 return False; # No se ha actualizado el scroll
 
@@ -279,7 +286,7 @@ class Sky:
 class Scenary:
     def __init__(self):
         self.imagen = ResourcesManager.LoadImage('level1/fondoNivel1.png', -1)
-        self.imagen = pygame.transform.scale(self.imagen, (1200, 610))
+        self.imagen = pygame.transform.scale(self.imagen, (900, 610))
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = HEIGHT_SCREEN
