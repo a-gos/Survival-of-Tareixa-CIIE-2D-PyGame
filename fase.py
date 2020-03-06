@@ -286,7 +286,9 @@ class Sky:
 class Scenary:
     def __init__(self):
         self.imagen = ResourcesManager.LoadImage('level1/fondoNivel1.png', -1)
-        self.imagen = pygame.transform.scale(self.imagen, (900, 610))
+        
+        #TAMAÑO DEL FONDO AQUI (TAMBIEN TAMAÑO NIVEL)
+        self.imagen = pygame.transform.scale(self.imagen, (6000, 610))
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = HEIGHT_SCREEN
