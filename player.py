@@ -9,6 +9,7 @@ import sys
 import os
 from pygame.locals import *
 from resourcesmanager import ResourcesManager
+from scene import *
 
 
 # MOVEMENT
@@ -29,6 +30,10 @@ Character_SPEED = 0.2  # Pixeles per milisecond
 Character_JUMP_SPEED = 0.3  # Pixeles per milisecond
 Character_ANIMATION_DELAY = 5  # updates that the character model will endure
                             # should be a different number for each animation
+
+ZOMBIE_SPEED = 0.2
+ZOMBIE_JUMP_SPEED = 0.3
+ZOMBIE_ANIMATION_DELAY = 5
 
 GRAVITY = 0.0005
 
@@ -73,7 +78,7 @@ class MySprite(pygame.sprite.Sprite):
 # -------------------------------------------------
 
 class Character(MySprite):
-    "Character Principal"
+    "Cualquier personaje del juego"
 
     def __init__(self, imageFile, coordFile, numImages, runSpeed, jumpSpeed, animationDelay):
         # Primero invocamos al constructor de la clase padre
@@ -165,7 +170,7 @@ class Character(MySprite):
 
         # Si vamos a la izquierda o derecha
         if (self.movement == LEFT) or (self.movement == RIGHT):
-          # Si no estamos en el aire, la animation actual sera estar caminando
+          # cogemos el lado 
             self.looking = self.movement
            # Esta looking a la izquierda
             if self.movement == LEFT:
@@ -177,10 +182,10 @@ class Character(MySprite):
             if self.animationNumber != SPRITE_JUMPING:
           # walking
                 self.animationNumber = SPRITE_WALKING
-           # esto non sei que fai a vdd
+           # Ademas, si no estamos encima de ninguna plataforma, caeremos
                 if pygame.sprite.spritecollideany(self, platformGroup) == None:
                   self.animationNumber = SPRITE_JUMPING
-        # Si estamos saltando
+        # Si queremos saltar
         elif self.movement == UP:
             # La animation actual sera estar saltando
             self.animationNumber = SPRITE_JUMPING
@@ -228,7 +233,7 @@ class Character(MySprite):
 # Clase Player
 
 class Player(Character):
-    "Cualquier Character del juego"
+    "Protagonista juego"
 
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este Character concreto (jugador 1 en este caso)
@@ -251,9 +256,9 @@ class Player(Character):
 # Clase NPC
 
 class NPC(Character):
-    "El resto de Characters no jugadores"
+    "El resto de personajes no jugadores"
 
-    def __init__(self, imageFile, coordFile, numImagenes, speed, jumpSeed, animationDelay):
+    def __init__(self, imageFile, coordFile, numImages, speed, jumpSeed, animationDelay):
         # Primero invocamos al constructor de la clase padre con los parametros pasados
         Character.__init__(self, imageFile, coordFile,
                            numImages, speed, jumpSeed, animationDelay)
@@ -265,3 +270,32 @@ class NPC(Character):
         # Por defecto un enemigo no hace nada
         #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
         return
+# -------------------------------------------------
+# Clase Zombie
+
+class Zombie(NPC):
+    
+    def __init__(self):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        NPC.__init__(self,'zombie1v2.png','coordZombie.txt', [1,8,1], ZOMBIE_SPEED, ZOMBIE_JUMP_SPEED, ZOMBIE_ANIMATION_DELAY);
+
+    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
+    # La implementacion de la inteligencia segun este personaje particular
+    def mover_cpu(self, player1):
+
+        # Movemos solo a los enemigos que esten en la pantalla
+        if self.rect.left>0 and self.rect.right<WIDTH_SCREEN and self.rect.bottom>0 and self.rect.top<HEIGHT_SCREEN:
+
+            # intentara acercarse al jugador mas cercano en el eje x
+
+            # Y nos movemos andando hacia el
+            if player1.position[0]<self.position[0]:
+              # Character.mover(self,LEFT)
+              Character.mover(self,LEFT)
+            else:
+              Character.mover(self,RIGHT)
+
+        # Si este personaje no esta en pantalla, no hara nada
+        else:
+            Character.mover(self,IDLE)
+

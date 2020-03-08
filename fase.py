@@ -40,7 +40,7 @@ class Fase(Scene):
 
         # Creamos el decorado y el background
         self.scenary = Scenary()
-    #    self.background = Sky()
+    #   self.background = Sky()
 
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
@@ -59,24 +59,25 @@ class Fase(Scene):
         # La platform que conforma todo el suelo
         platformSuelo = Platform(pygame.Rect(0, 580, 6020, 20))
       
-        
+
+
         # La platform del techo del edificio
        # platformCasa = Platform(pygame.Rect(870, 417, 200, 10))
         # y el grupo con las mismas
         self.platformGroup = pygame.sprite.Group( platformSuelo)
 
         # Y los enemys que tendran en este decorado
-     #   enemy1 = Sniper()
-     #   enemy1.setposition((1000, 418))
+        enemy1 = Zombie()
+        enemy1.setposition((900, 578))
 
         # Creamos un grupo con los enemys
-        self.grupoEnemy = pygame.sprite.Group()
+        self.enemyGroup = pygame.sprite.Group(enemy1)
 
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group( self.player1 )
+        self.grupoSpritesDinamicos = pygame.sprite.Group( self.player1, enemy1 )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group( self.player1, self.grupoEnemy, platformSuelo )
+        self.grupoSprites = pygame.sprite.Group( self.player1, enemy1, platformSuelo )
 
         # Creamos las animaciones de fuego,
         #  las que estan detras del decorado, y delante
@@ -175,7 +176,8 @@ class Fase(Scene):
     def update(self, time):
 
         # Primero, se indican las acciones que van a hacer los enemys segun como esten los jugadores
-       
+        for enemy in iter(self.enemyGroup):
+            enemy.mover_cpu(self.player1)
         # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA
         # En el caso de los jugadores, esto ya se ha realizado
 
@@ -197,10 +199,10 @@ class Fase(Scene):
         # Comprobamos si hay colision entre algun jugador y algun enemy
         # Se comprueba la colision entre ambos grupos
         # Si la hay, indicamos que se ha finalizado la fase
-        if pygame.sprite.groupcollide(self.grupoPlayers, self.grupoEnemy, False, False)!={}:
+        if pygame.sprite.groupcollide(self.grupoPlayers, self.enemyGroup, False, False)!={}:
             # Se le dice al director que salga de esta escena y ejecute la siguiente en la pila
-            self.director.exitScene()
-
+            #self.director.exitScene()
+            print("muerto")
         # Actualizamos el scroll
         self.updateScroll(self.player1)
   
