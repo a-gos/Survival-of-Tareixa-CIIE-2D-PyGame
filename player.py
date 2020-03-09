@@ -308,3 +308,9 @@ class Zombie2(Zombie):
 
     def __init__(self):
         Zombie.__init__(self,'zombie2v2.png', 'coordZombie2.txt', [1,3,8], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=2)
+
+
+class Zombie3(Zombie):
+
+    def __init__(self):
+        Zombie.__init__(self,'zombie3v2.png', 'coordZombie3.txt', [1,8,1], zombie_speed=0.13, zombie_jump_speed=0.2, damage_level=3)
