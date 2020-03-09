@@ -31,9 +31,7 @@ Character_JUMP_SPEED = 0.3  # Pixeles per milisecond
 Character_ANIMATION_DELAY = 5  # updates that the character model will endure
                             # should be a different number for each animation
 
-ZOMBIE_SPEED = 0.2
-ZOMBIE_JUMP_SPEED = 0.3
-ZOMBIE_ANIMATION_DELAY = 5
+
 
 GRAVITY = 0.0005
 
@@ -274,10 +272,16 @@ class NPC(Character):
 # Clase Zombie
 
 class Zombie(NPC):
-    
-    def __init__(self):
+
+    # Por defecto crea un zombie de nivel 1
+    def __init__(self, image='zombie1v2.png',coord='coordZombie.txt', numImages=[1,8,1], zombie_speed=0.1, zombie_jump_speed=0.2, zombie_animation_delay=5, damage_level=1):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        NPC.__init__(self,'zombie1v2.png','coordZombie.txt', [1,8,1], ZOMBIE_SPEED, ZOMBIE_JUMP_SPEED, ZOMBIE_ANIMATION_DELAY);
+        NPC.__init__(self, image, coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay)
+        # Cambiar la orientacion inicial de la imagen para que coincida con la del protagonista
+        #self.looking = RIGHT
+
+        # Establecer el nivel de daño que provoca el enemigo (valor de 1-10)
+        self.damage_level = damage_level
 
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
@@ -298,4 +302,5 @@ class Zombie(NPC):
         # Si este personaje no esta en pantalla, no hara nada
         else:
             Character.mover(self,IDLE)
+
 
