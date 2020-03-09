@@ -23,6 +23,7 @@ DOWN = 4
 SPRITE_IDLE = 0
 SPRITE_WALKING = 1
 SPRITE_JUMPING = 2
+SPRITE_SHOOTING = 3
 
 
 # Character SETTINGS
@@ -30,8 +31,6 @@ Character_SPEED = 0.2  # Pixeles per milisecond
 Character_JUMP_SPEED = 0.3  # Pixeles per milisecond
 Character_ANIMATION_DELAY = 5  # updates that the character model will endure
                             # should be a different number for each animation
-
-
 
 GRAVITY = 0.0005
 
@@ -274,7 +273,7 @@ class NPC(Character):
 class Zombie(NPC):
 
     # Por defecto crea un zombie de nivel 1
-    def __init__(self, image='zombie1v2.png',coord='coordZombie.txt', numImages=[1,8,1], zombie_speed=0.1, zombie_jump_speed=0.2, zombie_animation_delay=5, damage_level=1):
+    def __init__(self, image='zombie1v2.png',coord='coordZombie.txt', numImages=[1,8,1], zombie_speed=0.05, zombie_jump_speed=0.05, zombie_animation_delay=5, damage_level=1):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         NPC.__init__(self, image, coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay)
         # Cambiar la orientacion inicial de la imagen para que coincida con la del protagonista
@@ -304,3 +303,8 @@ class Zombie(NPC):
             Character.mover(self,IDLE)
 
 
+# Zombie de nivel 2
+class Zombie2(Zombie):
+
+    def __init__(self):
+        Zombie.__init__(self,'zombie2v2.png', 'coordZombie2.txt', [1,3,8], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=2)
