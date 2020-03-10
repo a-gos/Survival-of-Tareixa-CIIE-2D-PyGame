@@ -34,6 +34,47 @@ Character_ANIMATION_DELAY = 5  # updates that the character model will endure
 
 GRAVITY = 0.0005
 
+
+class Control:
+
+    # Acciones que puede realizar un jugador
+
+    def jump(self, event_list):
+        raise NotImplementedError()
+
+    def left(self, event_list):
+        raise NotImplementedError()
+
+    def right(self, event_list):
+        raise NotImplementedError()
+
+    def shoot(self, event_list):
+        raise NotImplementedError()
+
+    # Métodos para asignar teclas a acciones
+
+    def assign_jump(self, key):
+        raise NotImplementedError()
+
+    def assign_left(self, key):
+        raise NotImplementedError()
+
+    def assign_right(self, key):
+        raise NotImplementedError()
+
+    def assign_shoot(self, key):
+        raise NotImplementedError()
+
+
+class ControlKeyboard(Control):
+    key_jump = K_UP
+    key_left = K_LEFT
+    key_right = K_RIGHT
+    key_shoot = K_SPACE
+
+
+
+
 # -------------------------------------------------
 #
 # -------------------------------------------------
