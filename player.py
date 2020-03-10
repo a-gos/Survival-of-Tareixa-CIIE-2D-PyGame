@@ -89,6 +89,7 @@ class Character(MySprite):
         self.movement = IDLE
         # Lado hacia el que esta looking
         self.looking = LEFT
+        self.isJumping = False
 
         # Leemos las coordenadas de un archivo de texto
         data = ResourcesManager.LoadCoordFile(coordFile)
@@ -96,6 +97,7 @@ class Character(MySprite):
         self.animationNumber = 1
         self.numImagenPostura = 0
         cont = 0
+
 
         self.coordenadasHoja = []
         for linea in range(0, 3):
@@ -132,7 +134,7 @@ class Character(MySprite):
         if move == UP:
             # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
             if self.animationNumber == SPRITE_JUMPING:
-                self.movement = IDLE
+                self.isJumping = True
             else:
                 self.movement = UP
         else:
@@ -187,10 +189,12 @@ class Character(MySprite):
                   self.animationNumber = SPRITE_JUMPING
         # Si queremos saltar
         elif self.movement == UP:
-            # La animation actual sera estar saltando
-            self.animationNumber = SPRITE_JUMPING
-            # Le imprimimos una speed en el eje y
-            speedy = -self.jumpSpeed
+            if not(self.isJumping):
+                # La animation actual sera estar saltando
+                self.animationNumber = SPRITE_JUMPING
+                # Le imprimimos una speed en el eje y
+                speedy = -self.jumpSpeed
+            
         # Si no se ha pulsado ninguna tecla
         elif self.movement == IDLE:
             # Si no estamos saltando, la animation actual será estar quieto
@@ -215,6 +219,7 @@ class Character(MySprite):
                 self.animationNumber = SPRITE_IDLE
                 # Y estará quieto en el eje y
                 speedy = 0
+                self.isJumping = False
 
             # Si no caemos en una platform, aplicamos el efecto de la gravedad
             else:
@@ -242,15 +247,15 @@ class Player(Character):
 
     def mover(self, control):
         # Indicamos la acción a realizar segun la tecla pulsada para el Character
-        if control.idle():
-            Character.mover(self, IDLE)
+        
+        if control.jump():
+            Character.mover(self, UP)
+        elif control.left():
+            Character.mover(self, LEFT)
+        elif control.right():
+            Character.mover(self, RIGHT)
         else:
-            if control.jump():
-                Character.mover(self, UP)
-            if control.left():
-                Character.mover(self, LEFT)
-            if control.right():
-                Character.mover(self, RIGHT)
+            Character.mover(self, IDLE)
 
 
 
