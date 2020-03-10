@@ -34,6 +34,8 @@ Character_ANIMATION_DELAY = 5  # updates that the character model will endure
 
 GRAVITY = 0.0005
 
+
+
 # -------------------------------------------------
 #
 # -------------------------------------------------
@@ -164,6 +166,7 @@ class Character(MySprite):
     def update(self, platformGroup, tiempo):
 
         (speedx, speedy) = self.speed
+        # print(self.rect)
 
         # Si vamos a la izquierda o derecha
         if (self.movement == LEFT) or (self.movement == RIGHT):
@@ -237,16 +240,19 @@ class Player(Character):
         Character.__init__(self, 'Tareixav2.png', 'coordTareixa.txt', [4, 12, 1],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
 
 
-    def mover(self, pressedKeys, arriba, abajo, izquierda, derecha):
+    def mover(self, control):
         # Indicamos la acción a realizar segun la tecla pulsada para el Character
-        if pressedKeys[arriba]:
-            Character.mover(self, UP)
-        elif pressedKeys[izquierda]:
-            Character.mover(self, LEFT)
-        elif pressedKeys[derecha]:
-            Character.mover(self, RIGHT)
-        else:
+        if control.idle():
             Character.mover(self, IDLE)
+        else:
+            if control.jump():
+                Character.mover(self, UP)
+            if control.left():
+                Character.mover(self, LEFT)
+            if control.right():
+                Character.mover(self, RIGHT)
+
+
 
 
 # -------------------------------------------------
