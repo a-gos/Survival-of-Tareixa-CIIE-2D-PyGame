@@ -234,7 +234,6 @@ class Fase(Scene):
                 self.director.exitProgram()
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
-        pressedKeys = pygame.key.get_pressed()
         self.player1.mover(self.control)
         
 
