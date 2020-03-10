@@ -5,7 +5,7 @@ from scene import *
 from player import *
 from pygame.locals import *
 from resourcesmanager import ResourcesManager
-
+from control import *
 
 # -------------------------------------------------
 # -------------------------------------------------
@@ -79,6 +79,8 @@ class Fase(Scene):
         # Creamos otro grupo con todos los Sprites
         self.grupoSprites = pygame.sprite.Group( self.player1, enemy1, platformSuelo )
 
+        # Creamos los controles del jugador
+        self.control = ControlKeyboard()
         # Creamos las animaciones de fuego,
         #  las que estan detras del decorado, y delante
 
@@ -233,7 +235,7 @@ class Fase(Scene):
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         pressedKeys = pygame.key.get_pressed()
-        self.player1.mover(pressedKeys, K_UP, K_DOWN, K_LEFT, K_RIGHT)
+        self.player1.mover(self.control)
         
 
 # -------------------------------------------------
