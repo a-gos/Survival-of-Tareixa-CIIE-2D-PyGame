@@ -25,7 +25,7 @@ if __name__ == '__main__':
     # Creamos el director
     director = Director()
     # Creamos la escena con la pantalla inicial
-    fase = Fase(director)
+    fase = Fase(director, 1)
     # Le decimos al director que apile esta escena
     director.stackscene(fase)
     # Y ejecutamos el juego

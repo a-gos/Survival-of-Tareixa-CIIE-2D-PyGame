@@ -23,7 +23,7 @@ MAX_X_PLAYER = WIDTH_SCREEN - MIN_X_PLAYER
 # Clase Fase
 
 class Fase(Scene):
-    def __init__(self, director):
+    def __init__(self, director, num_level):
 
         # Habria que pasarle como parámetro el número de fase, a partir del cual se cargue
         #  un fichero donde este la configuracion de esa fase en concreto, con cosas como
@@ -38,8 +38,13 @@ class Fase(Scene):
         # Primero invocamos al constructor de la clase padre
         Scene.__init__(self, director)
 
+        # Cargamos el archivo de configuración del nivel
+        filename = 'level_' + str(num_level) + '.json'
+        conf = ResourcesManager.LoadConfigurationFile(filename)
+
         # Creamos el decorado y el background
-        self.scenary = Scenary()
+
+        self.scenary = Scenary(conf['background'], pygame.Rect(0, 0, conf['width'], conf['height']))
     #   self.background = Sky()
 
         # Que parte del decorado estamos visualizando
@@ -49,26 +54,36 @@ class Fase(Scene):
 
         # Creamos los sprites de los jugadores
         self.player1 = Player()
-        self.grupoPlayers = pygame.sprite.Group( self.player1)
+        self.grupoPlayers = pygame.sprite.Group(self.player1)
 
         # Ponemos a los jugadores en sus posiciones iniciales
-        self.player1.setposition((500, 578))
+        self.player1.setposition((500, 820))
     
 
-        # Creamos las platforms del decorado
-        # La platform que conforma todo el suelo
-        platformSuelo = Platform(pygame.Rect(0, 580, 6020, 20))
-      
+        # Creamos las plataformas del decorado
+        for layer in conf['layers']:
+            if layer['name'] == 'platforms':
+                self.platformGroup = pygame.sprite.Group()
+                for platfConf in layer['objects']:
+                    if platfConf['visible']:
+                        image_name = platfConf['name']
+                    else:
+                        image_name = None
+                    for coord in platfConf['coordinates']:
+                        platform = Platform(image_name, pygame.Rect(coord[0], coord[1]-250, platfConf['width'], platfConf['height']))
+                        self.platformGroup.add(platform)
 
+        # platformSuelo = Platform(image, pygame.Rect(0, 580, 6020, 20), True)
 
         # La platform del techo del edificio
        # platformCasa = Platform(pygame.Rect(870, 417, 200, 10))
         # y el grupo con las mismas
-        self.platformGroup = pygame.sprite.Group( platformSuelo)
+        #self.platformGroup = pygame.sprite.Group( platformSuelo)
 
+        #############################
         # Y los enemys que tendran en este decorado
         enemy1 = Zombie()
-        enemy1.setposition((900, 578))
+        enemy1.setposition((900, 820))
 
         # Creamos un grupo con los enemys
         self.enemyGroup = pygame.sprite.Group(enemy1)
@@ -77,7 +92,7 @@ class Fase(Scene):
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
         self.grupoSpritesDinamicos = pygame.sprite.Group( self.player1, enemy1 )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group( self.player1, enemy1, platformSuelo )
+        self.grupoSprites = pygame.sprite.Group( self.player1, enemy1, self.platformGroup.sprites() )
 
         # Creamos los controles del jugador
         self.control = ControlKeyboard()
@@ -242,16 +257,18 @@ class Fase(Scene):
 
 #class Platform(pygame.sprite.Sprite):
 class Platform(MySprite):
-    def __init__(self,rectangle):
+    def __init__(self, image_name, rectangle):
         # Primero invocamos al constructor de la clase padre
         MySprite.__init__(self)
         # Rectangulo con las coordenadas en screen que ocupara
         self.rect = rectangle
         # Y lo situamos de forma global en esas coordenadas
-        self.setposition((self.rect.left, self.rect.bottom))
-        # En el caso particular de este juego, las platforms no se van a ver, asi que no se carga ninguna imagen
-        self.image = ResourcesManager.LoadImage("level1/plataforma1.png")
-
+        self.setposition((self.rect.left, self.rect.top))
+        # Cargamos la images correspondiente (si la plataforma está visible)
+        if image_name is not None:
+            self.image = ResourcesManager.LoadImageScene(image_name)
+        else:
+            self.image = pygame.Surface((0, 0))
 # -------------------------------------------------
 # Clase Sky
 """
@@ -287,18 +304,18 @@ class Sky:
 # Clase Scenary
 
 class Scenary:
-    def __init__(self):
-        self.imagen = ResourcesManager.LoadImage('level1/fondoNivel1.png', -1)
-        
-        #TAMAÑO DEL FONDO AQUI (TAMBIEN TAMAÑO NIVEL)
-        self.imagen = pygame.transform.scale(self.imagen, (6000, 610))
+    def __init__(self, image_name, rectangle):
+        self.imagen = ResourcesManager.LoadImageScene(image_name, -1)
+
+        # TAMAÑO DEL FONDO AQUI (TAMBIEN TAMAÑO NIVEL)
+        self.imagen = pygame.transform.scale(self.imagen, (6000, 600))
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = HEIGHT_SCREEN
 
         # La subimagen que estamos viendo
         self.rectSubimagen = pygame.Rect(0, 0, WIDTH_SCREEN, HEIGHT_SCREEN)
-        self.rectSubimagen.left = 0 # El scroll horizontal empieza en la position 0 por defecto
+        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la position 0 por defecto
 
     def update(self, scrollx):
         self.rectSubimagen.left = scrollx

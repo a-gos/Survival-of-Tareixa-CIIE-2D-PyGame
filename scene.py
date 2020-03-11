@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 WIDTH_SCREEN = 800
-HEIGHT_SCREEN = 600
+HEIGHT_SCREEN = 608
 PLAYER_SIZE = 31
 
 # -------------------------------------------------
