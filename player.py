@@ -83,7 +83,7 @@ class Character(MySprite):
         # Primero invocamos al constructor de la clase padre
         MySprite.__init__(self)
         # Se carga la hoja
-        self.hoja = ResourcesManager.LoadImage(imageFile, -1)
+        self.hoja = ResourcesManager.LoadImageCharacter(imageFile, -1)
         self.hoja = self.hoja.convert_alpha()
         # El movement que esta realizando
         self.movement = IDLE

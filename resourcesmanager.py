@@ -6,6 +6,7 @@
 
 import pygame, sys, os
 from pygame.locals import *
+import json
 
 # -------------------------------------------------
 # CODE
@@ -13,10 +14,18 @@ from pygame.locals import *
 
 class ResourcesManager(object):
     resources = {}
-            
+
     @classmethod
-    def LoadImage(cls, name, colorkey=None):
-        # Si el name de archivo está entre los resources ya cargados
+    def LoadImageScene(cls, name, colorkey=None):
+        return cls.LoadImage('scene', name, colorkey)
+
+    @classmethod
+    def LoadImageCharacter(cls, name, colorkey=None):
+        return cls.LoadImage('characters', name, colorkey)
+
+    @classmethod
+    def LoadImage(cls, rel_path, name, colorkey=None):
+        # Si el nombre de archivo está entre los resources ya cargados
         if name in cls.resources:
             # Se devuelve ese recurso
             return cls.resources[name]
@@ -25,7 +34,7 @@ class ResourcesManager(object):
             # Se carga la imagen indicando la carpeta en la que está
             
             current_path = os.path.dirname(__file__) 
-            fullname_path = os.path.join(current_path, 'data')
+            fullname_path = os.path.join(current_path, 'data', rel_path)
             fullname = os.path.join(fullname_path, name)
 
             try:
@@ -45,15 +54,15 @@ class ResourcesManager(object):
 
     @classmethod
     def LoadCoordFile(cls, name):
-        # Si el name de archivo está entre los resources ya cargados
+        # Si el nombre de archivo está entre los resources ya cargados
         if name in cls.resources:
             # Se devuelve ese recurso
             return cls.resources[name]
         # Si no ha sido cargado anteriormente
         else:
-            # Se carga el recurso indicando el name de su carpeta
+            # Se carga el recurso indicando el nombre de su carpeta
             current_path = os.path.dirname(__file__) 
-            fullname_path = os.path.join(current_path, 'data')
+            fullname_path = os.path.join(current_path, 'data', 'characters')
             fullname = os.path.join(fullname_path, name)
             pfile=open(fullname,'r')
             datos=pfile.read()
@@ -62,3 +71,30 @@ class ResourcesManager(object):
             cls.resources[name] = datos
             # Se devuelve
             return datos
+
+    @classmethod
+    def LoadConfigurationFile(cls, name):
+
+        # Si el nombre de archivo está entre los resources ya cargados
+        if name in cls.resources:
+            # Se devuelve ese recurso
+            return cls.resources[name]
+        # Si no ha sido cargado anteriormente
+        else:
+            # Se carga el fichero de configuración indicando la carpeta en la que está
+
+            current_path = os.path.dirname(__file__)
+            fullname_path = os.path.join(current_path, 'data/levels')
+            fullname = os.path.join(fullname_path, name)
+
+            try:
+                with open(fullname) as json_file:
+                    data = json.load(json_file)
+            except:
+                print('Cannot load configuration file:', fullname)
+                raise SystemExit()
+
+            # Se almacena
+            cls.resources[name] = data
+            # Se devuelve
+            return data
