@@ -284,7 +284,7 @@ class NPC(Character):
 class Zombie(NPC):
 
     # Por defecto crea un zombie de nivel 1
-    def __init__(self, image='zombie1v3.png',coord='coordZombie.txt', numImages=[1,8,1], zombie_speed=0.05, zombie_jump_speed=0.05, zombie_animation_delay=6, damage_level=1):
+    def __init__(self, image,coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay, damage_level):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         NPC.__init__(self, image, coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay)
         # Cambiar la orientacion inicial de la imagen para que coincida con la del protagonista
@@ -293,6 +293,18 @@ class Zombie(NPC):
         # Establecer el nivel de daño que provoca el enemigo (valor de 1-10)
         self.damage_level = damage_level
 
+
+
+class Zombie1(Zombie):
+
+    # Por defecto crea un zombie de nivel 1
+    def __init__(self, image='zombie1v3.png',coord='coordZombie.txt', numImages=[1,8,1], zombie_speed=0.05, zombie_jump_speed=0.05, zombie_animation_delay=6, damage_level=1):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        Zombie.__init__(self, image, coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay, damage_level)
+        # Cambiar la orientacion inicial de la imagen para que coincida con la del protagonista
+        #self.looking = RIGHT
+
+      
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
     def mover_cpu(self, player1):

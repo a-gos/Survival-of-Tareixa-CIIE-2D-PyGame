@@ -67,7 +67,7 @@ class Fase(Scene):
         self.platformGroup = pygame.sprite.Group( platformSuelo)
 
         # Y los enemys que tendran en este decorado
-        enemy1 = Zombie()
+        enemy1 = Zombie1()
         enemy1.setposition((900, 578))
 
         # Creamos un grupo con los enemys
