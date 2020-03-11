@@ -6,7 +6,7 @@
 
 import pygame, sys, os
 from pygame.locals import *
-import json
+from pytmx.pytmx import TiledMap
 
 # -------------------------------------------------
 # CODE
@@ -88,8 +88,7 @@ class ResourcesManager(object):
             fullname = os.path.join(fullname_path, name)
 
             try:
-                with open(fullname) as json_file:
-                    data = json.load(json_file)
+                data = TiledMap(fullname)
             except:
                 print('Cannot load configuration file:', fullname)
                 raise SystemExit()

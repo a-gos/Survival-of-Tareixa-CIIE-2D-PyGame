@@ -8,14 +8,11 @@ import pygame, sys, os
 from pygame.locals import *
 from player import Player
 from fase import Fase
-
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# Importar modulos
-import pygame
 import director
 from director import *
+
+
+
 
 
 if __name__ == '__main__':

@@ -237,7 +237,7 @@ class Player(Character):
 
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este Character concreto (jugador 1 en este caso)
-        Character.__init__(self, 'Tareixav2.png', 'coordTareixa.txt', [4, 12, 1],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
+        Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt', [4, 12, 1],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
 
 
     def mover(self, control):
@@ -279,11 +279,9 @@ class NPC(Character):
 class Zombie(NPC):
 
     # Por defecto crea un zombie de nivel 1
-    def __init__(self, image='zombie1v3.png',coord='coordZombie.txt', numImages=[1,8,1], zombie_speed=0.05, zombie_jump_speed=0.05, zombie_animation_delay=6, damage_level=1):
+    def __init__(self, image='zombie1.png',coord='coordZombie1.txt', numImages=[1,8,1], zombie_speed=0.05, zombie_jump_speed=0.05, zombie_animation_delay=6, damage_level=1):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         NPC.__init__(self, image, coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay)
-        # Cambiar la orientacion inicial de la imagen para que coincida con la del protagonista
-        #self.looking = RIGHT
 
         # Establecer el nivel de daño que provoca el enemigo (valor de 1-10)
         self.damage_level = damage_level
@@ -313,10 +311,25 @@ class Zombie(NPC):
 class Zombie2(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'zombie2v2.png', 'coordZombie2.txt', [1,8,3], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=2)
+        Zombie.__init__(self,'zombie2.png', 'coordZombie2.txt', [1,6,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=2)
 
 
+# Zombie de nivel 3
 class Zombie3(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'zombie3v2.png', 'coordZombie3.txt', [1,8,1], zombie_speed=0.13, zombie_jump_speed=0.2, damage_level=3)
+        Zombie.__init__(self,'zombie3.png', 'coordZombie3.txt', [1,8,1], zombie_speed=0.13, zombie_jump_speed=0.2, damage_level=3)
+
+
+# Zombie de nivel 4
+class Zombie4(Zombie):
+
+    def __init__(self):
+        Zombie.__init__(self,'zombie4.png', 'coordZombie4.txt', [1,8,3], zombie_speed=0.15, zombie_jump_speed=0.2, damage_level=4)
+
+
+# Oso (Boss)
+class Bear(Zombie):
+
+    def __init__(self):
+        Zombie.__init__(self,'bear.png', 'coordBear.txt', [2,11,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=5)
