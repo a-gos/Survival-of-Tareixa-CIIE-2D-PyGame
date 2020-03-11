@@ -1,0 +1,51 @@
+{
+	"level": 1,
+	"name": "Nivel 1",
+	"height": 886,
+	"width": 6018,
+	"background": "background_level_1.png",
+	"layers":[
+		{
+			"name": "platforms",
+			"objects": [
+				{
+					"name": "platform_base_531.png",
+					"visible": true,
+					"height": 37,
+					"width": 531,
+					"coordinates": [
+						[0,849],
+						[531,849],
+						[1437,520],
+						[2097,849],
+						[3570,849],
+						[4101,849],
+						[4632,849],
+						[5163,849]
+					]
+				},
+				{
+					"name": "platform_base_265.png",
+					"visible": true,
+					"height": 37,
+					"width": 265,
+					"coordinates": [
+						[1186,645],
+						[2719,726],
+						[3203,721]
+					]
+				},
+				{
+					"name": "platform_base_400.png",
+					"visible": true,
+					"height": 37,
+					"width": 400,
+					"coordinates": [
+						[5694,849]
+						
+					]
+				}
+			]
+		}
+	]
+}

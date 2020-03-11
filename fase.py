@@ -6,6 +6,7 @@ from player import *
 from pygame.locals import *
 from resourcesmanager import ResourcesManager
 from control import *
+import os
 
 # -------------------------------------------------
 # -------------------------------------------------
@@ -42,9 +43,44 @@ class Fase(Scene):
         filename = 'level_' + str(num_level) + '.json'
         conf = ResourcesManager.LoadConfigurationFile(filename)
 
+        ######
+        from pytmx.pytmx import TiledMap
+        file = TiledMap('./data/levels/level_file.tmx')
+        # Imagen de fondo
+        back_layer = file.get_layer_by_name('Image Layer 1')
+        back_image_name = back_layer.image[0]
+        # image = ResourcesManager.LoadImageScene(back_image_name, -1)
+        # rect = image.get_rect()
+
+        # Capa de plataformas
+        layer = file.get_layer_by_name('Tile Layer 1')
+        self.platformGroup = pygame.sprite.Group()
+        for tile in layer.tiles():
+            coord_x = tile[0] # Multiplicar por TILE_SIZE para obtener el pixel donde se dibujará
+            coord_y = tile[1]
+            # image = file.get_tile_image(coord_x, coord_y, layer)
+            tile_image = os.path.basename(tile[2][0])
+            tile_coords = tile[2][1]
+            rect = pygame.Rect(coord_x*TILE_SIZE, coord_y*TILE_SIZE, tile_coords[2], tile_coords[3])
+
+            tmp = ResourcesManager.LoadImageScene(tile_image)
+            # tmp = tmp.convert_alpha()
+            image = tmp.subsurface(pygame.Rect(tile_coords[0], tile_coords[1], tile_coords[2], tile_coords[3]))
+
+            platform = Platform(image, rect)
+            self.platformGroup.add(platform)
+                # Devuelve una tupla de 4 elementos:
+                #  - coord_x en la imagen de bloques
+                #  - coord y en la imagen de bloques
+                #  - size_x del bloque
+                #  - size y del bloque
+            # Buscar como obtener un bloque de una imagen que contiene varios
+
+        ######
+
         # Creamos el decorado y el background
 
-        self.scenary = Scenary(conf['background'], pygame.Rect(0, 0, conf['width'], conf['height']))
+        self.scenary = Scenary('background_level_1_scaled.png')
     #   self.background = Sky()
 
         # Que parte del decorado estamos visualizando
@@ -61,17 +97,17 @@ class Fase(Scene):
     
 
         # Creamos las plataformas del decorado
-        for layer in conf['layers']:
-            if layer['name'] == 'platforms':
-                self.platformGroup = pygame.sprite.Group()
-                for platfConf in layer['objects']:
-                    if platfConf['visible']:
-                        image_name = platfConf['name']
-                    else:
-                        image_name = None
-                    for coord in platfConf['coordinates']:
-                        platform = Platform(image_name, pygame.Rect(coord[0], coord[1]-250, platfConf['width'], platfConf['height']))
-                        self.platformGroup.add(platform)
+        # for layer in conf['layers']:
+        #     if layer['name'] == 'platforms':
+        #         self.platformGroup = pygame.sprite.Group()
+        #         for platfConf in layer['objects']:
+        #             if platfConf['visible']:
+        #                 image_name = platfConf['name']
+        #             else:
+        #                 image_name = None
+        #             for coord in platfConf['coordinates']:
+        #                 platform = Platform(image_name, pygame.Rect(coord[0], coord[1]-250, platfConf['width'], platfConf['height']))
+        #                 self.platformGroup.add(platform)
 
         # platformSuelo = Platform(image, pygame.Rect(0, 580, 6020, 20), True)
 
@@ -257,7 +293,7 @@ class Fase(Scene):
 
 #class Platform(pygame.sprite.Sprite):
 class Platform(MySprite):
-    def __init__(self, image_name, rectangle):
+    def __init__(self, image, rectangle):
         # Primero invocamos al constructor de la clase padre
         MySprite.__init__(self)
         # Rectangulo con las coordenadas en screen que ocupara
@@ -265,8 +301,8 @@ class Platform(MySprite):
         # Y lo situamos de forma global en esas coordenadas
         self.setposition((self.rect.left, self.rect.top))
         # Cargamos la images correspondiente (si la plataforma está visible)
-        if image_name is not None:
-            self.image = ResourcesManager.LoadImageScene(image_name)
+        if image is not None:
+            self.image = image
         else:
             self.image = pygame.Surface((0, 0))
 # -------------------------------------------------
@@ -304,11 +340,11 @@ class Sky:
 # Clase Scenary
 
 class Scenary:
-    def __init__(self, image_name, rectangle):
+    def __init__(self, image_name):
         self.imagen = ResourcesManager.LoadImageScene(image_name, -1)
 
         # TAMAÑO DEL FONDO AQUI (TAMBIEN TAMAÑO NIVEL)
-        self.imagen = pygame.transform.scale(self.imagen, (6000, 600))
+        self.imagen = pygame.transform.scale(self.imagen, (6016, 608))
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = HEIGHT_SCREEN
