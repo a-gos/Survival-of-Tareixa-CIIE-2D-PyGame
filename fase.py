@@ -179,7 +179,7 @@ class Fase(Scene):
 
         # Primero, se indican las acciones que van a hacer los enemys segun como esten los jugadores
         for enemy in iter(self.enemyGroup):
-            enemy.mover_cpu(self.player1)
+            enemy.move_cpu(self.player1)
         # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA
         # En el caso de los jugadores, esto ya se ha realizado
 
