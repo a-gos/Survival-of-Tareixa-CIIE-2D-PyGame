@@ -269,7 +269,7 @@ class NPC(Character):
     # Aqui vendria la implementacion de la IA segun las positiones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
-    def move_cpu(self, player1):
+    def move_cpu(self, player):
         # Por defecto un enemigo no hace nada
         #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
         return
@@ -288,7 +288,7 @@ class Zombie(NPC):
 
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
-    def mover_cpu(self, player1):
+    def move_cpu(self, player):
 
         # Movemos solo a los enemigos que esten en la pantalla
         if self.rect.left>0 and self.rect.right<WIDTH_SCREEN and self.rect.bottom>0 and self.rect.top<HEIGHT_SCREEN:
@@ -296,7 +296,7 @@ class Zombie(NPC):
             # intentara acercarse al jugador mas cercano en el eje x
 
             # Y nos movemos andando hacia el
-            if player1.position[0]<self.position[0]:
+            if player.position[0]<self.position[0]:
               # Character.mover(self,LEFT)
               Character.mover(self,LEFT)
             else:
