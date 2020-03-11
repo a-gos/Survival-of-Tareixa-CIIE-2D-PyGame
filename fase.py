@@ -6,14 +6,13 @@ from player import *
 from pygame.locals import *
 from resourcesmanager import ResourcesManager
 from control import *
+import os
 
 # -------------------------------------------------
 # -------------------------------------------------
 # Constantes
 # -------------------------------------------------
 # -------------------------------------------------
-
-VELOCIDAD_SOL = 0.1 # Pixeles por milisegundo
 
 # Los bordes de la screen para hacer scroll horizontal
 MIN_X_PLAYER = (WIDTH_SCREEN / 2) - PLAYER_SIZE
@@ -23,7 +22,7 @@ MAX_X_PLAYER = WIDTH_SCREEN - MIN_X_PLAYER
 # Clase Fase
 
 class Fase(Scene):
-    def __init__(self, director):
+    def __init__(self, director, num_level):
 
         # Habria que pasarle como parámetro el número de fase, a partir del cual se cargue
         #  un fichero donde este la configuracion de esa fase en concreto, con cosas como
@@ -38,63 +37,104 @@ class Fase(Scene):
         # Primero invocamos al constructor de la clase padre
         Scene.__init__(self, director)
 
-        # Creamos el decorado y el background
-        self.scenary = Scenary()
-    #   self.background = Sky()
+        # Cargamos el archivo de configuración del nivel
+        filename = 'level_' + str(num_level) + '.tmx'
+        conf = ResourcesManager.LoadConfigurationFile(filename)
+
+        # Imagen de fondo
+        back_layer = conf.get_layer_by_name('Background')
+        back_image_name = os.path.basename(back_layer.image[0])
+
+        # Creamos el fondo del nivel
+        self.scenary = Scenary(back_image_name)
+
+        # Capa de plataformas
+        layer = conf.get_layer_by_name('Platforms')
+        self.platformGroup = pygame.sprite.Group()
+        for tile in layer.tiles():
+            coord_x = tile[0] # Multiplicar por TILE_SIZE para obtener el pixel donde se dibujará
+            coord_y = tile[1]
+            tile_image = os.path.basename(tile[2][0])
+            tile_coords = tile[2][1]
+                # tile_coords es una tupla de 4 elementos:
+                #  - coord_x en la imagen de bloques
+                #  - coord y en la imagen de bloques
+                #  - size_x del bloque
+                #  - size y del bloque
+
+            rect = pygame.Rect(coord_x*TILE_SIZE, coord_y*TILE_SIZE, tile_coords[2], tile_coords[3])
+
+            # Especificamos que trozo de la imagen se va a dibujar
+            subimage_rectangle = pygame.Rect(tile_coords[0], tile_coords[1], tile_coords[2], tile_coords[3])
+
+            platform = Platform(tile_image, rect, subimage_rectangle)
+            self.platformGroup.add(platform)
+
 
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
 
-        # Creamos los sprites de los jugadores
-        self.player1 = Player()
-        self.grupoPlayers = pygame.sprite.Group( self.player1)
+        # Creamos el sprite del jugador
+        self.player = Player()
+        self.grupoPlayers = pygame.sprite.Group(self.player)
 
-        # Ponemos a los jugadores en sus posiciones iniciales
-        self.player1.setposition((500, 578))
-    
+        # Ponemos al jugador en su posición inicial
+        layer = conf.get_layer_by_name('Character')
+        tile = next(layer.tiles())
+        coord_x = tile[0]
+        coord_y = tile[1]
+        self.player.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
 
-        # Creamos las platforms del decorado
-        # La platform que conforma todo el suelo
-        platformSuelo = Platform(pygame.Rect(0, 580, 6020, 20))
-      
+        # Y los enemigos que tendran en este decorado
+        self.enemyGroup = pygame.sprite.Group()
+        layer = conf.get_layer_by_name('Enemies')
+        for tile in layer.tiles():
+            coord_x = tile[0]
+            coord_y = tile[1]
+            enemy_name = os.path.basename(tile[2][0])
+            enemy = self.__get_enemy(enemy_name)
+            enemy.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
+            self.enemyGroup.add(enemy)
 
 
-        # La platform del techo del edificio
-       # platformCasa = Platform(pygame.Rect(870, 417, 200, 10))
-        # y el grupo con las mismas
-        self.platformGroup = pygame.sprite.Group( platformSuelo)
-
-        # Y los enemys que tendran en este decorado
-        enemy1 = Zombie1()
-        enemy1.setposition((900, 578))
-
-        # Creamos un grupo con los enemys
-        self.enemyGroup = pygame.sprite.Group(enemy1)
-
-        # Creamos un grupo con los Sprites que se mueven
-        #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group( self.player1, enemy1 )
+        # Creamos un grupo con los Sprites que se mueven (personaje, enemigos, proyectiles,etc.
+        self.grupoSpritesDinamicos = pygame.sprite.Group(self.player, self.enemyGroup.sprites() )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group( self.player1, enemy1, platformSuelo )
+        self.grupoSprites = pygame.sprite.Group(self.player, self.enemyGroup.sprites(), self.platformGroup.sprites() )
 
         # Creamos los controles del jugador
         self.control = ControlKeyboard()
-        # Creamos las animaciones de fuego,
-        #  las que estan detras del decorado, y delante
+
 
      #ANIMATIONS AQUI
 
-        
+    # Devuelve el enemigo que se corresponde con el nombre del fichero
+    def __get_enemy(self, name):
+        enemy = None
+        if name == 'zombie1.png':
+            enemy = Zombie()
+        elif name == 'zombie2.png':
+            enemy = Zombie2()
+        elif name == 'zombie3.png':
+            enemy = Zombie3()
+        elif name == 'zombie4.png':
+            enemy = Zombie4()
+        elif name == 'bear.png':
+            enemy = Bear()
+        else:
+            enemy = Zombie()
+        return enemy
+
     # Devuelve True o False según se ha tenido que desplazar el scroll
-    def updateOrderedScroll(self, player1):
+    def updateOrderedScroll(self, player):
      
-        print(player1.rect.right)
+        print(player.rect.right)
         print(self.scenary.rect.right)
         # Si el jugador de la izquierda se encuentra más allá del borde izquierdo
-        if (player1.rect.left<MIN_X_PLAYER):
-            offset = MIN_X_PLAYER - player1.rect.left
+        if (player.rect.left<MIN_X_PLAYER):
+            offset = MIN_X_PLAYER - player.rect.left
 
             # Si el escenario ya está a la izquierda del todo, no movemos mas la camara (player size para compensar)
             if self.scrollx <= 0:
@@ -102,8 +142,8 @@ class Fase(Scene):
               
                #Miramos si el jugador esta en el limte de la ventana, si es así lo colocamos ahi y no desplazamos
 
-                if (player1.rect.left<=0):
-                    player1.setposition(( 0, player1.position[1]))
+                if (player.rect.left<=0):
+                    player.setposition(( 0, player.position[1]))
                 
                     
 
@@ -119,10 +159,10 @@ class Fase(Scene):
                 return True; # Se ha actualizado el scroll
 
         # Si el jugador de la derecha se encuentra más allá del borde derecho
-        elif (player1.rect.right>MAX_X_PLAYER):
+        elif (player.rect.right>MAX_X_PLAYER):
 
             # Se calcula cuantos pixeles esta fuera del borde
-            offset = player1.rect.right - MAX_X_PLAYER
+            offset = player.rect.right - MAX_X_PLAYER
 
             # Si el escenario ya está a la derecha del todo, no lo movemos mas
             if (self.scrollx + WIDTH_SCREEN >= self.scenary.rect.right ):
@@ -136,8 +176,8 @@ class Fase(Scene):
                     # MISMA POSICION Y SE ACTUALIZA EL RESTO, ENTONCES LA POSICION RELATIVA SE PIERDA
                     # PERO TAMBIEN SIGNIFICA QUE EL FINAL DEL ESCENARIO PARA LA POSICION DEL JUGADOR 
                     # SERA SIEMPRE EL ANCHO DE LA PANTALLA
-                if (player1.rect.right >=WIDTH_SCREEN):
-                    player1.setposition((self.scrollx+WIDTH_SCREEN - PLAYER_SIZE, player1.position[1]))
+                if (player.rect.right >=WIDTH_SCREEN):
+                    player.setposition((self.scrollx+WIDTH_SCREEN - PLAYER_SIZE, player.position[1]))
 
                 return False; # No se ha actualizado el scroll
 
@@ -152,10 +192,10 @@ class Fase(Scene):
 
         
 
-    def updateScroll(self, player1):
+    def updateScroll(self, player):
         # Se ordenan los jugadores según el eje x, y se mira si hay que actualizar el scroll
      
-        stateScroll = self.updateOrderedScroll(player1)
+        stateScroll = self.updateOrderedScroll(player)
       
         # Si se cambio el scroll, se desplazan todos los Sprites y el decorado
         if stateScroll:
@@ -179,7 +219,8 @@ class Fase(Scene):
 
         # Primero, se indican las acciones que van a hacer los enemys segun como esten los jugadores
         for enemy in iter(self.enemyGroup):
-            enemy.move_cpu(self.player1)
+            enemy.move_cpu(self.player)
+
         # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA
         # En el caso de los jugadores, esto ya se ha realizado
 
@@ -206,7 +247,7 @@ class Fase(Scene):
             #self.director.exitScene()
             print("muerto")
         # Actualizamos el scroll
-        self.updateScroll(self.player1)
+        self.updateScroll(self.player)
   
         # Actualizamos el background:
         #  la position del sol y el color del cielo
@@ -234,7 +275,7 @@ class Fase(Scene):
                 self.director.exitProgram()
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
-        self.player1.mover(self.control)
+        self.player.mover(self.control)
         
 
 # -------------------------------------------------
@@ -242,63 +283,38 @@ class Fase(Scene):
 
 #class Platform(pygame.sprite.Sprite):
 class Platform(MySprite):
-    def __init__(self,rectangle):
+    def __init__(self, image, rectangle, subimage_rect=None):
         # Primero invocamos al constructor de la clase padre
         MySprite.__init__(self)
         # Rectangulo con las coordenadas en screen que ocupara
         self.rect = rectangle
         # Y lo situamos de forma global en esas coordenadas
-        self.setposition((self.rect.left, self.rect.bottom))
-        # En el caso particular de este juego, las platforms no se van a ver, asi que no se carga ninguna imagen
-        self.image = ResourcesManager.LoadImage("level1/plataforma1.png")
-
-# -------------------------------------------------
-# Clase Sky
-"""
-class Sky:
-    def __init__(self):
-        self.sol = GestorRecursos.CargarImagen('sol.png', -1)
-        self.sol = pygame.transform.scale(self.sol, (300, 200))
-
-        self.rect = self.sol.get_rect()
-        self.posicionx = 0 # El lado izquierdo de la subimagen que se esta visualizando
-        self.update(0)
-
-    def update(self, tiempo):
-        self.posicionx += VELOCIDAD_SOL * tiempo
-        if (self.posicionx - self.rect.width >= WIDTH_SCREEN):
-            self.posicionx = 0
-        self.rect.right = self.posicionx
-        # Calculamos el color del cielo
-        if self.posicionx >= ((self.rect.width + WIDTH_SCREEN) / 2):
-            ratio = 2 * ((self.rect.width + WIDTH_SCREEN) - self.posicionx) / (self.rect.width + WIDTH_SCREEN)
+        self.setposition((self.rect.left, self.rect.top))
+        # Cargamos la images correspondiente (si la plataforma está visible)
+        if image is not None:
+            self.image = ResourcesManager.LoadImageScene(image)
+            if subimage_rect is not None:
+                # Si la imagen contiene distintos bloques y solo se quiere dibujar uno
+                self.image = self.image.subsurface(subimage_rect)
         else:
-            ratio = 2 * self.posicionx / (self.rect.width + WIDTH_SCREEN)
-        self.colorSky = (100*ratio, 200*ratio, 255)
-        
-    def paint(self,screen):
-        # Dibujamos el color del cielo
-        screen.fill(self.colorSky)
-        # Y ponemos el sol
-        screen.blit(self.sol, self.rect)
+            self.image = pygame.Surface((0, 0))
 
-"""
 # -------------------------------------------------
 # Clase Scenary
 
 class Scenary:
-    def __init__(self):
-        self.imagen = ResourcesManager.LoadImage('level1/fondoNivel1.png', -1)
-        
-        #TAMAÑO DEL FONDO AQUI (TAMBIEN TAMAÑO NIVEL)
-        self.imagen = pygame.transform.scale(self.imagen, (6000, 610))
+    def __init__(self, image_name):
+        self.imagen = ResourcesManager.LoadImageScene(image_name, -1)
+
+        # TAMAÑO DEL FONDO AQUI (TAMBIEN TAMAÑO NIVEL)
+        self.imagen = pygame.transform.scale(self.imagen, (6016, 608))
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = HEIGHT_SCREEN
 
         # La subimagen que estamos viendo
         self.rectSubimagen = pygame.Rect(0, 0, WIDTH_SCREEN, HEIGHT_SCREEN)
-        self.rectSubimagen.left = 0 # El scroll horizontal empieza en la position 0 por defecto
+        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la position 0 por defecto
 
     def update(self, scrollx):
         self.rectSubimagen.left = scrollx

@@ -8,14 +8,11 @@ import pygame, sys, os
 from pygame.locals import *
 from player import Player
 from fase import Fase
-
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# Importar modulos
-import pygame
 import director
 from director import *
+
+
+
 
 
 if __name__ == '__main__':
@@ -25,7 +22,7 @@ if __name__ == '__main__':
     # Creamos el director
     director = Director()
     # Creamos la escena con la pantalla inicial
-    fase = Fase(director)
+    fase = Fase(director, 1)
     # Le decimos al director que apile esta escena
     director.stackscene(fase)
     # Y ejecutamos el juego

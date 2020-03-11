@@ -83,7 +83,7 @@ class Character(MySprite):
         # Primero invocamos al constructor de la clase padre
         MySprite.__init__(self)
         # Se carga la hoja
-        self.hoja = ResourcesManager.LoadImage(imageFile, -1)
+        self.hoja = ResourcesManager.LoadImageCharacter(imageFile, -1)
         self.hoja = self.hoja.convert_alpha()
         # El movement que esta realizando
         self.movement = IDLE
@@ -242,7 +242,7 @@ class Player(Character):
 
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este Character concreto (jugador 1 en este caso)
-        Character.__init__(self, 'Tareixav2.png', 'coordTareixa.txt', [4, 12, 1],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
+        Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt', [4, 12, 1],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
 
 
     def mover(self, control):
@@ -274,7 +274,7 @@ class NPC(Character):
     # Aqui vendria la implementacion de la IA segun las positiones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
-    def move_cpu(self, player1):
+    def move_cpu(self, player):
         # Por defecto un enemigo no hace nada
         #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
         return
@@ -284,11 +284,10 @@ class NPC(Character):
 class Zombie(NPC):
 
     # Por defecto crea un zombie de nivel 1
-    def __init__(self, image,coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay, damage_level):
+    def __init__(self, image='zombie1.png',coord='coordZombie1.txt', numImages=[1,8,1], zombie_speed=0.05, zombie_jump_speed=0.05, zombie_animation_delay=6, damage_level=1):
+
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         NPC.__init__(self, image, coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay)
-        # Cambiar la orientacion inicial de la imagen para que coincida con la del protagonista
-        #self.looking = RIGHT
 
         # Establecer el nivel de daño que provoca el enemigo (valor de 1-10)
         self.damage_level = damage_level
@@ -307,7 +306,7 @@ class Zombie1(Zombie):
       
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
-    def move_cpu(self, player1):
+    def move_cpu(self, player):
 
         # Movemos solo a los enemigos que esten en la pantalla
         if self.rect.left>0 and self.rect.right<WIDTH_SCREEN and self.rect.bottom>0 and self.rect.top<HEIGHT_SCREEN:
@@ -315,7 +314,7 @@ class Zombie1(Zombie):
             # intentara acercarse al jugador mas cercano en el eje x
 
             # Y nos movemos andando hacia el
-            if player1.position[0]<self.position[0]:
+            if player.position[0]<self.position[0]:
               # Character.mover(self,LEFT)
               Character.mover(self,LEFT)
             else:
@@ -330,10 +329,25 @@ class Zombie1(Zombie):
 class Zombie2(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'zombie2v2.png', 'coordZombie2.txt', [1,8,3], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=2)
+        Zombie.__init__(self,'zombie2.png', 'coordZombie2.txt', [1,6,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=2)
 
 
+# Zombie de nivel 3
 class Zombie3(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'zombie3v2.png', 'coordZombie3.txt', [1,8,1], zombie_speed=0.13, zombie_jump_speed=0.2, damage_level=3)
+        Zombie.__init__(self,'zombie3.png', 'coordZombie3.txt', [1,8,1], zombie_speed=0.13, zombie_jump_speed=0.2, damage_level=3)
+
+
+# Zombie de nivel 4
+class Zombie4(Zombie):
+
+    def __init__(self):
+        Zombie.__init__(self,'zombie4.png', 'coordZombie4.txt', [1,8,3], zombie_speed=0.15, zombie_jump_speed=0.2, damage_level=4)
+
+
+# Oso (Boss)
+class Bear(Zombie):
+
+    def __init__(self):
+        Zombie.__init__(self,'bear.png', 'coordBear.txt', [2,11,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=5)
