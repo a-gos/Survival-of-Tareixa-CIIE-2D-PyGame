@@ -338,4 +338,4 @@ class Zombie4(Zombie):
 class Bear(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'bear.png', 'coordBear.txt', [2,11,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=5)
+        Zombie.__init__(self,'bear.png', 'coordBear.txt', [1,11,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=5)

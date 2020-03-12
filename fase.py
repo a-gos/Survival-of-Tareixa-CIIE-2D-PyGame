@@ -129,9 +129,10 @@ class Fase(Scene):
 
     # Devuelve True o False según se ha tenido que desplazar el scroll
     def updateOrderedScroll(self, player):
-     
-        print(player.rect.right)
-        print(self.scenary.rect.right)
+
+        # Debug info
+        # print(player.rect.right)
+        # print(self.scenary.rect.right)
         # Si el jugador de la izquierda se encuentra más allá del borde izquierdo
         if (player.rect.left<MIN_X_PLAYER):
             offset = MIN_X_PLAYER - player.rect.left
