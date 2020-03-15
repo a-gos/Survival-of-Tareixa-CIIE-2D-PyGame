@@ -189,7 +189,7 @@ class Character(MySprite):
                 if pygame.sprite.spritecollideany(self, platformGroup) == None:
                   self.animationNumber = SPRITE_JUMPING
         # Si queremos saltar
-        elif self.movement == UP:
+        if self.movement == UP:
             if not(self.isJumping):
                 # La animation actual sera estar saltando
                 self.animationNumber = SPRITE_JUMPING
@@ -197,7 +197,7 @@ class Character(MySprite):
                 speedy = -self.jumpSpeed
             
         # Si no se ha pulsado ninguna tecla
-        elif self.movement == IDLE:
+        if self.movement == IDLE:
             # Si no estamos saltando, la animation actual será estar quieto
             if not self.animationNumber == SPRITE_JUMPING:
                 self.animationNumber = SPRITE_IDLE

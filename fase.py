@@ -271,8 +271,8 @@ class Fase(Scene):
                 self.director.exitProgram()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    bullet = Bullet(self.player, 0.5)
-                    bullet.__init__(self.player, 0.5)
+                    bullet = Bullet(self.player, 0.5, self.scrollx)
+                    
 
                     self.grupoSpritesDinamicos.add(bullet)
                     self.grupoSprites.add(bullet)
