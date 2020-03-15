@@ -16,8 +16,8 @@ class Scene:
     def update(self, *args):
         raise NotImplementedError("Tiene que implementar el metodo update.")
 
-    def eventos(self, *args):
+    def events(self, *args):
         raise NotImplementedError("Tiene que implementar el metodo eventos.")
 
-    def dibujar(self, pantalla):
+    def paint(self, pantalla):
         raise NotImplementedError("Tiene que implementar el metodo dibujar.")

@@ -10,10 +10,12 @@ from player import Player
 from fase import Fase
 import director
 from director import *
+from menu import Menu
 
-
-
-
+# Si se pone a True, se cargará directamente la fase indicada en DEBUG_FASE,
+# sin necesidad de acceder a través del menú
+DEBUG = False
+DEBUG_FASE_NUM = 1
 
 if __name__ == '__main__':
 
@@ -21,10 +23,16 @@ if __name__ == '__main__':
     pygame.init()
     # Creamos el director
     director = Director()
-    # Creamos la escena con la pantalla inicial
-    fase = Fase(director, 1)
+
+    if DEBUG:
+        # Creamos la escena con el nivel a depurar
+        scene = Fase(director, DEBUG_FASE_NUM)
+    else:
+        # Creamos la escena con el menú principal
+        scene = Menu(director)
+
     # Le decimos al director que apile esta escena
-    director.stackscene(fase)
+    director.stackscene(scene)
     # Y ejecutamos el juego
     director.execute()
     # Cuando se termine la ejecución, finaliza la librería

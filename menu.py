@@ -33,11 +33,11 @@ class ElementoGUI:
     # Métodos abstractos a implementar por las subclases
 
     # Dibuja el elemento en pantalla
-    def dibujar(self):
+    def paint(self):
         raise NotImplemented("Tiene que implementar el metodo dibujar.")
 
     # Acción a realizar si se hace clic en el elemento
-    def accion(self):
+    def action(self):
         raise NotImplemented("Tiene que implementar el metodo accion.")
 
 
@@ -48,55 +48,38 @@ class Boton(ElementoGUI):
     def __init__(self, pantalla, nombreImagen, posicion):
         # Se carga la imagen del boton
         self.imagen = ResourcesManager.LoadImageMenu(nombreImagen,-1)
-        self.imagen = pygame.transform.scale(self.imagen, (20, 20))
+        # self.imagen = pygame.transform.scale(self.imagen, (20, 20))
         # Se llama al método de la clase padre con el rectángulo que ocupa el botón
         ElementoGUI.__init__(self, pantalla, self.imagen.get_rect())
         # Se coloca el rectangulo en su posicion
         self.establecerPosicion(posicion)
-    def dibujar(self, pantalla):
+    def paint(self, pantalla):
         pantalla.blit(self.imagen, self.rect)
 
 class BotonJugar(Boton):
     def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'boton_verde.png', (580,530))
-    def accion(self):
+        Boton.__init__(self, pantalla, 'xogar.png', (615,224))
+    def action(self):
         self.pantalla.menu.ejecutarJuego()
+
+class BotonInstrucciones(Boton):
+    def __init__(self, pantalla):
+        Boton.__init__(self, pantalla, 'instruccions.png', (622,340))
+    def action(self):
+        self.pantalla.menu.mostrarIntrucciones()
 
 class BotonSalir(Boton):
     def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'boton_rojo.png', (580,560))
-    def accion(self):
+        Boton.__init__(self, pantalla, 'sair.png', (626,451))
+    def action(self):
         self.pantalla.menu.salirPrograma()
 
-# -------------------------------------------------
-# Clase TextoGUI y los distintos textos
-
-class TextoGUI(ElementoGUI):
-    def __init__(self, pantalla, fuente, color, texto, posicion):
-        # Se crea la imagen del texto
-        self.imagen = fuente.render(texto, True, color)
-        # Se llama al método de la clase padre con el rectángulo que ocupa el texto
-        ElementoGUI.__init__(self, pantalla, self.imagen.get_rect())
-        # Se coloca el rectangulo en su posicion
-        self.establecerPosicion(posicion)
-    def dibujar(self, pantalla):
-        pantalla.blit(self.imagen, self.rect)
-
-class TextoJugar(TextoGUI):
+class BotonVolver(Boton):
     def __init__(self, pantalla):
-        # La fuente la debería cargar el estor de recursos
-        fuente = pygame.font.SysFont('arial', 26)
-        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Jugar', (610, 535))
-    def accion(self):
-        self.pantalla.menu.ejecutarJuego()
+        Boton.__init__(self, pantalla, 'volver.png', (50,498))
+    def action(self):
+        self.pantalla.menu.mostrarPantallaInicial()
 
-class TextoSalir(TextoGUI):
-    def __init__(self, pantalla):
-        # La fuente la debería cargar el estor de recursos
-        fuente = pygame.font.SysFont('arial', 26)
-        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Salir', (610, 565))
-    def accion(self):
-        self.pantalla.menu.salirPrograma()
 
 # -------------------------------------------------
 # Clase PantallaGUI y las distintas pantallas
@@ -110,7 +93,7 @@ class PantallaGUI:
         # Se tiene una lista de elementos GUI
         self.elementosGUI = []
 
-    def eventos(self, lista_eventos):
+    def events(self, lista_eventos):
         for evento in lista_eventos:
             if evento.type == MOUSEBUTTONDOWN:
                 self.elementoClic = None
@@ -121,28 +104,33 @@ class PantallaGUI:
                 for elemento in self.elementosGUI:
                     if elemento.posicionEnElemento(evento.pos):
                         if (elemento == self.elementoClic):
-                            elemento.accion()
+                            elemento.action()
 
-    def dibujar(self, pantalla):
+    def paint(self, pantalla):
         # Dibujamos primero la imagen de fondo
         pantalla.blit(self.imagen, self.imagen.get_rect())
         # Después los botones
         for elemento in self.elementosGUI:
-            elemento.dibujar(pantalla)
+            elemento.paint(pantalla)
 
 class PantallaInicialGUI(PantallaGUI):
     def __init__(self, menu):
-        PantallaGUI.__init__(self, menu, 'portada.jpg')
+        PantallaGUI.__init__(self, menu, 'portada_principal.png')
         # Creamos los botones y los metemos en la lista
         botonJugar = BotonJugar(self)
+        botonInstrucciones = BotonInstrucciones(self)
         botonSalir = BotonSalir(self)
         self.elementosGUI.append(botonJugar)
+        self.elementosGUI.append(botonInstrucciones)
         self.elementosGUI.append(botonSalir)
-        # Creamos el texto y lo metemos en la lista
-        textoJugar = TextoJugar(self)
-        textoSalir = TextoSalir(self)
-        self.elementosGUI.append(textoJugar)
-        self.elementosGUI.append(textoSalir)
+
+class PantallaIntruccionesGUI(PantallaGUI):
+    def __init__(self, menu):
+        PantallaGUI.__init__(self, menu, 'portada_instruccions.png')
+        # Creamos el boton y lo metemos en la lista
+        botonVolver = BotonVolver(self)
+        self.elementosGUI.append(botonVolver)
+
 
 # -------------------------------------------------
 # Clase Menu, la escena en sí
@@ -157,13 +145,14 @@ class Menu(Scene):
         # Creamos las pantallas que vamos a tener
         #   y las metemos en la lista
         self.listaPantallas.append(PantallaInicialGUI(self))
+        self.listaPantallas.append(PantallaIntruccionesGUI(self))
         # En que pantalla estamos actualmente
         self.mostrarPantallaInicial()
 
     def update(self, *args):
         return
 
-    def eventos(self, lista_eventos):
+    def events(self, lista_eventos):
         # Se mira si se quiere salir de esta escena
         for evento in lista_eventos:
             # Si se quiere salir, se le indica al director
@@ -171,26 +160,29 @@ class Menu(Scene):
                 if evento.key == K_ESCAPE:
                     self.salirPrograma()
             elif evento.type == pygame.QUIT:
-                self.director.salirPrograma()
+                self.director.exitProgram()
 
         # Se pasa la lista de eventos a la pantalla actual
-        self.listaPantallas[self.pantallaActual].eventos(lista_eventos)
+        self.listaPantallas[self.pantallaActual].events(lista_eventos)
 
-    def dibujar(self, pantalla):
-        self.listaPantallas[self.pantallaActual].dibujar(pantalla)
+    def paint(self, pantalla):
+        self.listaPantallas[self.pantallaActual].paint(pantalla)
 
     #--------------------------------------
     # Metodos propios del menu
 
     def salirPrograma(self):
-        self.director.salirPrograma()
+        self.director.exitProgram()
 
     def ejecutarJuego(self):
-        fase = Fase(self.director)
-        self.director.apilarScene(fase)
+        fase = Fase(self.director, 1)
+        self.director.stackscene(fase)
 
     def mostrarPantallaInicial(self):
         self.pantallaActual = 0
+
+    def mostrarIntrucciones(self):
+        self.pantallaActual = 1
 
     # def mostrarPantallaConfiguracion(self):
     #    self.pantallaActual = ...
