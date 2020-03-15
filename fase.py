@@ -7,7 +7,7 @@ from pygame.locals import *
 from resourcesmanager import ResourcesManager
 from control import *
 import os
-
+from utilities import *
 # -------------------------------------------------
 # -------------------------------------------------
 # Constantes
@@ -269,10 +269,21 @@ class Fase(Scene):
             # Si se quiere salir, se le indica al director
             if event.type == pygame.QUIT:
                 self.director.exitProgram()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    bullet = Bullet(self.player, 0.5)
+                    bullet.__init__(self.player, 0.5)
+
+                    self.grupoSpritesDinamicos.add(bullet)
+                    self.grupoSprites.add(bullet)
+     
+          
+            
+
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         self.player.mover(self.control)
-        
+       
 
 # -------------------------------------------------
 # Clase Platform

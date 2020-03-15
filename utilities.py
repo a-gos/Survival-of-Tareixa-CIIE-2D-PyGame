@@ -1,11 +1,24 @@
-class Bullet():
-    def __init__(self,x,y,radius,color,facing):
-        self.x = x
-        self.y = y
-        self.radius = radius
-        self.color = color
-        self.facing = facing
-        self.vel = 8 * facing
+import pygame, scene
+from MySprite import *
 
-    def draw(self,win):
-        pygame.draw.circle(win, self.color, (self.x,self.y), self.radius)
+from resourcesmanager import ResourcesManager
+
+class Bullet(MySprite):
+    def __init__(self,player,speed):
+        MySprite.__init__(self)
+      #  self.rect = rect
+        self.rect = pygame.Rect(4,4, 50, 12)
+
+        self.setposition((player.rect.centerx, player.rect.centery))
+
+        self.looking = player.looking
+        self.image = ResourcesManager.LoadImage('characters','disparo.png', -1)
+        if(self.looking == LEFT):
+            self.image = pygame.transform.flip(self.image, 1 ,0)
+            speed = -speed
+
+        self.speed = (speed,0)
+
+
+    def update(self, platformGroup, time):
+        MySprite.update(self, time)

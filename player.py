@@ -12,6 +12,7 @@ from resourcesmanager import ResourcesManager
 from scene import *
 
 
+
 # MOVEMENT
 IDLE = 0
 LEFT = 1
