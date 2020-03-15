@@ -180,7 +180,7 @@ class Fase(Scene):
                 if (player.rect.right >=WIDTH_SCREEN):
                     player.setposition((self.scrollx+WIDTH_SCREEN - PLAYER_SIZE, player.position[1]))
 
-                return False; # No se ha actualizado el scroll
+                return False # No se ha actualizado el scroll
 
             # Si se puede hacer scroll a la derecha
             else:
@@ -189,7 +189,7 @@ class Fase(Scene):
                 #  (desplazamos a la derecha)
                 self.scrollx = self.scrollx + offset;
 
-                return True; # Se ha actualizado el scroll
+                return True # Se ha actualizado el scroll
 
         
 
@@ -215,7 +215,6 @@ class Fase(Scene):
     #  Se comprueba si hay colision entre algun jugador y algun enemy
     #  Se comprueba si algún jugador ha salido de la screen, y se actualiza el scroll en consecuencia
     #     Actualizar el scroll implica tener que desplazar todos los sprites por screen
-    #  Se actualiza la position del sol y el color del cielo
     def update(self, time):
 
         # Primero, se indican las acciones que van a hacer los enemys segun como esten los jugadores
@@ -256,16 +255,12 @@ class Fase(Scene):
 
         
     def paint(self, screen):
-        # Ponemos primero el background
-    #    self.background.paint(screen)
-        # Despues, las animaciones que haya detras
-       
-        # Después el decorado
+        # Dibujamos el decorado
         self.scenary.paint(screen)
         # Luego los Sprites
         self.grupoSprites.draw(screen)
         # Y por ultimo, dibujamos las animaciones por encima del decorado
-        
+        # AÑADIR HUD
 
 
     def events(self, event_list):
@@ -293,7 +288,7 @@ class Platform(MySprite):
         self.setposition((self.rect.left, self.rect.top))
         # Cargamos la images correspondiente (si la plataforma está visible)
         if image is not None:
-            self.image = ResourcesManager.LoadImageScene(image)
+            self.image = ResourcesManager.LoadImageScene(image, -1)
             if subimage_rect is not None:
                 # Si la imagen contiene distintos bloques y solo se quiere dibujar uno
                 self.image = self.image.subsurface(subimage_rect)
