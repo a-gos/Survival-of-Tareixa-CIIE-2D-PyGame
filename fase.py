@@ -87,6 +87,9 @@ class Fase(Scene):
         coord_y = tile[1]
         self.player.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
 
+        # Creamos un grupo donde se guardarán los disparos
+        self.grupoShots = pygame.sprite.Group()
+
         # Y los enemigos que tendran en este decorado
         self.enemyGroup = pygame.sprite.Group()
         layer = conf.get_layer_by_name('Enemies')
@@ -239,6 +242,9 @@ class Fase(Scene):
         # En cambio, sí haría falta actualizar los Sprites que no se mueven pero que tienen que
         #  mostrar alguna animación
 
+        # Comprobamos si los disparos colisionan con algún enemigo o plataforma para eliminarlos
+        self.grupoShots.update(self.platformGroup, self.enemyGroup, (self.scrollx, self.scrollx+WIDTH_SCREEN), time)
+
         # Comprobamos si hay colision entre algun jugador y algun enemy
         # Se comprueba la colision entre ambos grupos
         # Si la hay, indicamos que se ha finalizado la fase
@@ -271,10 +277,10 @@ class Fase(Scene):
                 self.director.exitProgram()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    bullet = Bullet(self.player, 0.5, self.scrollx)
-                    
+                    bullet = Bullet(self.player, 0.5)
 
-                    self.grupoSpritesDinamicos.add(bullet)
+                    # self.grupoSpritesDinamicos.add(bullet)
+                    self.grupoShots.add(bullet)
                     self.grupoSprites.add(bullet)
      
           
