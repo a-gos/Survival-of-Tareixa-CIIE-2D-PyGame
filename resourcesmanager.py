@@ -16,6 +16,14 @@ class ResourcesManager(object):
     resources = {}
 
     @classmethod
+    def LoadImageMenu(cls, name, colorkey=None):
+        return cls.LoadImage('menu', name, colorkey)
+
+    @classmethod
+    def LoadImageStory(cls, name, colorkey=None):
+        return cls.LoadImage('story', name, colorkey)
+
+    @classmethod
     def LoadImageScene(cls, name, colorkey=None):
         return cls.LoadImage('scene', name, colorkey)
 

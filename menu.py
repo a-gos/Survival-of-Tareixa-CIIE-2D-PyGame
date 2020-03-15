@@ -10,15 +10,19 @@ from fase import Fase
 # Clase abstracta ElementoGUI
 
 class ElementoGUI:
+    # Guarda una referencia a la pantalla a la que pertenece, y el rectángulo
+    # que ocupa en pantalla, para saber si se ha hecho clic
     def __init__(self, pantalla, rectangulo):
         self.pantalla = pantalla
         self.rect = rectangulo
 
+    # Método para situarlo en pantalla
     def establecerPosicion(self, posicion):
         (posicionx, posiciony) = posicion
         self.rect.left = posicionx
         self.rect.bottom = posiciony
 
+    # Método que dice si se ha hecho clic en él
     def posicionEnElemento(self, posicion):
         (posicionx, posiciony) = posicion
         if (posicionx>=self.rect.left) and (posicionx<=self.rect.right) and (posiciony>=self.rect.top) and (posiciony<=self.rect.bottom):
@@ -26,8 +30,13 @@ class ElementoGUI:
         else:
             return False
 
+    # Métodos abstractos a implementar por las subclases
+
+    # Dibuja el elemento en pantalla
     def dibujar(self):
         raise NotImplemented("Tiene que implementar el metodo dibujar.")
+
+    # Acción a realizar si se hace clic en el elemento
     def accion(self):
         raise NotImplemented("Tiene que implementar el metodo accion.")
 
@@ -38,7 +47,7 @@ class ElementoGUI:
 class Boton(ElementoGUI):
     def __init__(self, pantalla, nombreImagen, posicion):
         # Se carga la imagen del boton
-        self.imagen = ResourcesManager.CargarImagen(nombreImagen,-1)
+        self.imagen = ResourcesManager.LoadImageMenu(nombreImagen,-1)
         self.imagen = pygame.transform.scale(self.imagen, (20, 20))
         # Se llama al método de la clase padre con el rectángulo que ocupa el botón
         ElementoGUI.__init__(self, pantalla, self.imagen.get_rect())
@@ -96,7 +105,7 @@ class PantallaGUI:
     def __init__(self, menu, nombreImagen):
         self.menu = menu
         # Se carga la imagen de fondo
-        self.imagen = ResourcesManager.CargarImagen(nombreImagen)
+        self.imagen = ResourcesManager.LoadImageMenu(nombreImagen)
         self.imagen = pygame.transform.scale(self.imagen, (WIDTH_SCREEN, HEIGHT_SCREEN))
         # Se tiene una lista de elementos GUI
         self.elementosGUI = []
