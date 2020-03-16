@@ -24,15 +24,14 @@ MAX_X_PLAYER = WIDTH_SCREEN - MIN_X_PLAYER
 class Fase(Scene):
     def __init__(self, director, num_level):
 
-        # Habria que pasarle como parámetro el número de fase, a partir del cual se cargue
-        #  un fichero donde este la configuracion de esa fase en concreto, con cosas como
+        # Recibe como parámetro el número de fase, a partir del cual se carga
+        #  un fichero donde está la configuración de esa fase en concreto,
+        #  con cosas como:
         #   - Nombre del archivo con el decorado
-        #   - Posiciones de las platforms
-        #   - Posiciones de los enemys
-        #   - Posiciones de inicio de los jugadores
+        #   - Posiciones de las plataformas
+        #   - Posiciones de los enemigos
+        #   - Posición de inicio del jugador
         #  etc.
-        # Y cargar esa configuracion del archivo en lugar de ponerla a mano, como aqui abajo
-        # De esta forma, se podrian tener muchas fases distintas con esta clase
 
         # Primero invocamos al constructor de la clase padre
         Scene.__init__(self, director)
@@ -101,7 +100,6 @@ class Fase(Scene):
             enemy.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
             self.enemyGroup.add(enemy)
 
-
         # Creamos un grupo con los Sprites que se mueven (personaje, enemigos, proyectiles,etc.
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.player, self.enemyGroup.sprites() )
         # Creamos otro grupo con todos los Sprites
@@ -136,33 +134,30 @@ class Fase(Scene):
         # Debug info
         # print(player.rect.right)
         # print(self.scenary.rect.right)
-        # Si el jugador de la izquierda se encuentra más allá del borde izquierdo
+
+        # Si el jugador se encuentra más allá del borde izquierdo
         if (player.rect.left<MIN_X_PLAYER):
             offset = MIN_X_PLAYER - player.rect.left
 
-            # Si el escenario ya está a la izquierda del todo, no movemos mas la camara (player size para compensar)
+            # Si el escenario ya está a la izquierda del todo, no movemos mas
+            #  la camara (player size para compensar)
             if self.scrollx <= 0:
                 self.scrollx = 0
               
-               #Miramos si el jugador esta en el limte de la ventana, si es así lo colocamos ahi y no desplazamos
-
+                #Miramos si el jugador esta en el limte de la ventana, si es así lo colocamos ahi y no desplazamos
                 if (player.rect.left<=0):
                     player.setposition(( 0, player.position[1]))
-                
-                    
 
-                return False; # No se ha actualizado el scroll
+                return False  # No se ha actualizado el scroll
 
-       
-            # Si se puede hacer scroll a la izquierda
+            # Si se puede hacer más scroll a la izquierda
             else:
                 # Calculamos el nivel de scroll actual: el anterior - offset
                 #  (desplazamos a la izquierda)
-                self.scrollx = self.scrollx - offset;
+                self.scrollx = self.scrollx - offset
+                return True  # Se ha actualizado el scroll
 
-                return True; # Se ha actualizado el scroll
-
-        # Si el jugador de la derecha se encuentra más allá del borde derecho
+        # Si el jugador se encuentra más allá del borde derecho
         elif (player.rect.right>MAX_X_PLAYER):
 
             # Se calcula cuantos pixeles esta fuera del borde
@@ -183,16 +178,14 @@ class Fase(Scene):
                 if (player.rect.right >=WIDTH_SCREEN):
                     player.setposition((self.scrollx+WIDTH_SCREEN - PLAYER_SIZE, player.position[1]))
 
-                return False # No se ha actualizado el scroll
+                return False  # No se ha actualizado el scroll
 
             # Si se puede hacer scroll a la derecha
             else:
-
                 # Calculamos el nivel de scroll actual: el anterior + offset
                 #  (desplazamos a la derecha)
-                self.scrollx = self.scrollx + offset;
-
-                return True # Se ha actualizado el scroll
+                self.scrollx = self.scrollx + offset
+                return True  # Se ha actualizado el scroll
 
         
 
@@ -254,10 +247,7 @@ class Fase(Scene):
             print("muerto")
         # Actualizamos el scroll
         self.updateScroll(self.player)
-  
-        # Actualizamos el background:
-        #  la position del sol y el color del cielo
-     #   self.background.update(tiempo)
+
 
         
     def paint(self, screen):
@@ -282,10 +272,6 @@ class Fase(Scene):
                     # self.grupoSpritesDinamicos.add(bullet)
                     self.grupoShots.add(bullet)
                     self.grupoSprites.add(bullet)
-     
-          
-            
-
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         self.player.mover(self.control)
@@ -320,7 +306,7 @@ class Scenary:
         self.imagen = ResourcesManager.LoadImageScene(image_name, -1)
 
         # TAMAÑO DEL FONDO AQUI (TAMBIEN TAMAÑO NIVEL)
-        self.imagen = pygame.transform.scale(self.imagen, (6016, 608))
+        # self.imagen = pygame.transform.scale(self.imagen, (6016, 608))
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = HEIGHT_SCREEN
