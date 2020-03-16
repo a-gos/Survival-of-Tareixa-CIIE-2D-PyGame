@@ -53,11 +53,16 @@ class MySprite(pygame.sprite.Sprite):
         self.speed = (0, 0)
         self.scroll = (0, 0)
 
+    # Método para cambiar la posición global: cambia también la posición en
+    # pantalla gracias a la copia del scroll
     def setposition(self, position):
         self.position = position
         self.rect.left = self.position[0] - self.scroll[0]
         self.rect.bottom = self.position[1] - self.scroll[1]
 
+    # Recibe un valor de scroll y cambia su valor en pantalla, pero no su
+    # posición global en el entorno. Un cambio de pos. local NO implica un
+    # cambio de pos. global
     def setpositionscreen(self, scrollDecorado):
         self.scroll = scrollDecorado
         (scrollx, scrolly) = self.scroll
