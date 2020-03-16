@@ -136,6 +136,8 @@ class Fase(Scene):
         # print(self.scenary.rect.right)
 
         # Si el jugador se encuentra más allá del borde izquierdo
+        
+       
         if (player.rect.left<MIN_X_PLAYER):
             offset = MIN_X_PLAYER - player.rect.left
 
@@ -267,7 +269,7 @@ class Fase(Scene):
                 self.director.exitProgram()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    bullet = Bullet(self.player, 0.5)
+                    bullet = Bullet(self.player, 0.5, self.scrollx)
 
                     # self.grupoSpritesDinamicos.add(bullet)
                     self.grupoShots.add(bullet)
