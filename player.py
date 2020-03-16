@@ -107,8 +107,7 @@ class Character(MySprite):
 
 
         self.coordenadasHoja = []
-        # for linea in range(0, 4):
-        for linea in range(0, 3):
+        for linea in range(0, 4):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
             for animation in range(1, numImages[linea]+1):
@@ -204,8 +203,8 @@ class Character(MySprite):
                 speedy = -self.jumpSpeed
 
         # Si está disparando
-        # if self.movement == SHOOTING:
-        #     self.animationNumber = SPRITE_SHOOTING
+        if self.movement == SHOOTING:
+            self.animationNumber = SPRITE_SHOOTING
 
         # Si no se ha pulsado ninguna tecla
         if self.movement == IDLE:
@@ -266,8 +265,8 @@ class Player(Character):
             Character.mover(self, LEFT)
         elif control.right():
             Character.mover(self, RIGHT)
-        # elif control.shoot():
-        #     Character.mover(self, SHOOTING)
+        elif control.shoot():
+            Character.mover(self, SHOOTING)
         else:
             Character.mover(self, IDLE)
 
