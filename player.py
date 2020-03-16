@@ -203,7 +203,7 @@ class Character(MySprite):
                 speedy = -self.jumpSpeed
 
         # Si está disparando
-        if self.movement == SHOOTING:
+        if self.animationNumber == SPRITE_IDLE and self.movement== SHOOTING:
             self.animationNumber = SPRITE_SHOOTING
 
         # Si no se ha pulsado ninguna tecla
