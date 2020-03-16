@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-WIDTH_SCREEN = 800
+WIDTH_SCREEN = 1088
 HEIGHT_SCREEN = 608
 PLAYER_SIZE = 31
 TILE_SIZE = 32
@@ -16,8 +16,8 @@ class Scene:
     def update(self, *args):
         raise NotImplementedError("Tiene que implementar el metodo update.")
 
-    def eventos(self, *args):
+    def events(self, *args):
         raise NotImplementedError("Tiene que implementar el metodo eventos.")
 
-    def dibujar(self, pantalla):
+    def paint(self, pantalla):
         raise NotImplementedError("Tiene que implementar el metodo dibujar.")
