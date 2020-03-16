@@ -197,6 +197,8 @@ class Fase(Scene):
         # Si se cambio el scroll, se desplazan todos los Sprites y el decorado
         if stateScroll:
             # Actualizamos la posición en screen de todos los Sprites según el scroll actual
+            # Cuando se cambia el scroll, se llama al método setpositionscreen()
+            # de MiSprite: cambia la posición local pero no la global de los Sprites
             for sprite in iter(self.grupoSprites):
                 sprite.setpositionscreen((self.scrollx, 0))
 
