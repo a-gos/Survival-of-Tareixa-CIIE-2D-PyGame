@@ -7,17 +7,24 @@ class Bullet(MySprite):
     def __init__(self,player,speed):
         MySprite.__init__(self)
       #  self.rect = rect
-        self.rect = pygame.Rect(4,4, 50, 12)
+      #   self.rect = pygame.Rect(4,4, 50, 12)
+        # Carga de la imagen del disparo
+        self.image = ResourcesManager.LoadImage('characters', 'disparo.png',-1)
+        self.rect = self.image.get_rect()
 
-        self.setposition((player.rect.centerx, player.rect.centery ))
-
+        # Establecer la orientación, la posición y la velocidad del sprite
         self.looking = player.looking
-        self.image = ResourcesManager.LoadImage('characters','disparo.png', -1)
+        pos_y = player.rect.centery
         if(self.looking == LEFT):
-            self.image = pygame.transform.flip(self.image, 1 ,0)
+            pos_x = player.rect.left - self.rect.width
+            self.setposition((pos_x, pos_y))
+            self.image = pygame.transform.flip(self.image, 1, 0)
             speed = -speed
+        else:
+            pos_x = player.rect.right
+            self.setposition((pos_x, pos_y))
 
-        self.speed = (speed,0)
+        self.speed = (speed, 0)
 
 
     def update(self, platformGroup, enemyGroup, scroll, time):

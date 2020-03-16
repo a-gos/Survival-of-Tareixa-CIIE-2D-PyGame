@@ -19,12 +19,13 @@ LEFT = 1
 RIGHT = 2
 UP = 3
 DOWN = 4
+SHOOTING = 5
 
 # ANIMATIONS
 SPRITE_IDLE = 0
 SPRITE_WALKING = 1
 SPRITE_JUMPING = 2
-# SPRITE_SHOOTING = 3
+SPRITE_SHOOTING = 3
 
 
 # Character SETTINGS
@@ -101,7 +102,7 @@ class Character(MySprite):
 
 
         self.coordenadasHoja = []
-        for linea in range(0, 3):
+        for linea in range(0, 4):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
             for animation in range(1, numImages[linea]+1):
@@ -195,7 +196,11 @@ class Character(MySprite):
                 self.animationNumber = SPRITE_JUMPING
                 # Le imprimimos una speed en el eje y
                 speedy = -self.jumpSpeed
-            
+
+        # Si está disparando
+        if self.movement == SHOOTING:
+            self.animationNumber = SPRITE_SHOOTING
+
         # Si no se ha pulsado ninguna tecla
         if self.movement == IDLE:
             # Si no estamos saltando, la animation actual será estar quieto
@@ -243,7 +248,7 @@ class Player(Character):
 
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este Character concreto (jugador 1 en este caso)
-        Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt', [4, 12, 1],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
+        Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt', [4, 12, 1, 1],Character_SPEED, Character_JUMP_SPEED, Character_ANIMATION_DELAY);
 
 
     def mover(self, control):
@@ -255,6 +260,8 @@ class Player(Character):
             Character.mover(self, LEFT)
         elif control.right():
             Character.mover(self, RIGHT)
+        elif control.shoot():
+            Character.mover(self, SHOOTING)
         else:
             Character.mover(self, IDLE)
 
@@ -285,7 +292,7 @@ class NPC(Character):
 class Zombie(NPC):
 
     # Por defecto crea un zombie de nivel 1
-    def __init__(self, image='zombie1.png',coord='coordZombie1.txt', numImages=[1,8,1], zombie_speed=0.05, zombie_jump_speed=0.05, zombie_animation_delay=6, damage_level=1):
+    def __init__(self, image='zombie1.png',coord='coordZombie1.txt', numImages=[1,8,1, 1], zombie_speed=0.05, zombie_jump_speed=0.05, zombie_animation_delay=6, damage_level=1):
 
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         NPC.__init__(self, image, coord, numImages, zombie_speed, zombie_jump_speed, zombie_animation_delay)
@@ -318,25 +325,25 @@ class Zombie(NPC):
 class Zombie2(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'zombie2.png', 'coordZombie2.txt', [1,6,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=2)
+        Zombie.__init__(self,'zombie2.png', 'coordZombie2.txt', [1,6,1,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=2)
 
 
 # Zombie de nivel 3
 class Zombie3(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'zombie3.png', 'coordZombie3.txt', [1,8,1], zombie_speed=0.13, zombie_jump_speed=0.2, damage_level=3)
+        Zombie.__init__(self,'zombie3.png', 'coordZombie3.txt', [1,8,1,1], zombie_speed=0.13, zombie_jump_speed=0.2, damage_level=3)
 
 
 # Zombie de nivel 4
 class Zombie4(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'zombie4.png', 'coordZombie4.txt', [1,8,3], zombie_speed=0.15, zombie_jump_speed=0.2, damage_level=4)
+        Zombie.__init__(self,'zombie4.png', 'coordZombie4.txt', [1,8,3,1], zombie_speed=0.15, zombie_jump_speed=0.2, damage_level=4)
 
 
 # Oso (Boss)
 class Bear(Zombie):
 
     def __init__(self):
-        Zombie.__init__(self,'bear.png', 'coordBear.txt', [1,11,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=5)
+        Zombie.__init__(self,'bear.png', 'coordBear.txt', [1,11,1,1], zombie_speed=0.1, zombie_jump_speed=0.2, damage_level=5)
