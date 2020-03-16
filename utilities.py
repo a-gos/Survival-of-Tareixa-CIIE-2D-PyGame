@@ -11,7 +11,10 @@ class Bullet(MySprite):
 
         self.rect = self.image.get_rect()
         (posx, posy) = player.position
-        self.setposition((posx, player.rect.centery))
+        if(player.looking == RIGHT):
+            self.setposition((posx+self.rect.width, player.rect.centery))
+        else:
+            self.setposition((posx-self.rect.width, player.rect.centery))
         self.setpositionscreen(( scrollx, 0 ))
 
         self.looking = player.looking
