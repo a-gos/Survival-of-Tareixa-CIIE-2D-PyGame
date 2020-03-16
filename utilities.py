@@ -5,26 +5,31 @@ from MySprite import *
 from resourcesmanager import ResourcesManager
 
 class Bullet(MySprite):
-    def __init__(self,player,speed, scrollx):
+    def __init__(self, player, speed, scrollx):
         MySprite.__init__(self)
-        self.image = ResourcesManager.LoadImage('characters','disparo.png', -1)
 
+        # Carga de la imagen del disparo
+        self.image = ResourcesManager.LoadImageCharacter('disparo.png', -1)
         self.rect = self.image.get_rect()
+
+        # Dependiendo de hacia donde mire el jugador se crea el disparo en el
+        # lado derecho o en el izquierdo de este
         (posx, posy) = player.position
-        if(player.looking == RIGHT):
+        if player.looking == RIGHT:
             self.setposition((posx+self.rect.width, player.rect.centery))
         else:
             self.setposition((posx-self.rect.width, player.rect.centery))
-        self.setpositionscreen(( scrollx, 0 ))
+        self.setpositionscreen((scrollx, 0))
 
+        # Se comprueba si hay que darle la vuelta al disparo
         self.looking = player.looking
-        if(self.looking == LEFT):
+        if self.looking == LEFT:
             self.image = pygame.transform.flip(self.image, 1 ,0)
             speed = -speed
 
-        self.speed = (speed,0)
+        self.speed = (speed, 0)
         # print("spawn: ", self.position)
-    #
+
 
     def update(self, platformGroup, enemyGroup, scroll, time):
         # Comprueba si sobrepasa los límites de la pantalla
