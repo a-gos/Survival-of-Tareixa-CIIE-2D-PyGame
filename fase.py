@@ -115,7 +115,7 @@ class Fase(Scene):
     def __get_enemy(self, name):
         enemy = None
         if name == 'zombie1.png':
-            enemy = Zombie()
+            enemy = Zombie1()
         elif name == 'zombie2.png':
             enemy = Zombie2()
         elif name == 'zombie3.png':
@@ -125,7 +125,7 @@ class Fase(Scene):
         elif name == 'bear.png':
             enemy = Bear()
         else:
-            enemy = Zombie()
+            enemy = Zombie1()
         return enemy
 
     # Devuelve True o False según se ha tenido que desplazar el scroll
