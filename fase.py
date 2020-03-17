@@ -337,50 +337,23 @@ class Scenary:
 # -------------------------------------------------
 # Clase Heads-Up Display
 
-# class HUD:
-#
-#     def __init__(self):
-#         self.sprites = ResourcesManager.LoadImageHud('corazons.png', -1)
-#         # self.sprites = self.sprites.convert_alpha()
-#
-#         data = ResourcesManager.LoadCoordFileHud('coord_corazons.txt')
-#         data = data.split()
-#         self.coords = []
-#         cont = 0
-#         for animation in range(7):
-#             self.coords.append(pygame.Rect((int(data[cont]), int(
-#                 data[cont + 1])), (int(data[cont + 2]), int(data[cont + 3]))))
-#             cont += 4
-#
-#         self.currentImage = 6
-#         self.rect = self.coords[self.currentImage]
-#         self.pos_x = 50
-#         self.pos_y = 50
-#
-#     def update(self, player_health):
-#         if player_health >= 0:
-#             self.currentImage = int(player_health * 2)
-#         else:
-#             self.currentImage = 0
-#         self.rect = self.coords[self.currentImage]
-#
-#     def paint(self, screen):
-#         image = self.sprites.subsurface(self.rect)
-#         screen.blit(image, (self.pos_x, self.pos_y))
-
-
 class HUD:
 
     def __init__(self):
-        self.images = []
-        # Cargamos as 6 imaxes que indican o nivel de vida do xogador
-        for i in range(7):
-            filename = "vida_" + str(i) + ".png"
-            self.images.append(ResourcesManager.LoadImageHud(filename, -1))
-            # image = image.convert_alpha()
+        self.sprites = ResourcesManager.LoadImageHud('corazons.png', -1)
+        # self.sprites = self.sprites.convert_alpha()
+
+        data = ResourcesManager.LoadCoordFileHud('coord_corazons.txt')
+        data = data.split()
+        self.coords = []
+        cont = 0
+        for animation in range(7):
+            self.coords.append(pygame.Rect((int(data[cont]), int(
+                data[cont + 1])), (int(data[cont + 2]), int(data[cont + 3]))))
+            cont += 4
 
         self.currentImage = 6
-        self.image = self.images[self.currentImage]
+        self.rect = self.coords[self.currentImage]
         self.pos_x = 50
         self.pos_y = 50
 
@@ -389,7 +362,34 @@ class HUD:
             self.currentImage = int(player_health * 2)
         else:
             self.currentImage = 0
-        self.image = self.images[self.currentImage]
+        self.rect = self.coords[self.currentImage]
 
     def paint(self, screen):
-        screen.blit(self.image, (self.pos_x, self.pos_y))
+        image = self.sprites.subsurface(self.rect)
+        screen.blit(image, (self.pos_x, self.pos_y))
+
+
+# class HUD:
+#
+#     def __init__(self):
+#         self.images = []
+#         # Cargamos as 6 imaxes que indican o nivel de vida do xogador
+#         for i in range(7):
+#             filename = "vida_" + str(i) + ".png"
+#             self.images.append(ResourcesManager.LoadImageHud(filename, -1))
+#             # image = image.convert_alpha()
+#
+#         self.currentImage = 6
+#         self.image = self.images[self.currentImage]
+#         self.pos_x = 50
+#         self.pos_y = 50
+#
+#     def update(self, player_health):
+#         if player_health >= 0:
+#             self.currentImage = int(player_health * 2)
+#         else:
+#             self.currentImage = 0
+#         self.image = self.images[self.currentImage]
+#
+#     def paint(self, screen):
+#         screen.blit(self.image, (self.pos_x, self.pos_y))
