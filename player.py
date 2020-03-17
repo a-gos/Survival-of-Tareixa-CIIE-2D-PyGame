@@ -100,7 +100,7 @@ class Character(MySprite):
         self.isJumping = False
 
         # Leemos las coordenadas de un archivo de texto
-        data = ResourcesManager.LoadCoordFile(coordFile)
+        data = ResourcesManager.LoadCoordFileCharacter(coordFile)
         data = data.split()
         self.animationNumber = 1
         self.numImagenPostura = 0

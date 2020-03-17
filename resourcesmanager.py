@@ -16,6 +16,10 @@ class ResourcesManager(object):
     resources = {}
 
     @classmethod
+    def LoadImageHud(cls, name, colorkey=None):
+        return cls.LoadImage('hud', name, colorkey)
+
+    @classmethod
     def LoadImageMenu(cls, name, colorkey=None):
         return cls.LoadImage('menu', name, colorkey)
 
@@ -61,7 +65,15 @@ class ResourcesManager(object):
             return imagen
 
     @classmethod
-    def LoadCoordFile(cls, name):
+    def LoadCoordFileCharacter(cls, name):
+        return cls.LoadCoordFile('characters', name)
+
+    @classmethod
+    def LoadCoordFileHud(cls, name):
+        return cls.LoadCoordFile('hud', name)
+
+    @classmethod
+    def LoadCoordFile(cls, rel_path, name):
         # Si el nombre de archivo está entre los resources ya cargados
         if name in cls.resources:
             # Se devuelve ese recurso
@@ -70,7 +82,7 @@ class ResourcesManager(object):
         else:
             # Se carga el recurso indicando el nombre de su carpeta
             current_path = os.path.dirname(__file__) 
-            fullname_path = os.path.join(current_path, 'data', 'characters')
+            fullname_path = os.path.join(current_path, 'data', rel_path)
             fullname = os.path.join(fullname_path, name)
             pfile=open(fullname,'r')
             datos=pfile.read()
