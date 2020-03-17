@@ -180,7 +180,7 @@ class Character(MySprite):
                 self.image = pygame.transform.flip(self.hoja.subsurface(
                     self.coordenadasHoja[self.animationNumber][self.numImagenPostura]), 1, 0)
 
-    def update(self, platformGroup, tiempo):
+    def update(self, platformGroup, enemyGroup, tiempo):
 
         # Si el personaje ha caído al vacío
         if self.position[1] > HEIGHT_SCREEN:
@@ -285,7 +285,6 @@ class Player(Character):
 
     def mover(self, control):
         # Indicamos la acción a realizar segun la tecla pulsada por el jugador
-        
         if control.jump():
             Character.mover(self, UP)
         elif control.left():
@@ -297,7 +296,15 @@ class Player(Character):
         else:
             Character.mover(self, IDLE)
 
+    def update(self, platformGroup, enemyGroup, tiempo):
+        # Comprobamos si hay colision entre el jugador y algun enemigo
+        # Si la hay, restamos vida al jugador
+        enemy = pygame.sprite.spritecollideany(self, enemyGroup)
+        if enemy is not None:
+            self.health -= enemy.damage_level
+            print("Health = " + str(self.health))
 
+        Character.update(self, platformGroup, enemyGroup, tiempo)
 # -------------------------------------------------
 # Clase NPC
 

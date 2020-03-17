@@ -239,7 +239,7 @@ class Fase(Scene):
         # Esta operación de update ya comprueba que los movimientos sean correctos
         #  y, si lo son, realiza el movimiento de los Sprites
 
-        self.grupoSpritesDinamicos.update(self.platformGroup, time)
+        self.grupoSpritesDinamicos.update(self.platformGroup, self.enemyGroup, time)
 
         # Dentro del update ya se comprueba que todos los movimientos son válidos
         #  (que no choque con paredes, etc.)
@@ -250,19 +250,14 @@ class Fase(Scene):
         #  mostrar alguna animación
 
         # Comprobamos si los disparos colisionan con algún enemigo o plataforma para eliminarlos
-        self.grupoShots.update(self.platformGroup, self.enemyGroup, time)
+        # self.grupoShots.update(self.platformGroup, self.enemyGroup, time)
 
         # Si los disparos colisionan contra una plataforma o un enemigo hay que
         # eliminarlos. Además, en el último caso, hay que restar vida a los
         # enemigos.
 
 
-        # Comprobamos si hay colision entre el jugador y algun enemigo
-        # Si la hay, restamos vida al jugador
-        enemy = pygame.sprite.spritecollideany(self.player, self.enemyGroup)
-        if enemy is not None:
-            self.player.health -= enemy.damage_level
-            print("Health = " + str(self.player.health))
+
 
         # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
         # ha caído al vacío, se acaba el juego
@@ -298,8 +293,8 @@ class Fase(Scene):
                 if event.key == pygame.K_SPACE:
                     bullet = Bullet(self.player, 0.5, self.scrollx)
 
-                    # self.grupoSpritesDinamicos.add(bullet)
-                    self.grupoShots.add(bullet)
+                    self.grupoSpritesDinamicos.add(bullet)
+                    # self.grupoShots.add(bullet)
                     self.grupoSprites.add(bullet)
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
