@@ -237,27 +237,9 @@ class Fase(Scene):
         # Actualizamos los Sprites dinamicos
         # De esta forma, se simula que cambian todos a la vez
         # Esta operación de update ya comprueba que los movimientos sean correctos
-        #  y, si lo son, realiza el movimiento de los Sprites
+        # y, si lo son, realiza el movimiento de los Sprites
 
         self.grupoSpritesDinamicos.update(self.platformGroup, self.enemyGroup, time)
-
-        # Dentro del update ya se comprueba que todos los movimientos son válidos
-        #  (que no choque con paredes, etc.)
-
-        # Los Sprites que no se mueven no hace falta actualizarlos,
-        #  si se actualiza el scroll, sus posiciones en screen se actualizan más abajo
-        # En cambio, sí haría falta actualizar los Sprites que no se mueven pero que tienen que
-        #  mostrar alguna animación
-
-        # Comprobamos si los disparos colisionan con algún enemigo o plataforma para eliminarlos
-        # self.grupoShots.update(self.platformGroup, self.enemyGroup, time)
-
-        # Si los disparos colisionan contra una plataforma o un enemigo hay que
-        # eliminarlos. Además, en el último caso, hay que restar vida a los
-        # enemigos.
-
-
-
 
         # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
         # ha caído al vacío, se acaba el juego
