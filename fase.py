@@ -99,6 +99,17 @@ class Fase(Scene):
             enemy.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
             self.enemyGroup.add(enemy)
 
+        # El jefe final del nivel está en una capa diferente y guardamos una
+        # referencia a el en la fase para comprobar cuando se termina el nivel
+        layer = conf.get_layer_by_name('Boss')
+        tile = next(layer.tiles())
+        coord_x = tile[0]
+        coord_y = tile[1]
+        enemy_name = os.path.basename(tile[2][0])
+        self.boss = self.__get_enemy(enemy_name)
+        self.boss.setposition((coord_x * TILE_SIZE, coord_y * TILE_SIZE))
+        self.enemyGroup.add(self.boss)
+
         # Creamos un grupo con los Sprites que se mueven (personaje, enemigos, proyectiles,etc.
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.player, self.enemyGroup.sprites() )
         # Creamos otro grupo con todos los Sprites
@@ -256,7 +267,11 @@ class Fase(Scene):
         # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
         # ha caído al vacío, se acaba el juego
         if not self.player.alive():
+            print("JUEGO PERDIDO")
             # Llamada al director para manejar las escenas
+            self.director.exitScene()
+        elif not self.boss.alive():
+            print("JUEGO GANADO")
             self.director.exitScene()
 
         # Actualizamos el scroll
