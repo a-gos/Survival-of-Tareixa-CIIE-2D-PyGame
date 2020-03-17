@@ -239,23 +239,25 @@ class Fase(Scene):
         #  mostrar alguna animación
 
         # Comprobamos si los disparos colisionan con algún enemigo o plataforma para eliminarlos
-        self.grupoShots.update(self.platformGroup, self.enemyGroup, (self.scrollx, self.scrollx+WIDTH_SCREEN), time)
+        self.grupoShots.update(self.platformGroup, self.enemyGroup, time)
+
+        # Si los disparos colisionan contra una plataforma o un enemigo hay que
+        # eliminarlos. Además, en el último caso, hay que restar vida a los
+        # enemigos.
+
 
         # Comprobamos si hay colision entre el jugador y algun enemigo
         # Si la hay, restamos vida al jugador
         enemy = pygame.sprite.spritecollideany(self.player, self.enemyGroup)
         if enemy is not None:
-            # Se le dice al director que salga de esta escena y ejecute la
-            # siguiente en la pila
-            # self.director.exitScene()
-            # print("muerto")
             self.player.health -= enemy.damage_level
             print("Health = " + str(self.player.health))
 
-            # Si el jugador se queda sin vida, se acaba el juego
-            # if self.player.health <= 0:
-            #     # Llamada al director para manejar las escenas
-            #     pass
+        # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
+        # ha caído al vacío, se acaba el juego
+        if not self.player.alive():
+            # Llamada al director para manejar las escenas
+            self.director.exitScene()
 
         # Actualizamos el scroll
         self.updateScroll(self.player)

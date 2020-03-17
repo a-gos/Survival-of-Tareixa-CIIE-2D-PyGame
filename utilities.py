@@ -33,20 +33,20 @@ class Bullet(MySprite):
         # print("spawn: ", self.position)
 
 
-    def update(self, platformGroup, enemyGroup, scroll, time):
+    def update(self, platformGroup, enemyGroup, time):
         # Comprueba si sobrepasa los límites de la pantalla
         if self.looking == LEFT and self.rect.right < 0:
-            # print("position left: ", self.position, "rect: ", self.rect.right)
             self.kill()
         elif self.looking == RIGHT and self.rect.left > WIDTH_SCREEN:
-            # print("position right: ", self.position, "rect: ", self.rect.left)
             self.kill()
         else:
             # Comprueba si colisiona con una plataforma o enemigo
             enemy = pygame.sprite.spritecollideany(self, enemyGroup)
             if enemy is not None:
                 self.kill()
-                # RESTAR VIDA DEL ENEMIGO O ELIMINARLO
+                # Al colisionar con un enemigo se le resta vida
+                enemy.health -= self.damage
+                print("Health enemy = "+str(enemy.health))
             elif pygame.sprite.spritecollideany(self, platformGroup):
                 self.kill()
             else:

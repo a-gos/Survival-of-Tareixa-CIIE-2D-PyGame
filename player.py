@@ -182,77 +182,91 @@ class Character(MySprite):
 
     def update(self, platformGroup, tiempo):
 
-        (speedx, speedy) = self.speed
-        # print(self.rect)
+        # Si el personaje ha caído al vacío
+        if self.position[1] > HEIGHT_SCREEN:
+            self.health = 0
+            self.kill()
+            print("Personaje muerto")
 
-        # Si vamos a la izquierda o derecha
-        if (self.movement == LEFT) or (self.movement == RIGHT):
-            # cogemos el lado
-            self.looking = self.movement
-            # Esta mirando a la izquierda
-            if self.movement == LEFT:
-              speedx = -self.runSpeed
-            # o está mirando a la derecha
-            else:
-                speedx = self.runSpeed
-            # Si no estamos saltando
-            if self.animationNumber != SPRITE_JUMPING:
-                # La postura actual será estar caminando
-                self.animationNumber = SPRITE_WALKING
-                # Ademas, si no estamos encima de ninguna plataforma, caeremos
-                if pygame.sprite.spritecollideany(self, platformGroup) == None:
-                  self.animationNumber = SPRITE_JUMPING
-        # Si queremos saltar
-        if self.movement == UP:
-            if not(self.isJumping):
-                # La animation actual sera estar saltando
-                self.animationNumber = SPRITE_JUMPING
-                # Le imprimimos una speed en el eje y
-                speedy = -self.jumpSpeed
+        # Si al personaje lo han matado
+        elif self.health <= 0:
+            self.kill()
+            print("Personaje muerto")
 
-        # Si está disparando
-        if self.animationNumber == SPRITE_IDLE and self.movement == SHOOTING:
-            self.animationNumber = SPRITE_SHOOTING
+        # Si el personaje sigue vivo se actualiza su estado
+        else:
 
-        # Si no se ha pulsado ninguna tecla
-        if self.movement == IDLE:
-            # Si no estamos saltando, la animación actual será estar quieto
-            if not self.animationNumber == SPRITE_JUMPING:
-                self.animationNumber = SPRITE_IDLE
-            speedx = 0
+            (speedx, speedy) = self.speed
+            # print(self.rect)
 
-        # Si estamos en el aire
-        if self.animationNumber == SPRITE_JUMPING:
-            # Miramos a ver si hay que parar de caer: si hemos llegado a una
-            # platforma. Para ello, miramos si hay colision con alguna
-            # platforma del grupo
-            platform = pygame.sprite.spritecollideany(self, platformGroup)
-            # Ademas, esa colision solo nos interesa cuando estamos cayendo
-            # y solo es efectiva cuando caemos encima, no de lado, es decir,
-            # cuando nuestra position inferior esta por encima de la parte de
-            # abajo de la platform
-            if (platform != None) and (speedy > 0) and \
-                    (platform.rect.bottom > self.rect.bottom):
-                # Lo situamos con la parte de abajo un pixel colisionando con
-                # la plataforma para poder detectar cuando se cae de ella
-                self.setposition(
-                    (self.position[0], platform.position[1]-platform.rect.height+1))
-                # Lo ponemos como quieto
-                self.animationNumber = SPRITE_IDLE
-                # Y estará quieto en el eje y
-                speedy = 0
-                self.isJumping = False
+            # Si vamos a la izquierda o derecha
+            if (self.movement == LEFT) or (self.movement == RIGHT):
+                # Cogemos el lado hacia el que mira
+                self.looking = self.movement
+                # Si mirando a la izquierda
+                if self.movement == LEFT:
+                  speedx = -self.runSpeed
+                # o si está mirando a la derecha
+                else:
+                    speedx = self.runSpeed
+                # Si no estamos saltando
+                if self.animationNumber != SPRITE_JUMPING:
+                    # La postura actual será estar caminando
+                    self.animationNumber = SPRITE_WALKING
+                    # Ademas, si no estamos encima de ninguna plataforma, caeremos
+                    if pygame.sprite.spritecollideany(self, platformGroup) == None:
+                      self.animationNumber = SPRITE_JUMPING
+            # Si queremos saltar
+            if self.movement == UP:
+                if not(self.isJumping):
+                    # La animation actual sera estar saltando
+                    self.animationNumber = SPRITE_JUMPING
+                    # Le imprimimos una speed en el eje y
+                    speedy = -self.jumpSpeed
 
-            # Si no caemos en una platform, aplicamos el efecto de la gravedad
-            else:
-                speedy += GRAVITY * tiempo
+            # Si está disparando
+            if self.animationNumber == SPRITE_IDLE and self.movement == SHOOTING:
+                self.animationNumber = SPRITE_SHOOTING
 
-        # Actualizamos la imagen a mostrar
-        self.updatePosture()
+            # Si no se ha pulsado ninguna tecla
+            if self.movement == IDLE:
+                # Si no estamos saltando, la animación actual será estar quieto
+                if not self.animationNumber == SPRITE_JUMPING:
+                    self.animationNumber = SPRITE_IDLE
+                speedx = 0
 
-        self.speed = (speedx, speedy)
+            # Si estamos en el aire
+            if self.animationNumber == SPRITE_JUMPING:
+                # Miramos a ver si hay que parar de caer: si hemos llegado a una
+                # platforma. Para ello, miramos si hay colision con alguna
+                # platforma del grupo
+                platform = pygame.sprite.spritecollideany(self, platformGroup)
+                # Ademas, esa colision solo nos interesa cuando estamos cayendo
+                # y solo es efectiva cuando caemos encima, no de lado, es decir,
+                # cuando nuestra position inferior esta por encima de la parte de
+                # abajo de la platform
+                if (platform != None) and (speedy > 0) and \
+                        (platform.rect.bottom > self.rect.bottom):
+                    # Lo situamos con la parte de abajo un pixel colisionando con
+                    # la plataforma para poder detectar cuando se cae de ella
+                    self.setposition(
+                        (self.position[0], platform.position[1]-platform.rect.height+1))
+                    # Lo ponemos como quieto
+                    self.animationNumber = SPRITE_IDLE
+                    # Y estará quieto en el eje y
+                    speedy = 0
+                    self.isJumping = False
 
-        MySprite.update(self, tiempo)
+                # Si no caemos en una platform, aplicamos el efecto de la gravedad
+                else:
+                    speedy += GRAVITY * tiempo
+
+            # Actualizamos la imagen a mostrar
+            self.updatePosture()
+
+            self.speed = (speedx, speedy)
+
+            MySprite.update(self, tiempo)
         return
 
 

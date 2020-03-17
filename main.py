@@ -32,7 +32,7 @@ if __name__ == '__main__':
         scene = Menu(director)
 
     # Le decimos al director que apile esta escena
-    director.stackscene(scene)
+    director.stackScene(scene)
     # Y ejecutamos el juego
     director.execute()
     # Cuando se termine la ejecución, finaliza la librería
