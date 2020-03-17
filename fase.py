@@ -77,7 +77,6 @@ class Fase(Scene):
 
         # Creamos el sprite del jugador
         self.player = Player()
-        self.grupoPlayers = pygame.sprite.Group(self.player)
 
         # Ponemos al jugador en su posición inicial
         layer = conf.get_layer_by_name('Character')
@@ -242,13 +241,22 @@ class Fase(Scene):
         # Comprobamos si los disparos colisionan con algún enemigo o plataforma para eliminarlos
         self.grupoShots.update(self.platformGroup, self.enemyGroup, (self.scrollx, self.scrollx+WIDTH_SCREEN), time)
 
-        # Comprobamos si hay colision entre algun jugador y algun enemy
-        # Se comprueba la colision entre ambos grupos
-        # Si la hay, indicamos que se ha finalizado la fase
-        if pygame.sprite.groupcollide(self.grupoPlayers, self.enemyGroup, False, False)!={}:
-            # Se le dice al director que salga de esta escena y ejecute la siguiente en la pila
-            #self.director.exitScene()
-            print("muerto")
+        # Comprobamos si hay colision entre el jugador y algun enemigo
+        # Si la hay, restamos vida al jugador
+        enemy = pygame.sprite.spritecollideany(self.player, self.enemyGroup)
+        if enemy is not None:
+            # Se le dice al director que salga de esta escena y ejecute la
+            # siguiente en la pila
+            # self.director.exitScene()
+            # print("muerto")
+            self.player.health -= enemy.damage_level
+            print("Health = " + str(self.player.health))
+
+            # Si el jugador se queda sin vida, se acaba el juego
+            # if self.player.health <= 0:
+            #     # Llamada al director para manejar las escenas
+            #     pass
+
         # Actualizamos el scroll
         self.updateScroll(self.player)
 
