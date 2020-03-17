@@ -5,8 +5,10 @@ from MySprite import *
 from resourcesmanager import ResourcesManager
 
 class Bullet(MySprite):
-    def __init__(self, player, speed, scrollx):
+    def __init__(self, player, speed, scrollx, damage=0.5):
         MySprite.__init__(self)
+        # Daño que provoca cada disparo
+        self.damage = damage
 
         # Carga de la imagen del disparo
         self.image = ResourcesManager.LoadImageCharacter('disparo.png', -1)
