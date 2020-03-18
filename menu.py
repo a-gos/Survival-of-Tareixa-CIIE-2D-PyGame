@@ -57,26 +57,26 @@ class Boton(ElementoGUI):
         pantalla.blit(self.imagen, self.rect)
 
 class BotonJugar(Boton):
-    def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'xogar.png', (615,224))
+    def __init__(self, pantalla, nombreImagen='xogar.png', posicion=(615,224)):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
     def action(self):
         self.pantalla.menu.ejecutarJuego()
 
 class BotonInstrucciones(Boton):
-    def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'instruccions.png', (622,340))
+    def __init__(self, pantalla, nombreImagen='instruccions.png', posicion=(622,340)):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
     def action(self):
         self.pantalla.menu.mostrarIntrucciones()
 
 class BotonSalir(Boton):
-    def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'sair_gris.png', (626,451))
+    def __init__(self, pantalla, nombreImagen='sair_gris.png', posicion=(626,451)):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
     def action(self):
         self.pantalla.menu.salirPrograma()
 
 class BotonVolver(Boton):
-    def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'volver.png', (50,498))
+    def __init__(self, pantalla, nombreImagen='volver.png', posicion=(50,498)):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
     def action(self):
         self.pantalla.menu.mostrarPantallaInicial()
 
