@@ -78,7 +78,6 @@ class Fase(Scene):
 
         # Creamos el sprite del jugador
         self.player = Player()
-        self.grupoPlayers = pygame.sprite.Group(self.player)
 
         # Ponemos al jugador en su posición inicial
         layer = conf.get_layer_by_name('Character')
@@ -101,6 +100,17 @@ class Fase(Scene):
             enemy.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
             self.enemyGroup.add(enemy)
 
+        # El jefe final del nivel está en una capa diferente y guardamos una
+        # referencia a el en la fase para comprobar cuando se termina el nivel
+        layer = conf.get_layer_by_name('Boss')
+        tile = next(layer.tiles())
+        coord_x = tile[0]
+        coord_y = tile[1]
+        enemy_name = os.path.basename(tile[2][0])
+        self.boss = self.__get_enemy(enemy_name)
+        self.boss.setposition((coord_x * TILE_SIZE, coord_y * TILE_SIZE))
+        self.enemyGroup.add(self.boss)
+
         # Creamos un grupo con los Sprites que se mueven (personaje, enemigos, proyectiles,etc.
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.player, self.enemyGroup.sprites() )
         # Creamos otro grupo con todos los Sprites
@@ -108,6 +118,9 @@ class Fase(Scene):
 
         # Creamos los controles del jugador
         self.control = ControlKeyboard()
+
+        # Creamos el Heads-Up Display con el nivel de vida
+        self.hud = HUD()
 
 
      #ANIMATIONS AQUI
@@ -228,40 +241,35 @@ class Fase(Scene):
         # Actualizamos los Sprites dinamicos
         # De esta forma, se simula que cambian todos a la vez
         # Esta operación de update ya comprueba que los movimientos sean correctos
-        #  y, si lo son, realiza el movimiento de los Sprites
+        # y, si lo son, realiza el movimiento de los Sprites
 
-        self.grupoSpritesDinamicos.update(self.platformGroup, time)
+        self.grupoSpritesDinamicos.update(self.platformGroup, self.enemyGroup, time)
 
-        # Dentro del update ya se comprueba que todos los movimientos son válidos
-        #  (que no choque con paredes, etc.)
+        # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
+        # ha caído al vacío, se acaba el juego
+        if not self.player.alive():
+            print("JUEGO PERDIDO")
+            # Llamada al director para manejar las escenas
+            self.director.exitScene()
+        elif not self.boss.alive():
+            print("JUEGO GANADO")
+            self.director.exitScene()
 
-        # Los Sprites que no se mueven no hace falta actualizarlos,
-        #  si se actualiza el scroll, sus posiciones en screen se actualizan más abajo
-        # En cambio, sí haría falta actualizar los Sprites que no se mueven pero que tienen que
-        #  mostrar alguna animación
-
-        # Comprobamos si los disparos colisionan con algún enemigo o plataforma para eliminarlos
-        self.grupoShots.update(self.platformGroup, self.enemyGroup, (self.scrollx, self.scrollx+WIDTH_SCREEN), time)
-
-        # Comprobamos si hay colision entre algun jugador y algun enemy
-        # Se comprueba la colision entre ambos grupos
-        # Si la hay, indicamos que se ha finalizado la fase
-        if pygame.sprite.groupcollide(self.grupoPlayers, self.enemyGroup, False, False)!={}:
-            # Se le dice al director que salga de esta escena y ejecute la siguiente en la pila
-            #self.director.exitScene()
-            print("muerto")
         # Actualizamos el scroll
         self.updateScroll(self.player)
 
+        # Actualizamos el HUD
+        self.hud.update(self.player.health)
 
-        
+
+
     def paint(self, screen):
         # Dibujamos el decorado
         self.scenary.paint(screen)
         # Luego los Sprites
         self.grupoSprites.draw(screen)
-        # Y por ultimo, dibujamos las animaciones por encima del decorado
-        # AÑADIR HUD
+        # Y por ultimo, dibujamos el HUD por encima del decorado
+        self.hud.paint(screen)
 
 
     def events(self, event_list):
@@ -274,8 +282,8 @@ class Fase(Scene):
                 if event.key == pygame.K_SPACE:
                     bullet = Bullet(self.player, 0.5, self.scrollx)
 
-                    # self.grupoSpritesDinamicos.add(bullet)
-                    self.grupoShots.add(bullet)
+                    self.grupoSpritesDinamicos.add(bullet)
+                    # self.grupoShots.add(bullet)
                     self.grupoSprites.add(bullet)
                 elif event.key == pygame.K_p:
                     pause_scene = MenuPausa(self.director)
@@ -329,3 +337,41 @@ class Scenary:
 
     def paint(self, screen):
         screen.blit(self.imagen, self.rect, self.rectSubimagen)
+
+
+# -------------------------------------------------
+# Clase Heads-Up Display
+
+class HUD:
+
+    def __init__(self):
+        self.sprites = ResourcesManager.LoadImageHud('corazons_con_calavera.png', -1)
+        # self.sprites = self.sprites.convert_alpha()
+
+        # Cargamos las coordenadas de cada sprite
+        data = ResourcesManager.LoadCoordFileHud('coord_corazons.txt')
+        data = data.split()
+        self.coords = []
+        cont = 0
+        for animation in range(7):
+            self.coords.append(pygame.Rect((int(data[cont]), int(
+                data[cont + 1])), (int(data[cont + 2]), int(data[cont + 3]))))
+            cont += 4
+
+        # Establecemos como imagen inicial los 3 corazones
+        self.currentImage = 6
+        self.rect = self.coords[self.currentImage]
+        self.pos_x = 50
+        self.pos_y = 50
+
+    def update(self, player_health):
+        # Dependiendo de la vida del jugador se carga una imagen u otra
+        if player_health >= 0:
+            self.currentImage = int(player_health * 2)
+        else:
+            self.currentImage = 0
+        self.rect = self.coords[self.currentImage]
+
+    def paint(self, screen):
+        image = self.sprites.subsurface(self.rect)
+        screen.blit(image, (self.pos_x, self.pos_y))

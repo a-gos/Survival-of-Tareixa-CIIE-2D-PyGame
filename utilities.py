@@ -5,8 +5,10 @@ from MySprite import *
 from resourcesmanager import ResourcesManager
 
 class Bullet(MySprite):
-    def __init__(self, player, speed, scrollx):
+    def __init__(self, player, speed, scrollx, damage_level=0.5):
         MySprite.__init__(self)
+        # Daño que provoca cada disparo
+        self.damage_level = damage_level
 
         # Carga de la imagen del disparo
         self.image = ResourcesManager.LoadImageCharacter('disparo.png', -1)
@@ -28,23 +30,23 @@ class Bullet(MySprite):
             speed = -speed
 
         self.speed = (speed, 0)
-        # print("spawn: ", self.position)
 
-
-    def update(self, platformGroup, enemyGroup, scroll, time):
+    def update(self, platformGroup, enemyGroup, time):
         # Comprueba si sobrepasa los límites de la pantalla
         if self.looking == LEFT and self.rect.right < 0:
-            # print("position left: ", self.position, "rect: ", self.rect.right)
             self.kill()
         elif self.looking == RIGHT and self.rect.left > WIDTH_SCREEN:
-            # print("position right: ", self.position, "rect: ", self.rect.left)
             self.kill()
         else:
             # Comprueba si colisiona con una plataforma o enemigo
             enemy = pygame.sprite.spritecollideany(self, enemyGroup)
             if enemy is not None:
                 self.kill()
-                # RESTAR VIDA DEL ENEMIGO O ELIMINARLO
+                # Al colisionar con un enemigo se le resta vida
+                # La comprobación de si el enemigo debe ser eliminado se hace
+                # en el método update del enemigo
+                enemy.health -= self.damage_level
+                print("Health enemy = "+str(enemy.health))
             elif pygame.sprite.spritecollideany(self, platformGroup):
                 self.kill()
             else:
