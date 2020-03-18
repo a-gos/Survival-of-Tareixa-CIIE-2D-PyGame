@@ -343,6 +343,7 @@ class HUD:
         self.sprites = ResourcesManager.LoadImageHud('corazons.png', -1)
         # self.sprites = self.sprites.convert_alpha()
 
+        # Cargamos las coordenadas de cada sprite
         data = ResourcesManager.LoadCoordFileHud('coord_corazons.txt')
         data = data.split()
         self.coords = []
@@ -352,12 +353,14 @@ class HUD:
                 data[cont + 1])), (int(data[cont + 2]), int(data[cont + 3]))))
             cont += 4
 
+        # Establecemos como imagen inicial los 3 corazones
         self.currentImage = 6
         self.rect = self.coords[self.currentImage]
         self.pos_x = 50
         self.pos_y = 50
 
     def update(self, player_health):
+        # Dependiendo de la vida del jugador se carga una imagen u otra
         if player_health >= 0:
             self.currentImage = int(player_health * 2)
         else:
