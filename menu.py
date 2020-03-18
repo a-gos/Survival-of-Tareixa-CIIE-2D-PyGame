@@ -106,7 +106,7 @@ class PantallaGUI:
     def __init__(self, menu, nombreImagen):
         self.menu = menu
         # Se carga la imagen de fondo
-        self.imagen = ResourcesManager.LoadImageMenu(nombreImagen, -1)
+        self.imagen = ResourcesManager.LoadImageMenu(nombreImagen)
         # self.imagen = self.imagen.convert_alpha()
         self.imagen = pygame.transform.scale(self.imagen, (WIDTH_SCREEN, HEIGHT_SCREEN))
         # Se tiene una lista de elementos GUI
