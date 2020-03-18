@@ -261,7 +261,7 @@ class Fase(Scene):
         self.hud.update(self.player.health)
 
 
-        
+
     def paint(self, screen):
         # Dibujamos el decorado
         self.scenary.paint(screen)
@@ -340,7 +340,7 @@ class Scenary:
 class HUD:
 
     def __init__(self):
-        self.sprites = ResourcesManager.LoadImageHud('corazons.png', -1)
+        self.sprites = ResourcesManager.LoadImageHud('corazons_con_calavera.png', -1)
         # self.sprites = self.sprites.convert_alpha()
 
         # Cargamos las coordenadas de cada sprite
@@ -370,29 +370,3 @@ class HUD:
     def paint(self, screen):
         image = self.sprites.subsurface(self.rect)
         screen.blit(image, (self.pos_x, self.pos_y))
-
-
-# class HUD:
-#
-#     def __init__(self):
-#         self.images = []
-#         # Cargamos as 6 imaxes que indican o nivel de vida do xogador
-#         for i in range(7):
-#             filename = "vida_" + str(i) + ".png"
-#             self.images.append(ResourcesManager.LoadImageHud(filename, -1))
-#             # image = image.convert_alpha()
-#
-#         self.currentImage = 6
-#         self.image = self.images[self.currentImage]
-#         self.pos_x = 50
-#         self.pos_y = 50
-#
-#     def update(self, player_health):
-#         if player_health >= 0:
-#             self.currentImage = int(player_health * 2)
-#         else:
-#             self.currentImage = 0
-#         self.image = self.images[self.currentImage]
-#
-#     def paint(self, screen):
-#         screen.blit(self.image, (self.pos_x, self.pos_y))
