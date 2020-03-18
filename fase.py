@@ -8,6 +8,7 @@ from resourcesmanager import ResourcesManager
 from control import *
 import os
 from utilities import *
+from menu import *
 # -------------------------------------------------
 # -------------------------------------------------
 # Constantes
@@ -276,6 +277,10 @@ class Fase(Scene):
                     # self.grupoSpritesDinamicos.add(bullet)
                     self.grupoShots.add(bullet)
                     self.grupoSprites.add(bullet)
+                elif event.key == pygame.K_p:
+                    pause_scene = MenuPausa(self.director)
+                    self.director.stackScene(pause_scene)
+                    # self.director.exit_scene = True
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         self.player.mover(self.control)

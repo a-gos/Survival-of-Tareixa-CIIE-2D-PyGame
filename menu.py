@@ -4,7 +4,7 @@ import pygame
 from pygame.locals import *
 from scene import *
 from resourcesmanager import *
-from fase import Fase
+import fase
 
 # -------------------------------------------------
 # Clase abstracta ElementoGUI
@@ -25,7 +25,8 @@ class ElementoGUI:
     # Método que dice si se ha hecho clic en él
     def posicionEnElemento(self, posicion):
         (posicionx, posiciony) = posicion
-        if (posicionx>=self.rect.left) and (posicionx<=self.rect.right) and (posiciony>=self.rect.top) and (posiciony<=self.rect.bottom):
+        if (posicionx>=self.rect.left) and (posicionx<=self.rect.right) and \
+                (posiciony>=self.rect.top) and (posiciony<=self.rect.bottom):
             return True
         else:
             return False
@@ -49,37 +50,54 @@ class Boton(ElementoGUI):
         # Se carga la imagen del boton
         self.imagen = ResourcesManager.LoadImageMenu(nombreImagen,-1)
         # self.imagen = pygame.transform.scale(self.imagen, (20, 20))
-        # Se llama al método de la clase padre con el rectángulo que ocupa el botón
+        # Se llama al método de la clase padre con el rectángulo que ocupa el
+        # botón
         ElementoGUI.__init__(self, pantalla, self.imagen.get_rect())
         # Se coloca el rectangulo en su posicion
         self.establecerPosicion(posicion)
+
     def paint(self, pantalla):
         pantalla.blit(self.imagen, self.rect)
+
 
 class BotonJugar(Boton):
     def __init__(self, pantalla, nombreImagen='xogar.png', posicion=(615,224)):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
+
     def action(self):
         self.pantalla.menu.ejecutarJuego()
+
 
 class BotonInstrucciones(Boton):
     def __init__(self, pantalla, nombreImagen='instruccions.png', posicion=(622,340)):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
+
     def action(self):
         self.pantalla.menu.mostrarIntrucciones()
+
 
 class BotonSalir(Boton):
     def __init__(self, pantalla, nombreImagen='sair_gris.png', posicion=(626,451)):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
+
     def action(self):
         self.pantalla.menu.salirPrograma()
+
 
 class BotonVolver(Boton):
     def __init__(self, pantalla, nombreImagen='volver.png', posicion=(50,498)):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
+
     def action(self):
         self.pantalla.menu.mostrarPantallaInicial()
 
+
+class BotonContinuar(Boton):
+    def __init__(self, pantalla, nombreImagen='continuar_blanco.png', posicion=(590,400)):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
+
+    def action(self):
+        self.pantalla.menu.continuarJuego()
 
 # -------------------------------------------------
 # Clase PantallaGUI y las distintas pantallas
@@ -88,7 +106,8 @@ class PantallaGUI:
     def __init__(self, menu, nombreImagen):
         self.menu = menu
         # Se carga la imagen de fondo
-        self.imagen = ResourcesManager.LoadImageMenu(nombreImagen)
+        self.imagen = ResourcesManager.LoadImageMenu(nombreImagen, -1)
+        # self.imagen = self.imagen.convert_alpha()
         self.imagen = pygame.transform.scale(self.imagen, (WIDTH_SCREEN, HEIGHT_SCREEN))
         # Se tiene una lista de elementos GUI
         self.elementosGUI = []
@@ -113,7 +132,8 @@ class PantallaGUI:
         for elemento in self.elementosGUI:
             elemento.paint(pantalla)
 
-class PantallaInicialGUI(PantallaGUI):
+
+class PantallaInicial(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'fondo_principal.png')
         # Creamos los botones y los metemos en la lista
@@ -124,14 +144,21 @@ class PantallaInicialGUI(PantallaGUI):
         self.elementosGUI.append(botonInstrucciones)
         self.elementosGUI.append(botonSalir)
 
-class PantallaIntruccionesGUI(PantallaGUI):
+
+class PantallaIntrucciones(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'fondo_instruccions.png')
         # Creamos el boton y lo metemos en la lista
         botonVolver = BotonVolver(self)
         self.elementosGUI.append(botonVolver)
 
-
+class PantallaPausa(PantallaGUI):
+    def __init__(self, menu):
+        PantallaGUI.__init__(self, menu, 'fondo_pausa.png')
+        botonSalir = BotonSalir(self, 'sair_blanco.png', (310,400))
+        botonContinuar = BotonContinuar(self)
+        self.elementosGUI.append(botonSalir)
+        self.elementosGUI.append(botonContinuar)
 # -------------------------------------------------
 # Clase Menu, que será utilizada por los diferentes tipos de menús del juego
 
@@ -178,21 +205,50 @@ class Menu(Scene):
         self.pantallaActual = 0
 
 
-
 class MenuPrincipal(Menu):
 
     def __init__(self, director):
         # Llamamos al constructor de la clase padre pasándole las distintas
         # pantallas que va a tener el menú
-        pantallas = [PantallaInicialGUI(self), PantallaIntruccionesGUI(self)]
+        pantallas = [PantallaInicial(self), PantallaIntrucciones(self)]
         Menu.__init__(self, director, pantallas)
 
     #--------------------------------------
     # Metodos propios del menu principal del juego
 
     def ejecutarJuego(self):
-        fase = Fase(self.director, 1)
-        self.director.stackscene(fase)
+        level = fase.Fase(self.director, 1)
+        self.director.stackScene(level)
 
     def mostrarIntrucciones(self):
         self.pantallaActual = 1
+
+
+class MenuPausa(Menu):
+
+    def __init__(self, director):
+        pantallas = [PantallaPausa(self)]
+        Menu.__init__(self, director, pantallas)
+
+    # Se redefine el método events para incluír la pulsación de la tecla P
+    # para continuar el juego
+    def events(self, lista_eventos):
+        # Se mira si se quiere salir de esta escena
+        for evento in lista_eventos:
+            # Si se quiere salir, se le indica al director
+            if evento.type == KEYDOWN:
+                if evento.key == K_ESCAPE:
+                    self.salirPrograma()
+                elif evento.key == K_p:
+                    self.continuarJuego()
+            elif evento.type == pygame.QUIT:
+                self.director.exitProgram()
+
+        # Se pasa la lista de eventos a la pantalla actual
+        self.listaPantallas[self.pantallaActual].events(lista_eventos)
+
+    # --------------------------------------
+    # Metodos propios del menu principal del juego
+    def continuarJuego(self):
+        # Sacamos el menú de pausa de la pila de escenas para continuar el juego
+        self.director.exitScene()

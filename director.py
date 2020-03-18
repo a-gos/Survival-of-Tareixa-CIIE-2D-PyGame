@@ -58,7 +58,7 @@ class Director():
             self.loop(scene)
 
 
-    def exitscene(self):
+    def exitScene(self):
         # Indicamos en el flag que se quiere salir de la scene
         self.exit_scene = True
         # Eliminamos la scene actual de la pila (si la hay)
@@ -70,12 +70,12 @@ class Director():
         self.stack = []
         self.exit_scene = True
 
-    def changescene(self, scene):
-        self.exitscene()
+    def changeScene(self, scene):
+        self.exitScene()
         # Ponemos la scene pasada en la cima de la pila
         self.stack.append(scene)
 
-    def stackscene(self, scene):
+    def stackScene(self, scene):
         self.exit_scene = True
         # Ponemos la scene pasada en la cima de la pila
         #  (por encima de la actual)
