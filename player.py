@@ -263,6 +263,15 @@ class Character(MySprite):
                         speedy = 0
                         self.isJumping = False
 
+                    # Si no cae sobre una plataforma, comprobamos si ha chocado
+                    # contra el techo
+                    elif (speedy < 0) and (platform.rect.bottom < self.rect.bottom)\
+                            and platform.rect.left < self.rect.centerx < platform.rect.right:
+                        self.setposition(
+                            (self.position[0],
+                             platform.position[1] + platform.rect.height))
+                        speedy = 0
+
                 # Si no caemos en una platform, aplicamos el efecto de la gravedad
                 if not floor_collision:
                     speedy += GRAVITY * tiempo
