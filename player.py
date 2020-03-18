@@ -235,31 +235,60 @@ class Character(MySprite):
                     self.animationNumber = SPRITE_IDLE
                 speedx = 0
 
+            # Obtenemos las plataformas contra las que está colisionando el
+            # personaje
+            platforms_collided = pygame.sprite.spritecollide(self, platformGroup, False)
+
             # Si estamos en el aire
             if self.animationNumber == SPRITE_JUMPING:
                 # Miramos a ver si hay que parar de caer: si hemos llegado a una
                 # platforma. Para ello, miramos si hay colision con alguna
                 # platforma del grupo
-                platform = pygame.sprite.spritecollideany(self, platformGroup)
                 # Ademas, esa colision solo nos interesa cuando estamos cayendo
                 # y solo es efectiva cuando caemos encima, no de lado, es decir,
                 # cuando nuestra position inferior esta por encima de la parte de
                 # abajo de la platform
-                if (platform != None) and (speedy > 0) and \
-                        (platform.rect.bottom > self.rect.bottom):
-                    # Lo situamos con la parte de abajo un pixel colisionando con
-                    # la plataforma para poder detectar cuando se cae de ella
-                    self.setposition(
-                        (self.position[0], platform.position[1]-platform.rect.height+1))
-                    # Lo ponemos como quieto
-                    self.animationNumber = SPRITE_IDLE
-                    # Y estará quieto en el eje y
-                    speedy = 0
-                    self.isJumping = False
+                floor_collision = False
+                for platform in platforms_collided:
+                    if (speedy > 0) and (platform.rect.bottom > self.rect.bottom)\
+                            and platform.rect.left < self.rect.centerx < platform.rect.right:
+                        floor_collision = True
+                        # Lo situamos con la parte de abajo un pixel colisionando con
+                        # la plataforma para poder detectar cuando se cae de ella
+                        self.setposition(
+                            (self.position[0], platform.position[1]-platform.rect.height+1))
+                        # Lo ponemos como quieto
+                        self.animationNumber = SPRITE_IDLE
+                        # Y estará quieto en el eje y
+                        speedy = 0
+                        self.isJumping = False
 
                 # Si no caemos en una platform, aplicamos el efecto de la gravedad
-                else:
+                if not floor_collision:
                     speedy += GRAVITY * tiempo
+
+            # Comprobamos si el jugador colisiona contra un muro lateralmente
+            for platform in platforms_collided:
+                # Colisión lateral
+                if platform.rect.top < self.rect.centery < platform.rect.bottom:
+                    # Si colisiona por la izquierda de la plataforma
+                    if platform.rect.centerx > self.rect.centerx:
+                        # Se mueve un poco el personaje para que no quede
+                        # bloqueado contra el muro
+                        self.setposition(
+                            (platform.position[0]-self.rect.width,
+                             self.position[1]))
+
+                    # Si colisiona por la derecha de la plataforma
+                    else:
+                        self.setposition(
+                            (platform.position[0]+platform.rect.width,
+                             self.position[1]))
+
+                    # Para al personaje para que no pueda atravesar el muro
+                    speedx = 0
+                    break
+
 
             # Actualizamos la imagen a mostrar
             self.updatePosture()
