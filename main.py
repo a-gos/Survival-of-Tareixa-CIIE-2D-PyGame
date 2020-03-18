@@ -10,7 +10,7 @@ from player import Player
 from fase import Fase
 import director
 from director import *
-from menu import Menu
+from menu import *
 
 # Si se pone a True, se cargará directamente la fase indicada en DEBUG_FASE,
 # sin necesidad de acceder a través del menú
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         scene = Fase(director, DEBUG_FASE_NUM)
     else:
         # Creamos la escena con el menú principal
-        scene = Menu(director)
+        scene = MenuPrincipal(director)
 
     # Le decimos al director que apile esta escena
     director.stackscene(scene)

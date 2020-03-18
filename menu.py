@@ -133,20 +133,20 @@ class PantallaIntruccionesGUI(PantallaGUI):
 
 
 # -------------------------------------------------
-# Clase Menu, la escena en sí
+# Clase Menu, que será utilizada por los diferentes tipos de menús del juego
 
 class Menu(Scene):
 
-    def __init__(self, director):
+    def __init__(self, director, pantallas):
         # Llamamos al constructor de la clase padre
         Scene.__init__(self, director)
         # Creamos la lista de pantallas
         self.listaPantallas = []
         # Creamos las pantallas que vamos a tener
-        #   y las metemos en la lista
-        self.listaPantallas.append(PantallaInicialGUI(self))
-        self.listaPantallas.append(PantallaIntruccionesGUI(self))
-        # En que pantalla estamos actualmente
+        # y las metemos en la lista
+        for pantalla in pantallas:
+            self.listaPantallas.append(pantalla)
+        # Establecemos la pantalla inicial del menú como la pantalla actual
         self.mostrarPantallaInicial()
 
     def update(self, *args):
@@ -169,20 +169,30 @@ class Menu(Scene):
         self.listaPantallas[self.pantallaActual].paint(pantalla)
 
     #--------------------------------------
-    # Metodos propios del menu
+    # Metodos genéricos de cualquier menu
 
     def salirPrograma(self):
         self.director.exitProgram()
+
+    def mostrarPantallaInicial(self):
+        self.pantallaActual = 0
+
+
+
+class MenuPrincipal(Menu):
+
+    def __init__(self, director):
+        # Llamamos al constructor de la clase padre pasándole las distintas
+        # pantallas que va a tener el menú
+        pantallas = [PantallaInicialGUI(self), PantallaIntruccionesGUI(self)]
+        Menu.__init__(self, director, pantallas)
+
+    #--------------------------------------
+    # Metodos propios del menu principal del juego
 
     def ejecutarJuego(self):
         fase = Fase(self.director, 1)
         self.director.stackscene(fase)
 
-    def mostrarPantallaInicial(self):
-        self.pantallaActual = 0
-
     def mostrarIntrucciones(self):
         self.pantallaActual = 1
-
-    # def mostrarPantallaConfiguracion(self):
-    #    self.pantallaActual = ...
