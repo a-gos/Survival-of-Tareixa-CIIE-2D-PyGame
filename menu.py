@@ -70,7 +70,7 @@ class BotonInstrucciones(Boton):
 
 class BotonSalir(Boton):
     def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'sair.png', (626,451))
+        Boton.__init__(self, pantalla, 'sair_gris.png', (626,451))
     def action(self):
         self.pantalla.menu.salirPrograma()
 
@@ -115,7 +115,7 @@ class PantallaGUI:
 
 class PantallaInicialGUI(PantallaGUI):
     def __init__(self, menu):
-        PantallaGUI.__init__(self, menu, 'portada_principal.png')
+        PantallaGUI.__init__(self, menu, 'fondo_principal.png')
         # Creamos los botones y los metemos en la lista
         botonJugar = BotonJugar(self)
         botonInstrucciones = BotonInstrucciones(self)
@@ -126,7 +126,7 @@ class PantallaInicialGUI(PantallaGUI):
 
 class PantallaIntruccionesGUI(PantallaGUI):
     def __init__(self, menu):
-        PantallaGUI.__init__(self, menu, 'portada_instruccions.png')
+        PantallaGUI.__init__(self, menu, 'fondo_instruccions.png')
         # Creamos el boton y lo metemos en la lista
         botonVolver = BotonVolver(self)
         self.elementosGUI.append(botonVolver)
