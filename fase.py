@@ -81,7 +81,14 @@ class Fase(Scene):
 
         # Ponemos al jugador en su posición inicial
         layer = conf.get_layer_by_name('Character')
-        tile = next(layer.tiles())
+        try:
+            # Para ejecutar el juego es necesario que haya un Jugador situado
+            # en algún punto del mapa donde comienza el juego, sinó lo hay se
+            # para la ejecución del juego
+            tile = next(layer.tiles())
+        except StopIteration:
+            raise ResourceWarning("Player's sprite not found. Include it in the"
+                                  " maps editor")
         coord_x = tile[0]
         coord_y = tile[1]
         self.player.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
@@ -103,7 +110,13 @@ class Fase(Scene):
         # El jefe final del nivel está en una capa diferente y guardamos una
         # referencia a el en la fase para comprobar cuando se termina el nivel
         layer = conf.get_layer_by_name('Boss')
-        tile = next(layer.tiles())
+        try:
+            # Para ejecutar el juego es necesario que haya un Jefe al final del
+            # nivel, sinó lo hay se para la ejecución del juego
+            tile = next(layer.tiles())
+        except StopIteration:
+            raise ResourceWarning("Boss's sprite not found. Include it in the"
+                                  " maps editor")
         coord_x = tile[0]
         coord_y = tile[1]
         enemy_name = os.path.basename(tile[2][0])
@@ -125,7 +138,8 @@ class Fase(Scene):
 
      #ANIMATIONS AQUI
 
-    # Devuelve el enemigo que se corresponde con el nombre del fichero
+    # Devuelve el enemigo que se corresponde con el nombre del fichero que lo
+    # representa en el directorio data/scene
     def __get_enemy(self, name):
         enemy = None
         if name == 'zombie1.png':
@@ -138,6 +152,8 @@ class Fase(Scene):
             enemy = Zombie4()
         elif name == 'bear.png':
             enemy = Bear()
+        elif name == 'wild_boar.png':
+            enemy = WildBoar()
         else:
             enemy = Zombie1()
         return enemy

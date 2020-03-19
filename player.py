@@ -442,5 +442,18 @@ class Bear(Enemy):
 
     def __init__(self):
         Enemy.__init__(self,'bear.png', 'coordBear.txt', [1,11,1,1],
-                       enemy_speed=0.1, enemy_jump_speed=0.2, health=3,
+                       enemy_speed=0.07, enemy_jump_speed=0.2, health=3,
                        damage_level=1.5)
+
+
+# Jabalí (Boss)
+class WildBoar(Enemy):
+
+    def __init__(self):
+        Enemy.__init__(self,'wild_boar.png', 'coordWildBoar.txt', [1,9,1,1],
+                       enemy_speed=0.1, enemy_jump_speed=0.2, health=4,
+                       damage_level=1.5)
+
+
+# WARNING: CADA VEZ QUE SE AÑADE UN ENEMIGO NUEVO HAY QUE AÑADIR UNA REFERENCIA
+# A SU CLASE EN EL MÉTODO __get_enemy() EN EL FICHERO fase.py
