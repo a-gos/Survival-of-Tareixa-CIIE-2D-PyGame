@@ -42,6 +42,22 @@ class ElementoGUI:
         raise NotImplemented("Tiene que implementar el metodo accion.")
 
 
+# Representa imágenes estáticas que no realizan ninguna acción
+class ElementoEstaticoGUI(ElementoGUI):
+
+    def __init__(self, pantalla, nombreImagen, posicion):
+        # Se carga la imagen del elemento estático
+        self.imagen = ResourcesManager.LoadImageMenu(nombreImagen, -1)
+        # Se llama al método de la clase padre con el rectángulo que ocupa
+        ElementoGUI.__init__(self, pantalla, self.imagen.get_rect())
+        # Se coloca el rectangulo en su posicion
+        self.establecerPosicion(posicion)
+
+    def paint(self, pantalla):
+        pantalla.blit(self.imagen, self.rect)
+
+    def action(self):
+        pass
 # -------------------------------------------------
 # Clase Boton y los distintos botones
 
@@ -49,7 +65,6 @@ class Boton(ElementoGUI):
     def __init__(self, pantalla, nombreImagen, posicion):
         # Se carga la imagen del boton
         self.imagen = ResourcesManager.LoadImageMenu(nombreImagen,-1)
-        # self.imagen = pygame.transform.scale(self.imagen, (20, 20))
         # Se llama al método de la clase padre con el rectángulo que ocupa el
         # botón
         ElementoGUI.__init__(self, pantalla, self.imagen.get_rect())
@@ -99,12 +114,21 @@ class BotonContinuar(Boton):
     def action(self):
         self.pantalla.menu.continuarJuego()
 
+
 class BotonRepetirNivel(Boton):
     def __init__(self, pantalla, nombreImagen, posicion):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
 
     def action(self):
         self.pantalla.menu.repetirNivel()
+
+
+class BotonSiguienteNivel(Boton):
+    def __init__(self, pantalla, nombreImagen, posicion):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
+
+    def action(self):
+        self.pantalla.menu.siguienteNivel()
 
 # -------------------------------------------------
 # Clase PantallaGUI y las distintas pantallas
@@ -176,6 +200,20 @@ class PantallaGameover(PantallaGUI):
         botonRepetirNivel = BotonRepetirNivel(self, 'denovo.png', (417,252))
         self.elementosGUI.append(botonSalir)
         self.elementosGUI.append(botonRepetirNivel)
+
+
+class PantallaNivelCompletado(PantallaGUI):
+    def __init__(self, menu, nivel):
+        PantallaGUI.__init__(self, menu, 'fondo_nivel.png')
+        filename = 'nivel' + str(nivel) + '.png'
+        tituloNivel = ElementoEstaticoGUI(self, filename, (140,62))
+        botonSalir = BotonSalir(self, 'sair_blanco.png', (473,539))
+        botonRepetirNivel = BotonRepetirNivel(self, 'denovo.png', (95,260))
+        botonSiguienteNivel = BotonSiguienteNivel(self, 'continuar.png', (674,324))
+        self.elementosGUI.append(botonSalir)
+        self.elementosGUI.append(botonRepetirNivel)
+        self.elementosGUI.append(botonSiguienteNivel)
+        self.elementosGUI.append(tituloNivel)
 
 # -------------------------------------------------
 # Clase Menu, que será utilizada por los diferentes tipos de menús del juego
@@ -267,7 +305,7 @@ class MenuPausa(Menu):
         self.listaPantallas[self.pantallaActual].events(lista_eventos)
 
     # --------------------------------------
-    # Metodos propios del menu principal del juego
+    # Metodos propios del menu de pausa
     def continuarJuego(self):
         # Sacamos el menú de pausa de la pila de escenas para continuar el juego
         self.director.exitScene()
@@ -279,8 +317,27 @@ class MenuGameover(Menu):
         Menu.__init__(self, director, pantallas)
 
     # --------------------------------------
-    # Metodos propios del menu principal del juego
+    # Metodos propios del menu Gameover
     def repetirNivel(self):
         self.director.exitScene()
+        self.director.stackScene(
+            fase.Fase(self.director, self.director.game_level))
+
+class MenuNivelCompletado(Menu):
+
+    def __init__(self, director):
+        pantallas = [PantallaNivelCompletado(self, director.game_level)]
+        Menu.__init__(self, director, pantallas)
+
+    # --------------------------------------
+    # Metodos propios del menu de nivel completado
+    def repetirNivel(self):
+        self.director.exitScene()
+        self.director.stackScene(
+            fase.Fase(self.director, self.director.game_level))
+
+    def siguienteNivel(self):
+        self.director.exitScene()
+        self.director.game_level += 1
         self.director.stackScene(
             fase.Fase(self.director, self.director.game_level))
