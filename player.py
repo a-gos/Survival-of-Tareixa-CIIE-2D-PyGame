@@ -28,7 +28,9 @@ SPRITE_IDLE = 0
 SPRITE_WALKING = 1
 SPRITE_JUMPING = 2
 SPRITE_SHOOTING = 3
-SPRITE_KNOCKED = 4
+SPRITE_DYING = 4
+SPRITE_DYINGAIR = 5
+SPRITE_KNOCKED = 6
 
 
 # Character SETTINGS
@@ -107,8 +109,8 @@ class Character(MySprite):
         self.looking = LEFT
         self.isJumping = False
         self.isKnocked = False
-        self.last = pygame.time.get_ticks()
-        self.cooldown = Character_INVULNERABILITY
+        self.lastHit = pygame.time.get_ticks()
+        self.cooldownHit = Character_INVULNERABILITY
 
         self.magazine = MAGAZINE_SIZE
         self.lastBullet = pygame.time.get_ticks()
@@ -160,20 +162,21 @@ class Character(MySprite):
     # Metodo base para realizar el movimiento: simplemente se le indica cual
     # va a hacer, y lo almacena
     def mover(self, move):
-        if move == UP:
-            # Si estamos en el aire y el personaje quiere saltar, ignoramos
-            # este movimiento
-            if self.animationNumber == SPRITE_JUMPING:
-                self.isJumping = True
+        if not(self.isKnocked):
+            if move == UP:
+                # Si estamos en el aire y el personaje quiere saltar, ignoramos
+                # este movimiento
+                if self.animationNumber == SPRITE_JUMPING:
+                    self.isJumping = True
+                else:
+                    self.movement = UP
+            elif move == HURT:
+                if self.animationNumber == SPRITE_KNOCKED:
+                    self.isKnocked = True
+                else:
+                    self.movement = HURT
             else:
-                self.movement = UP
-        elif move == HURT:
-            if self.animationNumber == SPRITE_KNOCKED:
-                self.isKnocked = True
-            else:
-                self.movement = HURT
-        else:
-            self.movement = move
+                self.movement = move
 
 
     def updatePosture(self):
@@ -252,7 +255,7 @@ class Character(MySprite):
             if self.movement == HURT:
                 self.animationNumber = SPRITE_KNOCKED
                 if not(self.isKnocked):
-                    speedx = self.runSpeed
+                    speedx = -self.runSpeed
                     speedy = -self.jumpSpeed
 
             # Si no se ha pulsado ninguna tecla
@@ -346,7 +349,7 @@ class Player(Character):
         # Invocamos al constructor de la clase padre con la configuracion para
         # el personaje protagonista
         Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt',
-                           [4, 12, 1, 1], Character_SPEED, Character_JUMP_SPEED,
+                           [4, 12, 1, 1, 21, 18, 5], Character_SPEED, Character_JUMP_SPEED,
                            Character_ANIMATION_DELAY, 3)
 
     def mover(self, control):
@@ -379,8 +382,8 @@ class Player(Character):
         enemy = pygame.sprite.spritecollideany(self, enemyGroup)
         now = pygame.time.get_ticks()
         if enemy is not None:
-            if now - self.last >= self.cooldown:
-                self.last = now
+            if now - self.lastHit >= self.cooldownHit:
+                self.lastHit = now
                 self.health -= enemy.damage_level
                 print("Health = " + str(self.health))
                 Character.mover(self, HURT)
@@ -448,7 +451,7 @@ class Enemy(NPC):
 class Zombie1(Enemy):
 
     def __init__(self):
-        Enemy.__init__(self,'zombie1.png', 'coordZombie1.txt', [1,8,1,1],
+        Enemy.__init__(self,'zombie1.png', 'coordZombie1.txt', [1,8,1,1, 1, 1, 1],
                        enemy_speed=0.05, enemy_jump_speed=0.05, health=1,
                        damage_level=0.5)
 
@@ -457,7 +460,7 @@ class Zombie1(Enemy):
 class Zombie2(Enemy):
 
     def __init__(self):
-        Enemy.__init__(self,'zombie2.png', 'coordZombie2.txt', [1,6,1,1],
+        Enemy.__init__(self,'zombie2.png', 'coordZombie2.txt', [1,6,1,1, 1, 1, 1],
                        enemy_speed=0.1, enemy_jump_speed=0.2, health=1.5,
                        damage_level=0.5)
 
@@ -466,7 +469,7 @@ class Zombie2(Enemy):
 class Zombie3(Enemy):
 
     def __init__(self):
-        Enemy.__init__(self,'zombie3.png', 'coordZombie3.txt', [1,8,1,1],
+        Enemy.__init__(self,'zombie3.png', 'coordZombie3.txt', [1,8,1,1, 1, 1, 1],
                        enemy_speed=0.13, enemy_jump_speed=0.2, health=2,
                        damage_level=1)
 
@@ -475,7 +478,7 @@ class Zombie3(Enemy):
 class Zombie4(Enemy):
 
     def __init__(self):
-        Enemy.__init__(self,'zombie4.png', 'coordZombie4.txt', [1,8,3,1],
+        Enemy.__init__(self,'zombie4.png', 'coordZombie4.txt', [1,8,3,1, 1, 1, 1],
                        enemy_speed=0.15, enemy_jump_speed=0.2, health=2.5,
                        damage_level=1)
 
@@ -484,7 +487,7 @@ class Zombie4(Enemy):
 class Bear(Enemy):
 
     def __init__(self):
-        Enemy.__init__(self,'bear.png', 'coordBear.txt', [1,11,1,1],
+        Enemy.__init__(self,'bear.png', 'coordBear.txt', [1,11,1,1, 1, 1, 1],
                        enemy_speed=0.07, enemy_jump_speed=0.2, health=3,
                        damage_level=1.5)
 
@@ -493,7 +496,7 @@ class Bear(Enemy):
 class WildBoar(Enemy):
 
     def __init__(self):
-        Enemy.__init__(self,'wild_boar.png', 'coordWildBoar.txt', [1,9,1,1],
+        Enemy.__init__(self,'wild_boar.png', 'coordWildBoar.txt', [1,9,1,1, 1, 1, 1],
                        enemy_speed=0.1, enemy_jump_speed=0.2, health=4,
                        damage_level=0.5)
 
