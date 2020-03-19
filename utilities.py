@@ -51,3 +51,27 @@ class Bullet(MySprite):
                 self.kill()
             else:
                 MySprite.update(self, time)
+
+class healthPack(MySprite):
+    def __init__(self,  image, position, heal_level=1):
+        MySprite.__init__(self)
+        self.healing = heal_level
+        self.image = image
+
+        self.image = ResourcesManager.LoadImageObjects(image, -1)
+        self.image = pygame.transform.scale(self.image, (20,20))
+        self.rect = self.image.get_rect()
+        self.setposition((position))
+    
+    def update(self, player, time):
+        healing = player.health + self.healing
+        if(player.rect.colliderect(self.rect) and (player.health < MAX_HEALTH) ):
+            if(healing <= MAX_HEALTH):
+                player.health = healing
+            else:
+                player.health = MAX_HEALTH
+            self.kill()
+        else:
+            MySprite.update(self, time)
+
+

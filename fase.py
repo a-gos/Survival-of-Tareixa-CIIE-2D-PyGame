@@ -124,10 +124,14 @@ class Fase(Scene):
         self.boss.setposition((coord_x * TILE_SIZE, coord_y * TILE_SIZE))
         self.enemyGroup.add(self.boss)
 
+
+        self.healthGroup = pygame.sprite.Group()
+        self.healthGroup.add(healthPack('bottle.png', (800,coord_y*TILE_SIZE), 1))
+
         # Creamos un grupo con los Sprites que se mueven (personaje, enemigos, proyectiles,etc.
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.player, self.enemyGroup.sprites() )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group(self.player, self.enemyGroup.sprites(), self.platformGroup.sprites() )
+        self.grupoSprites = pygame.sprite.Group(self.player, self.enemyGroup.sprites(), self.platformGroup.sprites(), self.healthGroup.sprites() )
 
         # Creamos los controles del jugador
         self.control = ControlKeyboard()
@@ -260,6 +264,7 @@ class Fase(Scene):
         # y, si lo son, realiza el movimiento de los Sprites
 
         self.grupoSpritesDinamicos.update(self.platformGroup, self.enemyGroup, time)
+        self.healthGroup.update(self.player, time)
 
         # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
         # ha caído al vacío, se acaba el juego

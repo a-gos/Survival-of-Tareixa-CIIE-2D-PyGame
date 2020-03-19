@@ -347,7 +347,7 @@ class Player(Character):
         # el personaje protagonista
         Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt',
                            [4, 12, 1, 1], Character_SPEED, Character_JUMP_SPEED,
-                           Character_ANIMATION_DELAY, 3)
+                           Character_ANIMATION_DELAY, MAX_HEALTH)
 
     def mover(self, control):
         # Indicamos la acción a realizar segun la tecla pulsada por el jugador
