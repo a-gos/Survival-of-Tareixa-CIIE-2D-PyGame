@@ -297,13 +297,11 @@ class Fase(Scene):
             if event.type == pygame.QUIT:
                 self.director.exitProgram()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    bullet = Bullet(self.player, 0.5, self.scrollx)
 
-                    self.grupoSpritesDinamicos.add(bullet)
-                    # self.grupoShots.add(bullet)
-                    self.grupoSprites.add(bullet)
-                elif event.key == pygame.K_p:
+                self.control.shoot(self.player, self.grupoSpritesDinamicos, self.grupoSprites, self.scrollx, event)
+               # if event.key == pygame.K_SPACE:
+               #    self.player.shoot(self.grupoSpritesDinamicos, self.grupoSprites, self.scrollx)
+                if event.key == pygame.K_p:
                     pause_scene = MenuPausa(self.director)
                     self.director.stackScene(pause_scene)
                     # self.director.exit_scene = True
