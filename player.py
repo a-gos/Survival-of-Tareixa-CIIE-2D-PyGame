@@ -20,12 +20,14 @@ RIGHT = 2
 UP = 3
 DOWN = 4
 SHOOTING = 5
+HURT = 6
 
 # ANIMATIONS
 SPRITE_IDLE = 0
 SPRITE_WALKING = 1
 SPRITE_JUMPING = 2
 SPRITE_SHOOTING = 3
+SPRITE_KNOCKED = 4
 
 
 # Character SETTINGS
@@ -33,7 +35,8 @@ Character_SPEED = 0.2  # Pixeles per milisecond
 Character_JUMP_SPEED = 0.3  # Pixeles per milisecond
 Character_ANIMATION_DELAY = 5  # updates that the character model will endure
                             # should be a different number for each animation
-
+Character_INVULNERABILITY = 2000 # Número de milisegundos que el personaje 
+                                #está sin recibir daño tras recibirlo una primera vez
 GRAVITY = 0.0005
 
 
@@ -98,6 +101,8 @@ class Character(MySprite):
         # Lado hacia el que esta mirando
         self.looking = LEFT
         self.isJumping = False
+        self.last = pygame.time.get_ticks()
+        self.cooldown = Character_INVULNERABILITY
 
         # Leemos las coordenadas de un archivo de texto
         data = ResourcesManager.LoadCoordFileCharacter(coordFile)
@@ -152,6 +157,8 @@ class Character(MySprite):
                 self.isJumping = True
             else:
                 self.movement = UP
+        elif move == HURT:
+            self.movement = HURT
         else:
             self.movement = move
 
@@ -227,6 +234,12 @@ class Character(MySprite):
             # Si está disparando
             if self.animationNumber == SPRITE_IDLE and self.movement == SHOOTING:
                 self.animationNumber = SPRITE_SHOOTING
+
+            # Si acaba de recibir daño
+            if self.movement == HURT:
+                #self.animationNumber = SPRITE_KNOCKED
+                speedx = -self.runSpeed
+                speedy = -self.jumpSpeed
 
             # Si no se ha pulsado ninguna tecla
             if self.movement == IDLE:
@@ -338,9 +351,13 @@ class Player(Character):
         # Comprobamos si hay colision entre el jugador y algun enemigo
         # Si la hay, restamos vida al jugador
         enemy = pygame.sprite.spritecollideany(self, enemyGroup)
+        now = pygame.time.get_ticks()
         if enemy is not None:
-            self.health -= enemy.damage_level
-            print("Health = " + str(self.health))
+            if now - self.last >= self.cooldown:
+                self.last = now
+                self.health -= enemy.damage_level
+                print("Health = " + str(self.health))
+                Character.mover(self, HURT)
 
         Character.update(self, platformGroup, enemyGroup, tiempo)
 # -------------------------------------------------
@@ -452,7 +469,7 @@ class WildBoar(Enemy):
     def __init__(self):
         Enemy.__init__(self,'wild_boar.png', 'coordWildBoar.txt', [1,9,1,1],
                        enemy_speed=0.1, enemy_jump_speed=0.2, health=4,
-                       damage_level=1.5)
+                       damage_level=0.5)
 
 
 # WARNING: CADA VEZ QUE SE AÑADE UN ENEMIGO NUEVO HAY QUE AÑADIR UNA REFERENCIA
