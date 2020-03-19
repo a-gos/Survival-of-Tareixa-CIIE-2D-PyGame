@@ -10,6 +10,7 @@ import os
 from pygame.locals import *
 from resourcesmanager import ResourcesManager
 from scene import *
+from utilities import *
 
 
 
@@ -38,6 +39,10 @@ Character_ANIMATION_DELAY = 5  # updates that the character model will endure
 Character_INVULNERABILITY = 2000 # Número de milisegundos que el personaje 
                                 #está sin recibir daño tras recibirlo una primera vez
 GRAVITY = 0.0005
+
+MAGAZINE_SIZE = 4
+MAGAZINE_CD = 300
+
 
 
 
@@ -103,6 +108,10 @@ class Character(MySprite):
         self.isJumping = False
         self.last = pygame.time.get_ticks()
         self.cooldown = Character_INVULNERABILITY
+
+        self.magazine = MAGAZINE_SIZE
+        self.lastBullet = pygame.time.get_ticks()
+        self.cooldownBullets = MAGAZINE_CD
 
         # Leemos las coordenadas de un archivo de texto
         data = ResourcesManager.LoadCoordFileCharacter(coordFile)
@@ -342,10 +351,21 @@ class Player(Character):
             Character.mover(self, LEFT)
         elif control.right():
             Character.mover(self, RIGHT)
-        elif control.shoot():
-            Character.mover(self, SHOOTING)
+
         else:
             Character.mover(self, IDLE)
+
+    def shoot(self,grupoSpritesDinamicos, grupoSprites, scrollx):
+        if(self.magazine>0):
+            self.magazine = self.magazine - 1
+            bullet = Bullet(self, 0.5, scrollx)
+            grupoSpritesDinamicos.add(bullet)
+            grupoSprites.add(bullet)
+            Character.mover(self, SHOOTING)
+        else:
+            now = pygame.time.get_ticks()
+            if now - self.lastBullet >= self.cooldownBullets:
+                self.magazine = 3
 
     def update(self, platformGroup, enemyGroup, tiempo):
         # Comprobamos si hay colision entre el jugador y algun enemigo
