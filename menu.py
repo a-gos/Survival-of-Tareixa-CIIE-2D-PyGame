@@ -99,6 +99,13 @@ class BotonContinuar(Boton):
     def action(self):
         self.pantalla.menu.continuarJuego()
 
+class BotonRepetirNivel(Boton):
+    def __init__(self, pantalla, nombreImagen='denovo.png', posicion=(417,258)):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
+
+    def action(self):
+        self.pantalla.menu.repetirNivel()
+
 # -------------------------------------------------
 # Clase PantallaGUI y las distintas pantallas
 
@@ -152,6 +159,7 @@ class PantallaIntrucciones(PantallaGUI):
         botonVolver = BotonVolver(self)
         self.elementosGUI.append(botonVolver)
 
+
 class PantallaPausa(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'fondo_pausa.png')
@@ -159,6 +167,16 @@ class PantallaPausa(PantallaGUI):
         botonContinuar = BotonContinuar(self)
         self.elementosGUI.append(botonSalir)
         self.elementosGUI.append(botonContinuar)
+
+
+class PantallaGameover(PantallaGUI):
+    def __init__(self, menu):
+        PantallaGUI.__init__(self, menu, 'fondo_gameover.png')
+        botonSalir = BotonSalir(self, 'sair_blanco.png', (42,520))
+        botonRepetirNivel = BotonRepetirNivel(self)
+        self.elementosGUI.append(botonSalir)
+        self.elementosGUI.append(botonRepetirNivel)
+
 # -------------------------------------------------
 # Clase Menu, que será utilizada por los diferentes tipos de menús del juego
 
@@ -217,7 +235,8 @@ class MenuPrincipal(Menu):
     # Metodos propios del menu principal del juego
 
     def ejecutarJuego(self):
-        level = fase.Fase(self.director, 1)
+        self.director.game_level = 1
+        level = fase.Fase(self.director, self.director.game_level)
         self.director.stackScene(level)
 
     def mostrarIntrucciones(self):
@@ -252,3 +271,16 @@ class MenuPausa(Menu):
     def continuarJuego(self):
         # Sacamos el menú de pausa de la pila de escenas para continuar el juego
         self.director.exitScene()
+
+class MenuGameover(Menu):
+
+    def __init__(self, director):
+        pantallas = [PantallaGameover(self)]
+        Menu.__init__(self, director, pantallas)
+
+    # --------------------------------------
+    # Metodos propios del menu principal del juego
+    def repetirNivel(self):
+        self.director.exitScene()
+        self.director.stackScene(
+            fase.Fase(self.director, self.director.game_level))

@@ -267,6 +267,7 @@ class Fase(Scene):
             print("JUEGO PERDIDO")
             # Llamada al director para manejar las escenas
             self.director.exitScene()
+            self.director.stackScene(MenuGameover(self.director))
         elif not self.boss.alive():
             print("JUEGO GANADO")
             self.director.exitScene()
