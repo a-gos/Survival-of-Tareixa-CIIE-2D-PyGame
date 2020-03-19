@@ -20,7 +20,7 @@ class ElementoGUI:
     def establecerPosicion(self, posicion):
         (posicionx, posiciony) = posicion
         self.rect.left = posicionx
-        self.rect.bottom = posiciony
+        self.rect.top = posiciony
 
     # Método que dice si se ha hecho clic en él
     def posicionEnElemento(self, posicion):
@@ -61,7 +61,7 @@ class Boton(ElementoGUI):
 
 
 class BotonJugar(Boton):
-    def __init__(self, pantalla, nombreImagen='xogar.png', posicion=(615,224)):
+    def __init__(self, pantalla, nombreImagen, posicion):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
 
     def action(self):
@@ -69,7 +69,7 @@ class BotonJugar(Boton):
 
 
 class BotonInstrucciones(Boton):
-    def __init__(self, pantalla, nombreImagen='instruccions.png', posicion=(622,340)):
+    def __init__(self, pantalla, nombreImagen, posicion):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
 
     def action(self):
@@ -77,7 +77,7 @@ class BotonInstrucciones(Boton):
 
 
 class BotonSalir(Boton):
-    def __init__(self, pantalla, nombreImagen='sair_gris.png', posicion=(626,451)):
+    def __init__(self, pantalla, nombreImagen, posicion):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
 
     def action(self):
@@ -85,7 +85,7 @@ class BotonSalir(Boton):
 
 
 class BotonVolver(Boton):
-    def __init__(self, pantalla, nombreImagen='volver.png', posicion=(50,498)):
+    def __init__(self, pantalla, nombreImagen, posicion):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
 
     def action(self):
@@ -93,14 +93,14 @@ class BotonVolver(Boton):
 
 
 class BotonContinuar(Boton):
-    def __init__(self, pantalla, nombreImagen='continuar_blanco.png', posicion=(590,400)):
+    def __init__(self, pantalla, nombreImagen, posicion):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
 
     def action(self):
         self.pantalla.menu.continuarJuego()
 
 class BotonRepetirNivel(Boton):
-    def __init__(self, pantalla, nombreImagen='denovo.png', posicion=(417,258)):
+    def __init__(self, pantalla, nombreImagen, posicion):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
 
     def action(self):
@@ -144,9 +144,9 @@ class PantallaInicial(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'fondo_principal.png')
         # Creamos los botones y los metemos en la lista
-        botonJugar = BotonJugar(self)
-        botonInstrucciones = BotonInstrucciones(self)
-        botonSalir = BotonSalir(self)
+        botonJugar = BotonJugar(self, 'xogar.png', (615,204))
+        botonInstrucciones = BotonInstrucciones(self, 'instruccions.png', (622,290))
+        botonSalir = BotonSalir(self, 'sair_gris.png', (626,410))
         self.elementosGUI.append(botonJugar)
         self.elementosGUI.append(botonInstrucciones)
         self.elementosGUI.append(botonSalir)
@@ -156,15 +156,15 @@ class PantallaIntrucciones(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'fondo_instruccions.png')
         # Creamos el boton y lo metemos en la lista
-        botonVolver = BotonVolver(self)
+        botonVolver = BotonVolver(self, 'volver.png', (50,485))
         self.elementosGUI.append(botonVolver)
 
 
 class PantallaPausa(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'fondo_pausa.png')
-        botonSalir = BotonSalir(self, 'sair_blanco.png', (310,400))
-        botonContinuar = BotonContinuar(self)
+        botonSalir = BotonSalir(self, 'sair_blanco.png', (302,320))
+        botonContinuar = BotonContinuar(self, 'continuar_blanco.png', (590,324))
         self.elementosGUI.append(botonSalir)
         self.elementosGUI.append(botonContinuar)
 
@@ -173,7 +173,7 @@ class PantallaGameover(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'fondo_gameover.png')
         botonSalir = BotonSalir(self, 'sair_blanco.png', (42,520))
-        botonRepetirNivel = BotonRepetirNivel(self)
+        botonRepetirNivel = BotonRepetirNivel(self, 'denovo.png', (417,252))
         self.elementosGUI.append(botonSalir)
         self.elementosGUI.append(botonRepetirNivel)
 
