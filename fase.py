@@ -264,12 +264,14 @@ class Fase(Scene):
         # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
         # ha caído al vacío, se acaba el juego
         if not self.player.alive():
-            print("JUEGO PERDIDO")
+            # print("JUEGO PERDIDO")
             # Llamada al director para manejar las escenas
             self.director.exitScene()
+            self.director.stackScene(MenuGameover(self.director))
         elif not self.boss.alive():
-            print("JUEGO GANADO")
+            # print("JUEGO GANADO")
             self.director.exitScene()
+            self.director.stackScene(MenuNivelCompletado(self.director))
 
         # Actualizamos el scroll
         self.updateScroll(self.player)

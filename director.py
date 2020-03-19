@@ -20,7 +20,8 @@ class Director():
         self.exit_scene = False
         # Reloj
         self.clock = pygame.time.Clock()
-
+        # Fase/nivel del juego que se está ejecutando
+        self.game_level = 0
 
     def loop(self, scene):
 

@@ -193,12 +193,12 @@ class Character(MySprite):
         if self.position[1] > HEIGHT_SCREEN:
             self.health = 0
             self.kill()
-            print("Personaje muerto")
+            # print("Personaje muerto")
 
         # Si al personaje lo han matado
         elif self.health <= 0:
             self.kill()
-            print("Personaje muerto")
+            # print("Personaje muerto")
 
         # Si el personaje sigue vivo se actualiza su estado
         else:

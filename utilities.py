@@ -46,7 +46,7 @@ class Bullet(MySprite):
                 # La comprobación de si el enemigo debe ser eliminado se hace
                 # en el método update del enemigo
                 enemy.health -= self.damage_level
-                print("Health enemy = "+str(enemy.health))
+                # print("Health enemy = "+str(enemy.health))
             elif pygame.sprite.spritecollideany(self, platformGroup):
                 self.kill()
             else:
