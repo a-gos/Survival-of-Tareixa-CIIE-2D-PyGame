@@ -101,6 +101,7 @@ class Character(MySprite):
         # Lado hacia el que esta mirando
         self.looking = LEFT
         self.isJumping = False
+        self.isKnocked = False
         self.last = pygame.time.get_ticks()
         self.cooldown = Character_INVULNERABILITY
 
@@ -158,7 +159,10 @@ class Character(MySprite):
             else:
                 self.movement = UP
         elif move == HURT:
-            self.movement = HURT
+            if self.animationNumber == SPRITE_KNOCKED:
+                self.isKnocked = True
+            else:
+                self.movement = HURT
         else:
             self.movement = move
 
@@ -237,9 +241,10 @@ class Character(MySprite):
 
             # Si acaba de recibir daño
             if self.movement == HURT:
-                #self.animationNumber = SPRITE_KNOCKED
-                speedx = -self.runSpeed
-                speedy = -self.jumpSpeed
+                self.animationNumber = SPRITE_KNOCKED
+                if not(self.isKnocked):
+                    speedx = self.runSpeed
+                    speedy = -self.jumpSpeed
 
             # Si no se ha pulsado ninguna tecla
             if self.movement == IDLE:
@@ -253,7 +258,7 @@ class Character(MySprite):
             platforms_collided = pygame.sprite.spritecollide(self, platformGroup, False)
 
             # Si estamos en el aire
-            if self.animationNumber == SPRITE_JUMPING:
+            if self.animationNumber == SPRITE_JUMPING or self.animationNumber == SPRITE_KNOCKED:
                 # Miramos a ver si hay que parar de caer: si hemos llegado a una
                 # platforma. Para ello, miramos si hay colision con alguna
                 # platforma del grupo
@@ -275,6 +280,7 @@ class Character(MySprite):
                         # Y estará quieto en el eje y
                         speedy = 0
                         self.isJumping = False
+                        self.isKnocked = False
 
                     # Si no cae sobre una plataforma, comprobamos si ha chocado
                     # contra el techo
