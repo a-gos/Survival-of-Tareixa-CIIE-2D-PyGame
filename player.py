@@ -40,6 +40,7 @@ Character_ANIMATION_DELAY = 5  # updates that the character model will endure
                             # should be a different number for each animation
 Character_INVULNERABILITY = 2000 # Número de milisegundos que el personaje 
                                 #está sin recibir daño tras recibirlo una primera vez
+Character_KNOCKDOWN = 300       # Tiempo que el personaje está volando por el golpe
 GRAVITY = 0.0005
 
 MAGAZINE_SIZE = 4
@@ -124,7 +125,7 @@ class Character(MySprite):
         cont = 0
 
         self.coordenadasHoja = []
-        for linea in range(0, 4):
+        for linea in range(0, 7):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
             for animation in range(1, numImages[linea]+1):
@@ -221,56 +222,59 @@ class Character(MySprite):
 
             (speedx, speedy) = self.speed
             # print(self.rect)
+            now = pygame.time.get_ticks()
+            # Si estámos knockeados, non se fai ningunha outra animación
+            if not (self.animationNumber == SPRITE_KNOCKED and ((now - self.lastHit) < Character_KNOCKDOWN)):
 
-            # Si vamos a la izquierda o derecha
-            if (self.movement == LEFT) or (self.movement == RIGHT):
-                # Cogemos el lado hacia el que mira
-                self.looking = self.movement
-                # Si mirando a la izquierda
-                if self.movement == LEFT:
-                  speedx = -self.runSpeed
-                # o si está mirando a la derecha
-                else:
-                    speedx = self.runSpeed
-                # Si no estamos saltando
-                if self.animationNumber != SPRITE_JUMPING:
-                    # La postura actual será estar caminando
-                    self.animationNumber = SPRITE_WALKING
-                    # Ademas, si no estamos encima de ninguna plataforma, caeremos
-                    if pygame.sprite.spritecollideany(self, platformGroup) == None:
-                      self.animationNumber = SPRITE_JUMPING
-            # Si queremos saltar
-            if self.movement == UP:
-                if not(self.isJumping):
-                    # La animation actual sera estar saltando
-                    self.animationNumber = SPRITE_JUMPING
-                    # Le imprimimos una speed en el eje y
-                    speedy = -self.jumpSpeed
+                # Si vamos a la izquierda o derecha
+                if (self.movement == LEFT) or (self.movement == RIGHT):
+                    # Cogemos el lado hacia el que mira
+                    self.looking = self.movement
+                    # Si mirando a la izquierda
+                    if self.movement == LEFT:
+                        speedx = -self.runSpeed
+                    # o si está mirando a la derecha
+                    else:
+                        speedx = self.runSpeed
+                    # Si no estamos saltando
+                    if self.animationNumber != SPRITE_JUMPING:
+                        # La postura actual será estar caminando
+                        self.animationNumber = SPRITE_WALKING
+                        # Ademas, si no estamos encima de ninguna plataforma, caeremos
+                        if pygame.sprite.spritecollideany(self, platformGroup) == None:
+                            self.animationNumber = SPRITE_JUMPING
+                # Si queremos saltar
+                if self.movement == UP:
+                    if not(self.isJumping):
+                        # La animation actual sera estar saltando
+                        self.animationNumber = SPRITE_JUMPING
+                        # Le imprimimos una speed en el eje y
+                        speedy = -self.jumpSpeed
 
-            # Si está disparando
-            if self.animationNumber == SPRITE_IDLE and self.movement == SHOOTING:
-                self.animationNumber = SPRITE_SHOOTING
+                # Si está disparando
+                if self.animationNumber == SPRITE_IDLE and self.movement == SHOOTING:
+                    self.animationNumber = SPRITE_SHOOTING
 
-            # Si acaba de recibir daño
-            if self.movement == HURT:
-                self.animationNumber = SPRITE_KNOCKED
-                if not(self.isKnocked):
-                    speedx = -self.runSpeed
-                    speedy = -self.jumpSpeed
+                # Si acaba de recibir daño
+                if self.movement == HURT:
+                    self.animationNumber = SPRITE_KNOCKED
+                    if not(self.isKnocked):
+                        speedx = -self.runSpeed
+                        speedy = (-self.jumpSpeed / 3)
 
-            # Si no se ha pulsado ninguna tecla
-            if self.movement == IDLE:
-                # Si no estamos saltando, la animación actual será estar quieto
-                if not self.animationNumber == SPRITE_JUMPING:
-                    self.animationNumber = SPRITE_IDLE
-                speedx = 0
+                # Si no se ha pulsado ninguna tecla
+                if self.movement == IDLE:
+                    # Si no estamos saltando o en knock, la animación actual será estar quieto
+                    if not (self.animationNumber == SPRITE_JUMPING or self.animationNumber == SPRITE_KNOCKED):
+                        self.animationNumber = SPRITE_IDLE
+                    speedx = 0
 
-            # Obtenemos las plataformas contra las que está colisionando el
-            # personaje
-            platforms_collided = pygame.sprite.spritecollide(self, platformGroup, False)
+                # Obtenemos las plataformas contra las que está colisionando el
+                # personaje
+                platforms_collided = pygame.sprite.spritecollide(self, platformGroup, False)
 
-            # Si estamos en el aire
-            if self.animationNumber == SPRITE_JUMPING or self.animationNumber == SPRITE_KNOCKED:
+                # Si estamos en el aire
+                if self.animationNumber == SPRITE_JUMPING or self.animationNumber == SPRITE_KNOCKED:
                 # Miramos a ver si hay que parar de caer: si hemos llegado a una
                 # platforma. Para ello, miramos si hay colision con alguna
                 # platforma del grupo
@@ -278,56 +282,59 @@ class Character(MySprite):
                 # y solo es efectiva cuando caemos encima, no de lado, es decir,
                 # cuando nuestra position inferior esta por encima de la parte de
                 # abajo de la platform
-                floor_collision = False
-                for platform in platforms_collided:
-                    if (speedy > 0) and (platform.rect.bottom > self.rect.bottom)\
-                            and platform.rect.left < self.rect.centerx < platform.rect.right:
-                        floor_collision = True
-                        # Lo situamos con la parte de abajo un pixel colisionando con
-                        # la plataforma para poder detectar cuando se cae de ella
-                        self.setposition(
+                    floor_collision = False
+                    for platform in platforms_collided:
+                        if (speedy > 0) and (platform.rect.bottom > self.rect.bottom)\
+                                and platform.rect.left < self.rect.centerx < platform.rect.right:
+                            floor_collision = True
+                            # Lo situamos con la parte de abajo un pixel colisionando con
+                            # la plataforma para poder detectar cuando se cae de ella
+                            self.setposition(
                             (self.position[0], platform.position[1]-platform.rect.height+1))
-                        # Lo ponemos como quieto
-                        self.animationNumber = SPRITE_IDLE
-                        # Y estará quieto en el eje y
-                        speedy = 0
-                        self.isJumping = False
-                        self.isKnocked = False
+                            # Lo ponemos como quieto
+                            self.animationNumber = SPRITE_IDLE
+                            # Y estará quieto en el eje y
+                            speedy = 0
+                            self.isJumping = False
+                            self.isKnocked = False
 
-                    # Si no cae sobre una plataforma, comprobamos si ha chocado
-                    # contra el techo
-                    elif (speedy < 0) and (platform.rect.bottom < self.rect.bottom)\
-                            and platform.rect.left < self.rect.centerx < platform.rect.right:
-                        self.setposition(
-                            (self.position[0],
-                             platform.position[1] + platform.rect.height))
-                        speedy = 0
+                        # Si no cae sobre una plataforma, comprobamos si ha chocado
+                        # contra el techo
+                        elif (speedy < 0) and (platform.rect.bottom < self.rect.bottom)\
+                                and platform.rect.left < self.rect.centerx < platform.rect.right:
+                            self.setposition(
+                                (self.position[0],
+                                platform.position[1] + platform.rect.height))
+                            speedy = 0
 
-                # Si no caemos en una platform, aplicamos el efecto de la gravedad
-                if not floor_collision:
-                    speedy += GRAVITY * tiempo
+                    # Si no caemos en una platform, aplicamos el efecto de la gravedad
+                    if not floor_collision:
+                        if self.animationNumber == SPRITE_JUMPING:
+                            speedy += GRAVITY * tiempo
+                        else:
+                            speedy += GRAVITY * tiempo
 
-            # Comprobamos si el jugador colisiona contra un muro lateralmente
-            for platform in platforms_collided:
-                # Colisión lateral
-                if platform.rect.top < self.rect.centery < platform.rect.bottom:
-                    # Si colisiona por la izquierda de la plataforma
-                    if platform.rect.centerx > self.rect.centerx:
-                        # Se mueve un poco el personaje para que no quede
-                        # bloqueado contra el muro
-                        self.setposition(
-                            (platform.position[0]-self.rect.width,
-                             self.position[1]))
+                # Comprobamos si el jugador colisiona contra un muro lateralmente
+                for platform in platforms_collided:
+                    # Colisión lateral
+                    if platform.rect.top < self.rect.centery < platform.rect.bottom:
+                        # Si colisiona por la izquierda de la plataforma
+                        if platform.rect.centerx > self.rect.centerx:
+                            # Se mueve un poco el personaje para que no quede
+                            # bloqueado contra el muro
+                            self.setposition(
+                                (platform.position[0]-self.rect.width,
+                                 self.position[1]))
 
-                    # Si colisiona por la derecha de la plataforma
-                    else:
-                        self.setposition(
-                            (platform.position[0]+platform.rect.width,
-                             self.position[1]))
+                        # Si colisiona por la derecha de la plataforma
+                        else:
+                            self.setposition(
+                                (platform.position[0]+platform.rect.width,
+                                self.position[1]))
 
-                    # Para al personaje para que no pueda atravesar el muro
-                    speedx = 0
-                    break
+                         # Para al personaje para que no pueda atravesar el muro
+                        speedx = 0
+                        break
 
 
             # Actualizamos la imagen a mostrar
@@ -349,7 +356,7 @@ class Player(Character):
         # Invocamos al constructor de la clase padre con la configuracion para
         # el personaje protagonista
         Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt',
-                           [4, 12, 1, 1, 21, 18, 5], Character_SPEED, Character_JUMP_SPEED,
+                           [4, 12, 1, 1, 21, 18, 1], Character_SPEED, Character_JUMP_SPEED,
                            Character_ANIMATION_DELAY, 3)
 
     def mover(self, control):
