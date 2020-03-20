@@ -6,7 +6,8 @@
 - http://www.spritecow.com/
 
 ### Sonidos
-- https://freesound.org/
+- https://www.themotionmonkey.co.uk/free-resources/retro-arcade-sounds/
+- 
 
 ### Programas para crear mapas
 - https://www.mapeditor.org/  (deixa exportar a json)
