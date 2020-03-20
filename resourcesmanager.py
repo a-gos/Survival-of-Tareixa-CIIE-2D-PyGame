@@ -117,3 +117,39 @@ class ResourcesManager(object):
             cls.resources[name] = data
             # Se devuelve
             return data
+
+    # Este método carga archivos de sonido (para disparos, golpes, etc.).
+    # NO utilizar para cargar la música de fondo o otros sonidos largos
+    @classmethod
+    def LoadSound(cls, name):
+        # Se carga el recurso indicando el nombre de su carpeta
+        current_path = os.path.dirname(__file__)
+        fullname_path = os.path.join(current_path, 'data', 'sound')
+        fullname = os.path.join(fullname_path, name)
+
+        # Devolvemos un objeto de la clase Sound
+        try:
+            sound = pygame.mixer.Sound(fullname)
+        except:
+            print('Cannot load the sound file:', fullname)
+            raise SystemExit()
+
+        return sound
+
+    # Método para cargar música o sonidos más pesados
+    # Sólo se puede reproducir un archivo de música en cada momento, pero hay
+    # una cola de reproducción para añadir ficheros.
+    @classmethod
+    def LoadMusic(cls, name):
+        # Se carga el recurso indicando el nombre de su carpeta
+        current_path = os.path.dirname(__file__)
+        fullname_path = os.path.join(current_path, 'data', 'sound')
+        fullname = os.path.join(fullname_path, name)
+
+        # Devolvemos un objeto de la clase Sound
+        try:
+            music = pygame.mixer.music.load(fullname)
+        except:
+            print('Cannot load the music file:', fullname)
+            raise SystemExit()
+        return music
