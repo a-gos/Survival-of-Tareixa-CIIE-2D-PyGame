@@ -56,7 +56,10 @@ class ControlKeyboard(Control):
         pressedKeys = pygame.key.get_pressed()
         return pressedKeys[self.key_right]
 
+    def isShooting(self):
+        pressedKeys = pygame.key.get_pressed()
+        return pressedKeys[self.key_shoot]
+        
     def shoot(self, player, grupoSpritesDinamicos, grupoSprites, scrollx, event):
-       
         if event.key == pygame.K_SPACE:
            player.shoot(grupoSpritesDinamicos, grupoSprites, scrollx)

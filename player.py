@@ -41,7 +41,9 @@ Character_INVULNERABILITY = 2000 # Número de milisegundos que el personaje
 GRAVITY = 0.0005
 
 MAGAZINE_SIZE = 4
-MAGAZINE_CD = 300
+MAGAZINE_CD = 500
+DMG_INIT = 0.5
+SPEED_INIT = 0.5
 
 
 
@@ -105,14 +107,18 @@ class Character(MySprite):
         self.movement = IDLE
         # Lado hacia el que esta mirando
         self.looking = LEFT
+
         self.isJumping = False
         self.isKnocked = False
+
+    
+
+        
+        
+
         self.last = pygame.time.get_ticks()
         self.cooldown = Character_INVULNERABILITY
-
-        self.magazine = MAGAZINE_SIZE
-        self.lastBullet = pygame.time.get_ticks()
-        self.cooldownBullets = MAGAZINE_CD
+       
 
         # Leemos las coordenadas de un archivo de texto
         data = ResourcesManager.LoadCoordFileCharacter(coordFile)
@@ -342,9 +348,11 @@ class Character(MySprite):
 class Player(Character):
     "Protagonista juego"
 
-    def __init__(self):
+    def __init__(self, initialWeapon):
         # Invocamos al constructor de la clase padre con la configuracion para
         # el personaje protagonista
+        self.weapon = initialWeapon
+        self.weapon.kill()
         Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt',
                            [4, 12, 1, 1], Character_SPEED, Character_JUMP_SPEED,
                            Character_ANIMATION_DELAY, MAX_HEALTH)
@@ -357,25 +365,30 @@ class Player(Character):
             Character.mover(self, LEFT)
         elif control.right():
             Character.mover(self, RIGHT)
-
+        elif control.isShooting():
+            Character.mover(self, SHOOTING)
         else:
             Character.mover(self, IDLE)
 
     def shoot(self,grupoSpritesDinamicos, grupoSprites, scrollx):
-        if(self.magazine>0):
-            self.magazine = self.magazine - 1
-            bullet = Bullet(self, 0.5, scrollx)
+        
+
+        if(self.weapon.magazine>0):
+            self.weapon.magazine = self.weapon.magazine - 1
+            bullet = Bullet(self, self.weapon.bulletSpeed, scrollx, self.weapon.dmg)
             grupoSpritesDinamicos.add(bullet)
             grupoSprites.add(bullet)
-            Character.mover(self, SHOOTING)
-        else:
-            now = pygame.time.get_ticks()
-            if now - self.lastBullet >= self.cooldownBullets:
-                self.magazine = 3
+            self.weapon.lastBullet = pygame.time.get_ticks()
+            
+    
+        
+      
+            
 
     def update(self, platformGroup, enemyGroup, tiempo):
         # Comprobamos si hay colision entre el jugador y algun enemigo
         # Si la hay, restamos vida al jugador
+        
         enemy = pygame.sprite.spritecollideany(self, enemyGroup)
         now = pygame.time.get_ticks()
         if enemy is not None:
@@ -385,6 +398,9 @@ class Player(Character):
                 print("Health = " + str(self.health))
                 Character.mover(self, HURT)
 
+        if (self.weapon.magazine<=0 ) and ( (now - self.weapon.lastBullet) >= self.weapon.reloadSpeed):
+            self.weapon.magazine = self.weapon.maxAmmo
+           
         Character.update(self, platformGroup, enemyGroup, tiempo)
 # -------------------------------------------------
 # Clase NPC
