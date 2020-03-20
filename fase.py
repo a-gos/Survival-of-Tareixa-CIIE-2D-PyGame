@@ -77,7 +77,7 @@ class Fase(Scene):
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
 
         # Creamos el sprite del jugador
-        self.player = Player()
+        self.player = Player(Handgun((0,0)))
 
         # Ponemos al jugador en su posición inicial
         layer = conf.get_layer_by_name('Character')
@@ -124,10 +124,17 @@ class Fase(Scene):
         self.boss.setposition((coord_x * TILE_SIZE, coord_y * TILE_SIZE))
         self.enemyGroup.add(self.boss)
 
+
+        self.healthGroup = pygame.sprite.Group()
+        self.healthGroup.add(LicorCafe((800,coord_y*TILE_SIZE)))
+
+        self.WeaponGroup = pygame.sprite.Group()
+        self.WeaponGroup.add(Shotgun( (750,coord_y*TILE_SIZE) ))
+
         # Creamos un grupo con los Sprites que se mueven (personaje, enemigos, proyectiles,etc.
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.player, self.enemyGroup.sprites() )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group(self.player, self.enemyGroup.sprites(), self.platformGroup.sprites() )
+        self.grupoSprites = pygame.sprite.Group(self.player, self.enemyGroup.sprites(), self.platformGroup.sprites(), self.healthGroup.sprites(), self.WeaponGroup.sprites() )
 
         # Creamos los controles del jugador
         self.control = ControlKeyboard()
@@ -260,6 +267,9 @@ class Fase(Scene):
         # y, si lo son, realiza el movimiento de los Sprites
 
         self.grupoSpritesDinamicos.update(self.platformGroup, self.enemyGroup, time)
+        self.healthGroup.update(self.player, time)
+
+        self.WeaponGroup.update(self.player,time)
 
         # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
         # ha caído al vacío, se acaba el juego
@@ -277,7 +287,7 @@ class Fase(Scene):
         self.updateScroll(self.player)
 
         # Actualizamos el HUD
-        self.hud.update(self.player.health)
+        self.hud.update(self.player)
 
 
 
@@ -359,35 +369,78 @@ class Scenary:
 # Clase Heads-Up Display
 
 class HUD:
+    '''
+    def Magazine(self):
+        def __init__(self):
+            data =  ResourcesManager.LoadCoordFileHud('coord_balas_pistola.txt')
+            data = data.split()
 
+            self.coords = []
+            cont = 0
+            for animation in range(5):
+                self.coords.append(pygame.Rect((int(data[cont]), int(
+                    data[cont + 1])), (int(data[cont + 2]), int(data[cont + 3]))))
+                cont += 4
+            self.currentImage = 4
+            self.rect = self.coords[self.currentImage]
+            self.pos_x = 750
+            self.pos_y = 50
+    '''
     def __init__(self):
         self.sprites = ResourcesManager.LoadImageHud('corazons_con_calavera.png', -1)
+        self.magazine = ResourcesManager.LoadImageHud('balas_con_recarga.png', -1)
         # self.sprites = self.sprites.convert_alpha()
 
         # Cargamos las coordenadas de cada sprite
-        data = ResourcesManager.LoadCoordFileHud('coord_corazons.txt')
+        data= ResourcesManager.LoadCoordFileHud('coord_corazons.txt')
         data = data.split()
-        self.coords = []
+       
+       
+        self.coordsCor = []
         cont = 0
         for animation in range(7):
-            self.coords.append(pygame.Rect((int(data[cont]), int(
+            self.coordsCor.append(pygame.Rect((int(data[cont]), int(
                 data[cont + 1])), (int(data[cont + 2]), int(data[cont + 3]))))
             cont += 4
 
-        # Establecemos como imagen inicial los 3 corazones
-        self.currentImage = 6
-        self.rect = self.coords[self.currentImage]
-        self.pos_x = 50
-        self.pos_y = 50
+        data= ResourcesManager.LoadCoordFileHud('coord_balas_pistola.txt')
+        data = data.split()
+       
+        self.coordMagazine = []
+        cont = 0
+        for animation in range(5):
+            self.coordMagazine.append(pygame.Rect((int(data[cont]), int(
+                data[cont + 1])), (int(data[cont + 2]), int(data[cont + 3]))))
+            cont += 4
+        self.currentImageMagazine = 4
+        self.rectMagazine = self.coordMagazine[self.currentImageMagazine]
+        self.pos_xMagazine = 750
+        self.pos_yMagazine = 50
 
-    def update(self, player_health):
+        # Establecemos como imagen inicial los 3 corazones
+        self.currentImageCor = 6
+        self.rectCor = self.coordsCor[self.currentImageCor]
+        self.pos_xCor = 50
+        self.pos_yCor = 50
+
+        
+
+    def update(self, player):
         # Dependiendo de la vida del jugador se carga una imagen u otra
-        if player_health >= 0:
-            self.currentImage = int(player_health * 2)
+        if player.health >= 0:
+            self.currentImageCor = int(player.health * 2)
         else:
-            self.currentImage = 0
-        self.rect = self.coords[self.currentImage]
+            self.currentImageCor = 0
+
+        
+        self.currentImageMagazine = player.weapon.magazine
+              
+
+        self.rectCor = self.coordsCor[self.currentImageCor]
+        self.rectMagazine = self.coordMagazine[self.currentImageMagazine]
 
     def paint(self, screen):
-        image = self.sprites.subsurface(self.rect)
-        screen.blit(image, (self.pos_x, self.pos_y))
+        image = self.sprites.subsurface(self.rectCor)
+        image2 = self.magazine.subsurface(self.rectMagazine)
+        screen.blit(image, (self.pos_xCor, self.pos_yCor))
+        screen.blit(image2, (self.pos_xMagazine, self.pos_yMagazine))

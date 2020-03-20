@@ -34,6 +34,10 @@ class ResourcesManager(object):
     @classmethod
     def LoadImageCharacter(cls, name, colorkey=None):
         return cls.LoadImage('characters', name, colorkey)
+        
+    @classmethod
+    def LoadImageObjects(cls, name, colorkey=None):
+        return cls.LoadImage('objects', name, colorkey)
 
     @classmethod
     def LoadImage(cls, rel_path, name, colorkey=None):
