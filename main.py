@@ -15,7 +15,7 @@ from resourcesmanager import ResourcesManager
 
 # Si se pone a True, se cargará directamente la fase indicada en DEBUG_FASE,
 # sin necesidad de acceder a través del menú
-DEBUG = True
+DEBUG = False
 DEBUG_FASE_NUM = 3
 MUSIC_ON = False
 

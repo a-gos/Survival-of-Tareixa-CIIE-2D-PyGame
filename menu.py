@@ -80,7 +80,7 @@ class BotonJugar(Boton):
         Boton.__init__(self, pantalla, nombreImagen, posicion)
 
     def action(self):
-        self.pantalla.menu.ejecutarJuego()
+        self.pantalla.menu.mostrarHistoria()
 
 
 class BotonInstrucciones(Boton):
@@ -129,6 +129,22 @@ class BotonSiguienteNivel(Boton):
 
     def action(self):
         self.pantalla.menu.siguienteNivel()
+
+
+class BotonAnterior(Boton):
+    def __init__(self, pantalla, nombreImagen, posicion):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
+
+    def action(self):
+        self.pantalla.menu.anteriorPantalla()
+
+
+class BotonSiguiente(Boton):
+    def __init__(self, pantalla, nombreImagen, posicion):
+        Boton.__init__(self, pantalla, nombreImagen, posicion)
+
+    def action(self):
+        self.pantalla.menu.siguientePantalla()
 
 # -------------------------------------------------
 # Clase PantallaGUI y las distintas pantallas
@@ -182,6 +198,31 @@ class PantallaIntrucciones(PantallaGUI):
         # Creamos el boton y lo metemos en la lista
         botonVolver = BotonVolver(self, 'volver.png', (50,485))
         self.elementosGUI.append(botonVolver)
+
+
+class PantallaHistoria(PantallaGUI):
+    def __init__(self, menu, num_historia):
+        filename = 'historia' + str(num_historia) + '.png'
+        PantallaGUI.__init__(self, menu, filename)
+        botonAnterior = BotonAnterior(self, 'flecha_anterior.png',(686,532))
+        botonSiguiente = BotonSiguiente(self, 'flecha_siguiente.png',(890,532))
+        self.elementosGUI.append(botonAnterior)
+        self.elementosGUI.append(botonSiguiente)
+
+
+class PantallaHistoria1(PantallaHistoria):
+    def __init__(self, menu):
+        PantallaHistoria.__init__(self, menu, 1)
+
+
+class PantallaHistoria2(PantallaHistoria):
+    def __init__(self, menu):
+        PantallaHistoria.__init__(self, menu, 2)
+
+
+class PantallaHistoria3(PantallaHistoria):
+    def __init__(self, menu):
+        PantallaHistoria.__init__(self, menu, 3)
 
 
 class PantallaPausa(PantallaGUI):
@@ -273,11 +314,16 @@ class MenuPrincipal(Menu):
     def __init__(self, director):
         # Llamamos al constructor de la clase padre pasándole las distintas
         # pantallas que va a tener el menú
-        pantallas = [PantallaInicial(self), PantallaIntrucciones(self)]
+        pantallas = [PantallaInicial(self), PantallaIntrucciones(self),
+                     PantallaHistoria1(self), PantallaHistoria2(self),
+                     PantallaHistoria3(self)]
         Menu.__init__(self, director, pantallas)
 
     #--------------------------------------
     # Metodos propios del menu principal del juego
+
+    def mostrarHistoria(self):
+        self.pantallaActual = 2
 
     def ejecutarJuego(self):
         self.director.game_level = 1
@@ -286,6 +332,18 @@ class MenuPrincipal(Menu):
 
     def mostrarIntrucciones(self):
         self.pantallaActual = 1
+
+    def anteriorPantalla(self):
+        if self.pantallaActual == 2:
+            self.pantallaActual = 0
+        else:
+            self.pantallaActual -= 1
+
+    def siguientePantalla(self):
+        if self.pantallaActual == 4:
+            self.ejecutarJuego()
+        else:
+            self.pantallaActual += 1
 
 
 class MenuPausa(Menu):
