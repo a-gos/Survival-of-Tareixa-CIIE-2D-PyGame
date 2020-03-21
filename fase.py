@@ -423,6 +423,9 @@ class HUD:
         self.pos_xCor = 50
         self.pos_yCor = 50
 
+     
+        
+
         
 
     def update(self, player):
@@ -438,9 +441,14 @@ class HUD:
 
         self.rectCor = self.coordsCor[self.currentImageCor]
         self.rectMagazine = self.coordMagazine[self.currentImageMagazine]
+        
+        #nome arma
+        self.weaponName = player.weapon.name
+        
 
     def paint(self, screen):
         image = self.sprites.subsurface(self.rectCor)
         image2 = self.magazine.subsurface(self.rectMagazine)
         screen.blit(image, (self.pos_xCor, self.pos_yCor))
         screen.blit(image2, (self.pos_xMagazine, self.pos_yMagazine))
+        screen.blit(self.weaponName,(750,10))

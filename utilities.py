@@ -110,9 +110,11 @@ class Chourizo(HealthPack):
         HealthPack.__init__(self, 'chorizo.png', position, 1)
 
 class Weapon(MySprite):
-    def __init__(self, image, position, dmg, reloadSpeed, magazine, speed):
+    def __init__(self, name, image, position, dmg, reloadSpeed, magazine, speed):
 
-        
+        myfont = pygame.font.SysFont('Arial', 30)
+        self.name = myfont.render(name, False, (255, 255, 255))
+      
         MySprite.__init__(self)
 
         self.dmg=dmg
@@ -141,14 +143,17 @@ class Weapon(MySprite):
 
 class Handgun(Weapon):
     def __init__(self,position):
-        Weapon.__init__(self, 'chorizo.png', position, DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
+
+        Weapon.__init__(self,'Handgun', 'chorizo.png', position, DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
 
 class RocketLauncher(Weapon):
     def __init__(self,position):
-        Weapon.__init__(self, 'chorizo.png', position, DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
+
+        Weapon.__init__(self,'Rocket Launcher', 'chorizo.png', position, DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
 
 class Shotgun(Weapon):
     def __init__(self,position):
-        Weapon.__init__(self, 'chorizo.png', position, DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
+
+        Weapon.__init__(self, 'Shotgun','chorizo.png', position, DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
 
 
