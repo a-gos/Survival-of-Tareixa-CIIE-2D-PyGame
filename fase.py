@@ -42,14 +42,22 @@ class Fase(Scene):
         conf = ResourcesManager.LoadConfigurationFile(filename)
 
         # Imagen de fondo
-        back_layer = conf.get_layer_by_name('Background')
+        try:
+            back_layer = conf.get_layer_by_name('Background')
+        except ValueError:
+            raise ReferenceError("Background layer not found. Include it in "
+                                 "the maps editor")
         back_image_name = os.path.basename(back_layer.image[0])
 
         # Creamos el fondo del nivel
         self.scenary = Scenary(back_image_name)
 
         # Capa de plataformas
-        layer = conf.get_layer_by_name('Platforms')
+        try:
+            layer = conf.get_layer_by_name('Platforms')
+        except ValueError:
+            raise ReferenceError("Platform layer not found. Include it in "
+                                 "the maps editor")
         self.platformGroup = pygame.sprite.Group()
         for tile in layer.tiles():
             coord_x = tile[0] # Multiplicar por TILE_SIZE para obtener el pixel donde se dibujará
@@ -77,18 +85,21 @@ class Fase(Scene):
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
 
         # Creamos el sprite del jugador
-        self.player = Player(Handgun((0,0)))
+        self.player = Player(Handgun())
 
         # Ponemos al jugador en su posición inicial
-        layer = conf.get_layer_by_name('Character')
         try:
+            layer = conf.get_layer_by_name('Character')
             # Para ejecutar el juego es necesario que haya un Jugador situado
             # en algún punto del mapa donde comienza el juego, sinó lo hay se
             # para la ejecución del juego
             tile = next(layer.tiles())
         except StopIteration:
-            raise ResourceWarning("Player's sprite not found. Include it in the"
+            raise ReferenceError("Player's sprite not found. Include it in the"
                                   " maps editor")
+        except ValueError:
+            raise ReferenceError("Character layer not found. Include it in "
+                                "the maps editor")
         coord_x = tile[0]
         coord_y = tile[1]
         self.player.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
@@ -96,9 +107,13 @@ class Fase(Scene):
         # Creamos un grupo donde se guardarán los disparos
         self.grupoShots = pygame.sprite.Group()
 
-        # Y los enemigos que tendran en este decorado
+        # Y los enemigos que tendrá en este nivel
         self.enemyGroup = pygame.sprite.Group()
-        layer = conf.get_layer_by_name('Enemies')
+        try:
+            layer = conf.get_layer_by_name('Enemies')
+        except ValueError:
+            raise ReferenceError("Enemies layer not found. Include it in "
+                                "the maps editor")
         for tile in layer.tiles():
             coord_x = tile[0]
             coord_y = tile[1]
@@ -107,16 +122,19 @@ class Fase(Scene):
             enemy.setposition((coord_x*TILE_SIZE, coord_y*TILE_SIZE))
             self.enemyGroup.add(enemy)
 
-        # El jefe final del nivel está en una capa diferente y guardamos una
-        # referencia a el en la fase para comprobar cuando se termina el nivel
-        layer = conf.get_layer_by_name('Boss')
         try:
+            # El jefe final del nivel está en una capa diferente y guardamos una
+            # referencia a el en la fase para comprobar cuando se termina el nivel
+            layer = conf.get_layer_by_name('Boss')
             # Para ejecutar el juego es necesario que haya un Jefe al final del
             # nivel, sinó lo hay se para la ejecución del juego
             tile = next(layer.tiles())
         except StopIteration:
-            raise ResourceWarning("Boss's sprite not found. Include it in the"
+            raise ReferenceError("Boss's sprite not found. Include it in the"
                                   " maps editor")
+        except ValueError:
+            raise ReferenceError("Boss layer not found. Include it in "
+                                "the maps editor")
         coord_x = tile[0]
         coord_y = tile[1]
         enemy_name = os.path.basename(tile[2][0])
@@ -125,16 +143,42 @@ class Fase(Scene):
         self.enemyGroup.add(self.boss)
 
 
+        # Añadimos los objetos que recuperan la vida del jugador
         self.healthGroup = pygame.sprite.Group()
-        self.healthGroup.add(LicorCafe((800,coord_y*TILE_SIZE)))
+        try:
+            layer = conf.get_layer_by_name('Health_Objects')
+        except ValueError:
+            raise ReferenceError("Health_Objects layer not found. Include it in "
+                                 "the maps editor")
+        for tile in layer.tiles():
+            coord_x = tile[0]
+            coord_y = tile[1]
+            object_name = os.path.basename(tile[2][0])
+            health_object = self.__get_health_object(object_name)
+            health_object.setposition((coord_x * TILE_SIZE, coord_y * TILE_SIZE))
+            self.healthGroup.add(health_object)
 
-        self.WeaponGroup = pygame.sprite.Group()
-        self.WeaponGroup.add(RocketLauncher( (750,coord_y*TILE_SIZE) ))
+
+        # Añadimos las armas que se pueden recoger durante el juego
+        self.weaponGroup = pygame.sprite.Group()
+        try:
+            layer = conf.get_layer_by_name('Weapons')
+        except ValueError:
+            raise ReferenceError("Weapons layer not found. Include it in "
+                                "the maps editor")
+        for tile in layer.tiles():
+            coord_x = tile[0]
+            coord_y = tile[1]
+            weapon_name = os.path.basename(tile[2][0])
+            weapon = self.__get_weapon(weapon_name)
+            weapon.setposition((coord_x * TILE_SIZE, coord_y * TILE_SIZE))
+            self.weaponGroup.add(weapon)
+
 
         # Creamos un grupo con los Sprites que se mueven (personaje, enemigos, proyectiles,etc.
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.player, self.enemyGroup.sprites() )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group(self.player, self.enemyGroup.sprites(), self.platformGroup.sprites(), self.healthGroup.sprites(), self.WeaponGroup.sprites() )
+        self.grupoSprites = pygame.sprite.Group(self.player, self.enemyGroup.sprites(), self.platformGroup.sprites(), self.healthGroup.sprites(), self.weaponGroup.sprites() )
 
         # Creamos los controles del jugador
         self.control = ControlKeyboard()
@@ -164,6 +208,28 @@ class Fase(Scene):
         else:
             enemy = Zombie1()
         return enemy
+
+    def __get_health_object(self, name):
+        object = None
+        if name == 'bottle.png':
+            object = LicorCafe()
+        elif name == 'chorizo.png':
+            object = Chourizo()
+        else:
+            object = LicorCafe()
+        return object
+
+    def __get_weapon(self, name):
+        weapon = None
+        if name == 'handgun.png':
+            weapon = Handgun()
+        elif name == 'shotgun.png':
+            weapon = Shotgun()
+        elif name == 'rocket_launcher.png':
+            weapon = RocketLauncher()
+        else:
+            weapon = Shotgun()
+        return weapon
 
     # Devuelve True o False según se ha tenido que desplazar el scroll
     def updateOrderedScroll(self, player):
@@ -269,7 +335,7 @@ class Fase(Scene):
         self.grupoSpritesDinamicos.update(self.platformGroup, self.enemyGroup, time)
         self.healthGroup.update(self.player, time)
 
-        self.WeaponGroup.update(self.player,time)
+        self.weaponGroup.update(self.player,time)
 
         # Si el jugador se queda sin vida porque lo ha matado un enemigo o se
         # ha caído al vacío, se acaba el juego

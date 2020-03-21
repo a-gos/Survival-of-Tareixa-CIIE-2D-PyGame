@@ -82,22 +82,17 @@ class Bullet(MySprite):
                 MySprite.update(self, time)
 
 class HealthPack(MySprite):
-    def __init__(self,  image, position, heal_level=1):
+    def __init__(self,  image, heal_level=1):
         MySprite.__init__(self)
 
-      
         self.healing = heal_level
         self.image = image
 
         self.image = ResourcesManager.LoadImageObjects(image, -1)
         self.rect = self.image.get_rect()
-        self.setposition((position))
+        # self.setposition((position))
 
-        
     def update(self, player, time):
-        
- 
-
         healing = player.health + self.healing
         if(player.rect.colliderect(self.rect) and (player.health < MAX_HEALTH) ):
             self.healSound.play()
@@ -111,17 +106,17 @@ class HealthPack(MySprite):
 
 
 class LicorCafe(HealthPack):
-    def __init__(self, position):
+    def __init__(self):
         self.healSound = ResourcesManager.LoadSound("drink.ogg")
         HealthPack.__init__(self, 'bottle.png', position, 0.5)
 
 class Chourizo(HealthPack):
-    def __init__(self, position):
+    def __init__(self):
         self.healSound = ResourcesManager.LoadSound("eat.ogg")
         HealthPack.__init__(self, 'chorizo.png', position, 1)
 
 class Weapon(MySprite):
-    def __init__(self, name, image, position, dmg, reloadSpeed, magazine, speed):
+    def __init__(self, name, image, dmg, reloadSpeed, magazine, speed):
 
         myfont = pygame.font.SysFont('Arial', 30)
         self.name = myfont.render(name, False, (255, 255, 255))
@@ -140,10 +135,9 @@ class Weapon(MySprite):
         self.image = ResourcesManager.LoadImageObjects(image, -1)
         self.rect = self.image.get_rect()
 
-        
+        # self.setposition(position)
+        # print("init")
 
-        self.setposition(position)
-        print("init")
 
     def shoot(self, player, scrollx, grupoSpritesDinamicos, grupoSprites):
         if(self.magazine>0):
@@ -155,7 +149,6 @@ class Weapon(MySprite):
             self.lastBullet = pygame.time.get_ticks()
             
 
-    
     def update(self,player,time):
       if player.rect.colliderect(self.rect):
           self.pickUp.play()
@@ -166,28 +159,30 @@ class Weapon(MySprite):
 
 
 class Handgun(Weapon):
-    def __init__(self,position):
+
+    def __init__(self):
         self.shootSound = ResourcesManager.LoadSound("handgun.ogg")
         self.shootSound.set_volume(0.4)
         self.impactSound = ResourcesManager.LoadSound("hitdefault.ogg")
         self.failHit = ResourcesManager.LoadSound("failhit.ogg")
-        Weapon.__init__(self,'Handgun', 'handgun.png', position, DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
+        Weapon.__init__(self,'Handgun', 'handgun.png', DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
 
 class RocketLauncher(Weapon):
-    def __init__(self,position):
+    def __init__(self):
         self.shootSound = ResourcesManager.LoadSound("rocketlauncher.ogg")
         self.shootSound.set_volume(0.5)
         self.impactSound = ResourcesManager.LoadSound("explosion.ogg")
         self.failHit = self.impactSound
-        Weapon.__init__(self,'Rocket Launcher', 'rocket_launcher.png', position, DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
+        Weapon.__init__(self,'Rocket Launcher', 'rocket_launcher.png', DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
 
 class Shotgun(Weapon):
-    def __init__(self,position):
+    def __init__(self):
         self.shootSound = ResourcesManager.LoadSound("shotgun.ogg")
         self.shootSound.set_volume(0.5)
         self.impactSound = ResourcesManager.LoadSound("hitdefault.ogg")
         self.failHit = ResourcesManager.LoadSound("failhit.ogg")
-        Weapon.__init__(self, 'Shotgun','shotgun.png', position, DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
+        Weapon.__init__(self, 'Shotgun','shotgun.png', DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
+
 
 
 
