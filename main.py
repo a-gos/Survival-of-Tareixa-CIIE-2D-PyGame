@@ -17,6 +17,7 @@ from resourcesmanager import ResourcesManager
 # sin necesidad de acceder a través del menú
 DEBUG = False
 DEBUG_FASE_NUM = 2
+MUSIC_ON = False
 
 if __name__ == '__main__':
 
@@ -26,9 +27,10 @@ if __name__ == '__main__':
     # Inicializamos el módulo para los sonidos y cargamos la música de fondo
     pygame.mixer.pre_init(44100, 16, 2, 4096)
     pygame.mixer.init()
-    ResourcesManager.LoadMusic('background_music.ogg')
-    # Reproducimos la música de forma que se repite continuamente
-    pygame.mixer.music.play(-1)
+    if MUSIC_ON:
+        ResourcesManager.LoadMusic('background_music.ogg')
+        # Reproducimos la música de forma que se repite continuamente
+        pygame.mixer.music.play(-1)
 
     # Creamos el director
     director = Director()
@@ -45,7 +47,8 @@ if __name__ == '__main__':
     # Y ejecutamos el juego
     director.execute()
 
-    # Paramos la reproducción de música
-    pygame.mixer.music.stop()
+    if MUSIC_ON:
+        # Paramos la reproducción de música
+        pygame.mixer.music.stop()
     # Cuando se termine la ejecución, finaliza la librería
     pygame.quit()
