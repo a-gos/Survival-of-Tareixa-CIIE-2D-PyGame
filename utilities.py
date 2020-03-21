@@ -108,12 +108,12 @@ class HealthPack(MySprite):
 class LicorCafe(HealthPack):
     def __init__(self):
         self.healSound = ResourcesManager.LoadSound("drink.ogg")
-        HealthPack.__init__(self, 'bottle.png', position, 0.5)
+        HealthPack.__init__(self, 'bottle.png', 0.5)
 
 class Chourizo(HealthPack):
     def __init__(self):
         self.healSound = ResourcesManager.LoadSound("eat.ogg")
-        HealthPack.__init__(self, 'chorizo.png', position, 1)
+        HealthPack.__init__(self, 'chorizo.png', 1)
 
 class Weapon(MySprite):
     def __init__(self, name, image, dmg, reloadSpeed, magazine, speed):
