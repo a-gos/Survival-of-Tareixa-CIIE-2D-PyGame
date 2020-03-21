@@ -206,7 +206,7 @@ class PantallaNivelCompletado(PantallaGUI):
     def __init__(self, menu, nivel):
         PantallaGUI.__init__(self, menu, 'fondo_nivel.png')
         filename = 'nivel' + str(nivel) + '.png'
-        tituloNivel = ElementoEstaticoGUI(self, filename, (140,62))
+        tituloNivel = ElementoEstaticoGUI(self, filename, (570,34))
         botonSalir = BotonSalir(self, 'sair_blanco.png', (473,539))
         botonRepetirNivel = BotonRepetirNivel(self, 'denovo.png', (95,260))
         botonSiguienteNivel = BotonSiguienteNivel(self, 'continuar.png', (674,324))
