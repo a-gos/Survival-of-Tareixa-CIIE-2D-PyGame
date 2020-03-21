@@ -74,22 +74,17 @@ class Bullet(MySprite):
                 MySprite.update(self, time)
 
 class HealthPack(MySprite):
-    def __init__(self,  image, position, heal_level=1):
+    def __init__(self,  image, heal_level=1):
         MySprite.__init__(self)
 
-      
         self.healing = heal_level
         self.image = image
 
         self.image = ResourcesManager.LoadImageObjects(image, -1)
         self.rect = self.image.get_rect()
-        self.setposition((position))
+        # self.setposition((position))
 
-        
     def update(self, player, time):
-        
- 
-
         healing = player.health + self.healing
         if(player.rect.colliderect(self.rect) and (player.health < MAX_HEALTH) ):
             if(healing <= MAX_HEALTH):
@@ -102,15 +97,15 @@ class HealthPack(MySprite):
 
 
 class LicorCafe(HealthPack):
-    def __init__(self, position):
-        HealthPack.__init__(self, 'bottle.png', position, 0.5)
+    def __init__(self):
+        HealthPack.__init__(self, 'bottle.png', 0.5)
 
 class Chourizo(HealthPack):
-    def __init__(self, position):
-        HealthPack.__init__(self, 'chorizo.png', position, 1)
+    def __init__(self):
+        HealthPack.__init__(self, 'chorizo.png',  1)
 
 class Weapon(MySprite):
-    def __init__(self, name, image, position, dmg, reloadSpeed, magazine, speed):
+    def __init__(self, name, image, dmg, reloadSpeed, magazine, speed):
 
         myfont = pygame.font.SysFont('Arial', 30)
         self.name = myfont.render(name, False, (255, 255, 255))
@@ -127,12 +122,9 @@ class Weapon(MySprite):
         self.image = ResourcesManager.LoadImageObjects(image, -1)
         self.rect = self.image.get_rect()
 
-        
+        # self.setposition(position)
+        # print("init")
 
-        self.setposition(position)
-        print("init")
-
-    
     def update(self,player,time):
       if player.rect.colliderect(self.rect):
           player.weapon = self
@@ -142,16 +134,16 @@ class Weapon(MySprite):
 
 
 class Handgun(Weapon):
-    def __init__(self,position):
-        Weapon.__init__(self,'Handgun', 'handgun.png', position, DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
+    def __init__(self):
+        Weapon.__init__(self,'Handgun', 'handgun.png', DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
 
 class RocketLauncher(Weapon):
-    def __init__(self,position):
-        Weapon.__init__(self,'Rocket Launcher', 'rocket_launcher.png', position, DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
+    def __init__(self):
+        Weapon.__init__(self,'Rocket Launcher', 'rocket_launcher.png', DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
 
 class Shotgun(Weapon):
-    def __init__(self,position):
-        Weapon.__init__(self, 'Shotgun','shotgun.png', position, DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
+    def __init__(self):
+        Weapon.__init__(self, 'Shotgun','shotgun.png', DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
 
 
 
