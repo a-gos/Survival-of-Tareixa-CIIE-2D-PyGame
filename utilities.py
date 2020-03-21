@@ -82,7 +82,6 @@ class HealthPack(MySprite):
         self.image = image
 
         self.image = ResourcesManager.LoadImageObjects(image, -1)
-        self.image = pygame.transform.scale(self.image, (20,20))
         self.rect = self.image.get_rect()
         self.setposition((position))
 
@@ -124,7 +123,6 @@ class Weapon(MySprite):
         self.maxAmmo = magazine
         self.lastBullet = pygame.time.get_ticks()
         self.image = ResourcesManager.LoadImageObjects(image, -1)
-        self.image = pygame.transform.scale(self.image, (20,20))
         self.rect = self.image.get_rect()
 
         
