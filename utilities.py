@@ -141,14 +141,14 @@ class Weapon(MySprite):
 
 class Handgun(Weapon):
     def __init__(self,position):
-        Weapon.__init__(self, 'chorizo.png', position, DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
+        Weapon.__init__(self, 'handgun.png', position, DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
 
 class RocketLauncher(Weapon):
     def __init__(self,position):
-        Weapon.__init__(self, 'chorizo.png', position, DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
+        Weapon.__init__(self, 'rocket_launcher.png', position, DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
 
 class Shotgun(Weapon):
     def __init__(self,position):
-        Weapon.__init__(self, 'chorizo.png', position, DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
+        Weapon.__init__(self, 'shotgun.png', position, DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
 
 
