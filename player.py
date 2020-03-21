@@ -116,6 +116,8 @@ class Character(MySprite):
         self.lastHit = pygame.time.get_ticks()
         self.cooldownHit = Character_INVULNERABILITY
 
+        #cargamos el death sound
+        self.deathSound = ResourcesManager.LoadSound(self.deathSound)
   
 
         # Leemos las coordenadas de un archivo de texto
@@ -210,11 +212,13 @@ class Character(MySprite):
         # Si el personaje ha caído al vacío
         if self.position[1] > HEIGHT_SCREEN:
             self.health = 0
+            self.deathSound.play()
             self.kill()
             # print("Personaje muerto")
 
         # Si al personaje lo han matado
         elif self.health <= 0:
+            self.deathSound.play()
             self.kill()
             # print("Personaje muerto")
 
@@ -359,11 +363,19 @@ class Player(Character):
     def __init__(self, initialWeapon):
         # Invocamos al constructor de la clase padre con la configuracion para
         # el personaje protagonista
+        
         self.weapon = initialWeapon
         self.weapon.kill()
+
+        self.knockSound = ResourcesManager.LoadSound("knocktareixa.ogg")
+
+        self.deathSound = "tareixadeath.ogg"
+
+        #efecto de sonido para morte, por defecto efecto zombie
+       
         Character.__init__(self, 'Tareixa.png', 'coordTareixa.txt',
                            [4, 12, 1, 1, 21, 18, 1], Character_SPEED, Character_JUMP_SPEED,
-                           Character_ANIMATION_DELAY, MAX_HEALTH)
+                           Character_ANIMATION_DELAY, MAX_HEALTH )
 
     def mover(self, control):
         # Indicamos la acción a realizar segun la tecla pulsada por el jugador
@@ -379,14 +391,9 @@ class Player(Character):
             Character.mover(self, IDLE)
 
     def shoot(self,grupoSpritesDinamicos, grupoSprites, scrollx):
-        
+        Character.mover(self, SHOOTING)
+        self.weapon.shoot(self,scrollx, grupoSpritesDinamicos, grupoSprites)
 
-        if(self.weapon.magazine>0):
-            self.weapon.magazine = self.weapon.magazine - 1
-            bullet = Bullet(self, self.weapon.bulletSpeed, scrollx, self.weapon.dmg)
-            grupoSpritesDinamicos.add(bullet)
-            grupoSprites.add(bullet)
-            self.weapon.lastBullet = pygame.time.get_ticks()
             
     
         
@@ -400,6 +407,7 @@ class Player(Character):
         now = pygame.time.get_ticks()
         if enemy is not None:
             if now - self.lastHit >= self.cooldownHit:
+                self.knockSound.play()
                 self.lastHit = now
                 self.health -= enemy.damage_level
                 print("Health = " + str(self.health))
@@ -419,6 +427,7 @@ class NPC(Character):
                  animationDelay, health):
         # Primero invocamos al constructor de la clase padre con los parametros
         # pasados
+        
         Character.__init__(self, imageFile, coordFile, numImages, speed,
                            jumpSpeed, animationDelay, health)
 
@@ -436,8 +445,9 @@ class Enemy(NPC):
 
     def __init__(self, image, coord, numImages, enemy_speed=0.05,
                  enemy_jump_speed=0.05, enemy_animation_delay=6, health=0.5,
-                 damage_level=0.5):
+                 damage_level=0.5, deathSound = "zombiedeath.ogg"):
 
+        self.deathSound = deathSound
         # Invocamos al constructor de la clase padre con la configuracion de
         # este enemigo concreto
         NPC.__init__(self, image, coord, numImages, enemy_speed,
@@ -446,6 +456,8 @@ class Enemy(NPC):
         # Establecer el nivel de daño que provoca el enemigo. Es un valor que
         # varía con incrementos de 0.5
         self.damage_level = damage_level
+
+
 
     # La implementacion de la IA para un enemigo básico.
     # En este caso el enemigo sigue al jugador.
@@ -465,6 +477,7 @@ class Enemy(NPC):
         # Si este enemigo no esta en pantalla, no hara nada
         else:
             Character.mover(self, IDLE)
+
 
 
 # Zombie de nivel 1

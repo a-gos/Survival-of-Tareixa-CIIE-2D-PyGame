@@ -129,7 +129,7 @@ class Fase(Scene):
         self.healthGroup.add(LicorCafe((800,coord_y*TILE_SIZE)))
 
         self.WeaponGroup = pygame.sprite.Group()
-        self.WeaponGroup.add(Shotgun( (750,coord_y*TILE_SIZE) ))
+        self.WeaponGroup.add(RocketLauncher( (750,coord_y*TILE_SIZE) ))
 
         # Creamos un grupo con los Sprites que se mueven (personaje, enemigos, proyectiles,etc.
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.player, self.enemyGroup.sprites() )

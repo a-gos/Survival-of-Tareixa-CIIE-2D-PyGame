@@ -15,7 +15,7 @@ RELOAD_SG = 1000
 MAGAZINE_SG = 2
 SPEED_SG=1
 
-DMG_HG = 1
+DMG_HG = 0.5
 RELOAD_HG = 500
 MAGAZINE_HG = 4
 SPEED_HG=0.5
@@ -23,7 +23,7 @@ SPEED_HG=0.5
 
 
 class Bullet(MySprite):
-    def __init__(self, player, speed, scrollx, damage_level):
+    def __init__(self, player, speed, scrollx, damage_level, hitSound, failHit):
         MySprite.__init__(self)
         # Daño que provoca cada disparo
         self.damage_level = damage_level
@@ -31,6 +31,12 @@ class Bullet(MySprite):
         # Carga de la imagen del disparo
         self.image = ResourcesManager.LoadImageCharacter('disparo.png', -1)
         self.rect = self.image.get_rect()
+
+        #Añadir sonido al impacto del disparo
+        self.hitSound = hitSound
+
+        #añadir sonido fallar bala
+        self.failHit = failHit
 
         # Dependiendo de hacia donde mire el jugador se crea el disparo en el
         # lado derecho o en el izquierdo de este
@@ -61,6 +67,7 @@ class Bullet(MySprite):
             # Comprueba si colisiona con una plataforma o enemigo
             enemy = pygame.sprite.spritecollideany(self, enemyGroup)
             if enemy is not None:
+                self.hitSound.play()
                 self.kill()
                 # Al colisionar con un enemigo se le resta vida
                 # La comprobación de si el enemigo debe ser eliminado se hace
@@ -69,6 +76,7 @@ class Bullet(MySprite):
                 
                 print("Health enemy = "+str(enemy.health))
             elif pygame.sprite.spritecollideany(self, platformGroup):
+                self.failHit.play()
                 self.kill()
             else:
                 MySprite.update(self, time)
@@ -92,6 +100,7 @@ class HealthPack(MySprite):
 
         healing = player.health + self.healing
         if(player.rect.colliderect(self.rect) and (player.health < MAX_HEALTH) ):
+            self.healSound.play()
             if(healing <= MAX_HEALTH):
                 player.health = healing
             else:
@@ -103,10 +112,12 @@ class HealthPack(MySprite):
 
 class LicorCafe(HealthPack):
     def __init__(self, position):
+        self.healSound = ResourcesManager.LoadSound("drink.ogg")
         HealthPack.__init__(self, 'bottle.png', position, 0.5)
 
 class Chourizo(HealthPack):
     def __init__(self, position):
+        self.healSound = ResourcesManager.LoadSound("eat.ogg")
         HealthPack.__init__(self, 'chorizo.png', position, 1)
 
 class Weapon(MySprite):
@@ -114,7 +125,9 @@ class Weapon(MySprite):
 
         myfont = pygame.font.SysFont('Arial', 30)
         self.name = myfont.render(name, False, (255, 255, 255))
-      
+        self.pickUp = ResourcesManager.LoadSound("pickup.ogg")
+
+
         MySprite.__init__(self)
 
         self.dmg=dmg
@@ -132,9 +145,20 @@ class Weapon(MySprite):
         self.setposition(position)
         print("init")
 
+    def shoot(self, player, scrollx, grupoSpritesDinamicos, grupoSprites):
+        if(self.magazine>0):
+            self.shootSound.play()
+            self.magazine = self.magazine - 1
+            bullet = Bullet(player, self.bulletSpeed, scrollx, self.dmg, self.impactSound, self.failHit)
+            grupoSpritesDinamicos.add(bullet)
+            grupoSprites.add(bullet)
+            self.lastBullet = pygame.time.get_ticks()
+            
+
     
     def update(self,player,time):
       if player.rect.colliderect(self.rect):
+          self.pickUp.play()
           player.weapon = self
           self.kill()
       else: 
@@ -143,14 +167,26 @@ class Weapon(MySprite):
 
 class Handgun(Weapon):
     def __init__(self,position):
+        self.shootSound = ResourcesManager.LoadSound("handgun.ogg")
+        self.shootSound.set_volume(0.4)
+        self.impactSound = ResourcesManager.LoadSound("hitdefault.ogg")
+        self.failHit = ResourcesManager.LoadSound("failhit.ogg")
         Weapon.__init__(self,'Handgun', 'handgun.png', position, DMG_HG, RELOAD_HG, MAGAZINE_HG, SPEED_HG)
 
 class RocketLauncher(Weapon):
     def __init__(self,position):
+        self.shootSound = ResourcesManager.LoadSound("rocketlauncher.ogg")
+        self.shootSound.set_volume(0.5)
+        self.impactSound = ResourcesManager.LoadSound("explosion.ogg")
+        self.failHit = self.impactSound
         Weapon.__init__(self,'Rocket Launcher', 'rocket_launcher.png', position, DMG_RL, RELOAD_RL, MAGAZINE_RL, SPEED_RL)
 
 class Shotgun(Weapon):
     def __init__(self,position):
+        self.shootSound = ResourcesManager.LoadSound("shotgun.ogg")
+        self.shootSound.set_volume(0.5)
+        self.impactSound = ResourcesManager.LoadSound("hitdefault.ogg")
+        self.failHit = ResourcesManager.LoadSound("failhit.ogg")
         Weapon.__init__(self, 'Shotgun','shotgun.png', position, DMG_SG, RELOAD_SG, MAGAZINE_SG, SPEED_SG)
 
 
