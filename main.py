@@ -38,6 +38,7 @@ if __name__ == '__main__':
     if DEBUG:
         # Creamos la escena con el nivel a depurar
         scene = Fase(director, DEBUG_FASE_NUM)
+        director.game_level = DEBUG_FASE_NUM
     else:
         # Creamos la escena con el menú principal
         scene = MenuPrincipal(director)
