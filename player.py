@@ -260,7 +260,10 @@ class Character(MySprite):
                 if self.movement == HURT:
                     self.animationNumber = SPRITE_KNOCKED
                     if not(self.isKnocked):
-                        speedx = -self.runSpeed
+                        if(self.looking == RIGHT):
+                            speedx = -self.runSpeed
+                        else:
+                            speedx = self.runSpeed
                         speedy = (-self.jumpSpeed / 3)
 
                 # Si no se ha pulsado ninguna tecla
