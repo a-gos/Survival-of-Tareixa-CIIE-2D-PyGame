@@ -564,7 +564,7 @@ class Chicken(Enemy):
 class Crab(Enemy):
 
     def __init__(self):
-        Enemy.__init__(self,'crab.png', 'coordCrab.txt', [1,23,1,1, 1, 1, 1],
+        Enemy.__init__(self,'crab.png', 'coordCrab.txt', [1,12,1,1, 1, 1, 1],
                        enemy_speed=0.12, enemy_jump_speed=0.2, health=5,
                        damage_level=1.5)
 
