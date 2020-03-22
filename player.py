@@ -541,7 +541,7 @@ class Bear(Enemy):
     def __init__(self):
         Enemy.__init__(self,'bear.png', 'coordBear.txt', [1,11,1,1, 1, 1, 1],
                        enemy_speed=0.07, enemy_jump_speed=0.2, health=3,
-                       damage_level=0.5)
+                       damage_level=1)
 
 
 # Jabalí (Boss)
@@ -550,7 +550,7 @@ class WildBoar(Enemy):
     def __init__(self):
         Enemy.__init__(self,'wild_boar.png', 'coordWildBoar.txt', [1,9,1,1, 1, 1, 1],
                        enemy_speed=0.1, enemy_jump_speed=0.2, health=4,
-                       damage_level=1)
+                       damage_level=0.5)
 
 
 class Chicken(Enemy):
