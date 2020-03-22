@@ -12,7 +12,7 @@
  <tileset firstgid="21" source="bear.tsx"/>
  <tileset firstgid="22" source="bottle.tsx"/>
  <imagelayer id="7" name="Background">
-  <image source="../scene/ background_level_2.png" width="6016" height="608"/>
+  <image source="../scene/background_level_3.png" width="6016" height="608"/>
  </imagelayer>
  <layer id="1" name="Platforms" width="186" height="19">
   <data encoding="csv">
