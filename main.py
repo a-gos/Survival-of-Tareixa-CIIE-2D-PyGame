@@ -17,7 +17,7 @@ from resourcesmanager import ResourcesManager
 # sin necesidad de acceder a través del menú
 DEBUG = False
 DEBUG_FASE_NUM = 4
-MUSIC_ON = False
+MUSIC_ON = True
 
 if __name__ == '__main__':
     # Inicializamos el módulo para los sonidos y cargamos la música de fondo
