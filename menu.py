@@ -257,11 +257,11 @@ class PantallaNivelCompletado(PantallaGUI):
         self.elementosGUI.append(tituloNivel)
 
 
-# class PantallaJuegoCompletado(PantallaGUI):
-#     def __init__(self, menu):
-#         PantallaGUI.__init__(self, menu, 'nombre_del_fondo.png')
-#         botonSalir = BotonSalir(self, 'sair_blanco.png', (0,0))
-#         self.elementosGUI.append(botonSalir)
+class PantallaJuegoCompletado(PantallaGUI):
+    def __init__(self, menu):
+        PantallaGUI.__init__(self, menu, 'fondo_fin.png')
+        botonSalir = BotonSalir(self, 'sair_blanco.png', (951,525))
+        self.elementosGUI.append(botonSalir)
 
 # -------------------------------------------------
 # Clase Menu, que será utilizada por los diferentes tipos de menús del juego
@@ -408,8 +408,8 @@ class MenuNivelCompletado(Menu):
             fase.Fase(self.director, self.director.game_level))
 
 
-# class MenuJuegoCompletado(Menu):
-#
-#     def __init__(self, director):
-#         pantallas = [PantallaJuegoCompletado(self)]
-#         Menu.__init__(self, director, pantallas)
+class MenuJuegoCompletado(Menu):
+
+    def __init__(self, director):
+        pantallas = [PantallaJuegoCompletado(self)]
+        Menu.__init__(self, director, pantallas)

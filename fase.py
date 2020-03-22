@@ -350,7 +350,11 @@ class Fase(Scene):
         elif not self.boss.alive():
             # print("JUEGO GANADO")
             self.director.exitScene()
-            self.director.stackScene(MenuNivelCompletado(self.director))
+            # Si el jugador ha superado todos los niveles, se muestra el menú final
+            if self.director.game_level == NUMBER_LEVELS:
+                self.director.stackScene(MenuJuegoCompletado(self.director))
+            else:
+                self.director.stackScene(MenuNivelCompletado(self.director))
 
         # Actualizamos el scroll
         self.updateScroll(self.player)

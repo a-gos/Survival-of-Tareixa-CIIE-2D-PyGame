@@ -8,6 +8,7 @@ from scene import *
 from pygame.locals import *
 
 
+
 class Director():
 
     def __init__(self):
@@ -21,7 +22,7 @@ class Director():
         # Reloj
         self.clock = pygame.time.Clock()
         # Fase/nivel del juego que se está ejecutando
-        self.game_level = 0
+        self.game_level = 1
 
     def loop(self, scene):
 
