@@ -20,11 +20,13 @@ DEBUG_FASE_NUM = 4
 MUSIC_ON = True
 
 if __name__ == '__main__':
+
+    # Inicializamos la libreria de pygame
+    pygame.init()
+
     # Inicializamos el módulo para los sonidos y cargamos la música de fondo
     pygame.mixer.pre_init(44100, 16, 2, 512)
     pygame.mixer.init()
-    # Inicializamos la libreria de pygame
-    pygame.init()
 
 
     if MUSIC_ON:
