@@ -41,7 +41,7 @@ Character_ANIMATION_DELAY = 5  # updates that the character model will endure
 Character_INVULNERABILITY = 2000 # Número de milisegundos que el personaje 
                                 #está sin recibir daño tras recibirlo una primera vez
 Character_KNOCKDOWN = 300       # Tiempo que el personaje está volando por el golpe
-GRAVITY = 0.0005
+GRAVITY = 0.0001
 
 MAGAZINE_SIZE = 4
 MAGAZINE_CD = 500
