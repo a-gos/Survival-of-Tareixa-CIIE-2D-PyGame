@@ -47,8 +47,7 @@ class Fase(Scene):
         except ValueError:
             raise ReferenceError("Background layer not found. Include it in "
                                  "the maps editor")
-        back_image_name = os.path.basename(back_layer.image[0])
-
+        back_image_name = os.path.basename(back_layer.source)
         # Creamos el fondo del nivel
         self.scenary = Scenary(back_image_name)
 
@@ -205,6 +204,8 @@ class Fase(Scene):
             enemy = Bear()
         elif name == 'wild_boar.png':
             enemy = WildBoar()
+        elif name == 'chicken.png':
+            enemy = Chicken()
         else:
             enemy = Zombie1()
         return enemy
