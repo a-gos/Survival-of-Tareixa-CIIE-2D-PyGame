@@ -42,9 +42,9 @@ class Bullet(MySprite):
         # lado derecho o en el izquierdo de este
         (posx, posy) = player.position
         if player.looking == RIGHT:
-            self.setposition((posx+self.rect.width, player.rect.centery))
+            self.setposition((posx+self.rect.width-20, player.rect.centery-3))
         else:
-            self.setposition((posx-self.rect.width, player.rect.centery))
+            self.setposition((posx-self.rect.width+5, player.rect.centery-3))
             
         self.setpositionscreen((scrollx, 0))
 
