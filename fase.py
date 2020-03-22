@@ -206,6 +206,8 @@ class Fase(Scene):
             enemy = WildBoar()
         elif name == 'chicken.png':
             enemy = Chicken()
+        elif name == 'crab.png':
+            enemy = Crab()
         else:
             enemy = Zombie1()
         return enemy

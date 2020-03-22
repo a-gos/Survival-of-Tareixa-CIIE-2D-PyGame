@@ -541,7 +541,7 @@ class Bear(Enemy):
     def __init__(self):
         Enemy.__init__(self,'bear.png', 'coordBear.txt', [1,11,1,1, 1, 1, 1],
                        enemy_speed=0.07, enemy_jump_speed=0.2, health=3,
-                       damage_level=1.5)
+                       damage_level=0.5)
 
 
 # Jabalí (Boss)
@@ -550,7 +550,7 @@ class WildBoar(Enemy):
     def __init__(self):
         Enemy.__init__(self,'wild_boar.png', 'coordWildBoar.txt', [1,9,1,1, 1, 1, 1],
                        enemy_speed=0.1, enemy_jump_speed=0.2, health=4,
-                       damage_level=0.5)
+                       damage_level=1)
 
 
 class Chicken(Enemy):
@@ -558,7 +558,16 @@ class Chicken(Enemy):
     def __init__(self):
         Enemy.__init__(self,'chicken.png', 'coordChicken.txt', [1,16,4,1, 1, 1, 1],
                        enemy_speed=0.1, enemy_jump_speed=0.2, health=5,
-                       damage_level=0.5, deathSound='chicken_clucking.ogg')
+                       damage_level=1, deathSound='chicken_clucking.ogg')
+
+
+class Crab(Enemy):
+
+    def __init__(self):
+        Enemy.__init__(self,'crab.png', 'coordCrab.txt', [1,23,1,1, 1, 1, 1],
+                       enemy_speed=0.12, enemy_jump_speed=0.2, health=5,
+                       damage_level=1.5)
+
 
 # WARNING: CADA VEZ QUE SE AÑADE UN ENEMIGO NUEVO HAY QUE AÑADIR UNA REFERENCIA
 # A SU CLASE EN EL MÉTODO __get_enemy() EN EL FICHERO fase.py
