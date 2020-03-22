@@ -553,5 +553,12 @@ class WildBoar(Enemy):
                        damage_level=0.5)
 
 
+class Chicken(Enemy):
+
+    def __init__(self):
+        Enemy.__init__(self,'chicken.png', 'coordChicken.txt', [1,16,4,1, 1, 1, 1],
+                       enemy_speed=0.1, enemy_jump_speed=0.2, health=5,
+                       damage_level=0.5, deathSound='chicken_clucking.ogg')
+
 # WARNING: CADA VEZ QUE SE AÑADE UN ENEMIGO NUEVO HAY QUE AÑADIR UNA REFERENCIA
 # A SU CLASE EN EL MÉTODO __get_enemy() EN EL FICHERO fase.py
