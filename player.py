@@ -493,7 +493,7 @@ class Zombie1(Enemy):
 class Zombie2(Enemy):
 
     def __init__(self):
-        Enemy.__init__(self,'zombie2.png', 'coordZombie2.txt', [1,6,1,1, 1, 1, 1],
+        Enemy.__init__(self,'zombie2.png', 'coordZombie2.txt', [1,7,1,1, 1, 1, 1],
                        enemy_speed=0.1, enemy_jump_speed=0.2, health=1.5,
                        damage_level=0.5)
 
