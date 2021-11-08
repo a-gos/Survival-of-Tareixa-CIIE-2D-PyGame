@@ -1,9 +1,6 @@
 
 **THIS PROJECT WAS MADE ONLY FOR EDUCATIONAL PURPOSES**
 
-
-First game ever made and first game in Python. This project was made for the course CIIE (Contornos Inmersivos Interactivos e de Entretenemento); degree in Computer Science in A Coruña. Basically, a Metal Slug Clone.
-
 The game was created on Python, using the library Pygame and also PyTMX for the creation and design of the levels.
 
 No copyright infringement intended.
