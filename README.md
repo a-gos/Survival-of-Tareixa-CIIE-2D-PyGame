@@ -35,6 +35,14 @@ In order to play the game first you have the install the dependencies.
 * [Pygame](https://www.pygame.org/) 
 * [PyTMX](https://pypi.org/project/PyTMX/) 
 
+## Images
+![image](https://user-images.githubusercontent.com/55861837/196565746-eee347b8-a385-40df-85d2-169914075340.png)
+![image](https://user-images.githubusercontent.com/55861837/196565053-76d91e99-0260-4cf5-b86c-a26db4c4df28.png)
+![image](https://user-images.githubusercontent.com/55861837/196565488-3f22ddb4-c3de-46f4-8822-2803f35f309e.png)
+![image](https://user-images.githubusercontent.com/55861837/196565684-1f9e09e0-4053-4772-a2fc-2d0fc49dcddd.png)
+![image](https://user-images.githubusercontent.com/55861837/196565696-692166c6-3220-4141-aa56-9d681282dc84.png)
+
+
 ## Authors
 
 - **Alberto Femenías**
